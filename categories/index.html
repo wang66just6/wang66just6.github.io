@@ -162,7 +162,22 @@
 </div>
 
   
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<div id="gitalk-container"></div>
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script type="text/javascript">
+    var gitalk = new Gitalk({
+        clientID: '2f2a844c3f5c5a2c5519',
+        clientSecret: '7bd16f26ba0b9bd9667372b25e02531c89d916c4',
+        id: window.location.pathname,
+        repo: 'myblog_comment',
+        owner: 'wang66just6',
+        admin: 'wang66just6'
+    })
+    gitalk.render('gitalk-container')
+</script>
 </aside>
+
         
       </div>
       <footer id="footer">
@@ -191,45 +206,6 @@ new WOW().init();
   <script src="/plugin/fancybox/jquery.fancybox.pack.js"></script>
 
 
-
-  <link rel="stylesheet" href="/plugin/galmenu/GalMenu.css">
-  <script src="/plugin/galmenu/GalMenu.js"></script>
-  <div class="GalMenu GalDropDown">
-      <div class="circle" id="gal">
-        <div class="ring">
-          
-            <a href="/" title="" class="menuItem">首页</a>
-          
-            <a href="/tags" title="" class="menuItem">标签</a>
-          
-            <a href="/categories" title="" class="menuItem">分类</a>
-          
-            <a href="/archives" title="" class="menuItem">归档</a>
-          
-            <a href="http://www.jilehui.top/wo.html" title="" class="menuItem">关于</a>
-          
-            <a href="http://www.jilehui.top/" title="" class="menuItem">试验靶场</a>
-          
-        </div>
-        
-          <audio id="audio" src="plugin/galmenu/wulusai.mp3"></audio>
-        
-      </div> 
-</div>
-<div id="overlay" style="opacity: 1; cursor: pointer;"></div>
-  <script type="text/javascript">var items = document.querySelectorAll('.menuItem');
-    for (var i = 0,
-    l = items.length; i < l; i++) {
-      items[i].style.left = (50 - 35 * Math.cos( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%";
-      items[i].style.top = (50 + 35 * Math.sin( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%"
-    }</script>
-<script type="text/javascript">
-  $(document).ready(function() {
-    $('body').GalMenu({
-      'menu': 'GalDropDown'
-    })
-  });
-</script>
 
   <section class="hidden-xs"> 
   <ul class="cb-slideshow"> 
