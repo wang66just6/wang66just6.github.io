@@ -44,9 +44,9 @@
     <h2 class="author">王六六</h2>
     <h3 class="description">It&#39;s raining cats and dogs.</h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>5</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>6</strong><br>文章</div></a>
       <a href="/categories"><div><strong>0</strong><br>分类</div></a>
-      <a href="/tags"><div><strong>4</strong><br>标签</div></a>
+      <a href="/tags"><div><strong>5</strong><br>标签</div></a>
     </div>
     <ul class="blog-link">
      
@@ -79,6 +79,83 @@
 </div>
 
         <section id="main">
+  
+    <article id="post-浅析缓冲区溢出" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/08/18/浅析缓冲区溢出/" class="article-date">
+  <time class="post-time" datetime="2018-08-18T08:49:06.000Z" itemprop="datePublished">
+    <span class="post-month">8月</span><br/>
+    <span class="post-day">18</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/08/18/浅析缓冲区溢出/">浅析缓冲区溢出</a>
+    </h1>
+  
+
+        <div>
+          
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>&emsp;最近一直在学习缓冲区溢出漏洞的攻击，但是关于这一块的内容还是需要很多相关知识的基础，例如编程语言及反汇编工具使用。所以研究透彻还需要不少的时间，这里简单的做一个学习的总结，通过具体的实验案例对缓冲区溢出进行简要的解析。<br>&emsp;汇编语言及编程语言是基础，其次是对反编译工具的使用：比如<strong>gdb</strong>、<strong>IDA pro</strong>、<strong>objdump</strong>等。汇编语言的学习可以看王爽编写的《汇编语言》，很适合初学者学习的一本书。(对于初学者来说，必要的知识屏蔽是很重要的，这本书就是按这个思想编写，所以看这本书的感觉就非常流畅。)<br>&emsp;缓冲区溢出是一种常见的攻击手段，原因在于缓冲区漏洞非常普遍，并且易于实现。缓冲区溢出漏洞占了远程网络攻击的绝大多数，成为远程攻击的主要手段。在CTF比赛中这一类的题目也是非常热门(pwn题)。利用缓冲区溢出攻击可以导致程序运行失败、系统崩溃等后果。更为严重的是，可以利用它执行非授权指令，甚至可以取得系统特权，进而进行各种非法操作。<br><!-- TOC --></p>
+<ul>
+<li><a href="#缓冲区溢出及其原理">缓冲区溢出及其原理</a><ul>
+<li><a href="#编译源程序">编译源程序</a></li>
+<li><a href="#执行程序">执行程序</a></li>
+<li><a href="#原因分析">原因分析</a></li>
+</ul>
+</li>
+<li><a href="#缓冲区溢出攻击例子">缓冲区溢出攻击例子</a><ul>
+<li><a href="#一创建程序">一、创建程序</a></li>
+<li><a href="#二编译程序">二、编译程序</a></li>
+<li><a href="#三覆盖eip">三、覆盖EIP</a></li>
+<li><a href="#四构造shellcode">四、构造shellcode</a></li>
+<li><a href="#五注入shellcode">五、注入shellcode</a></li>
+</ul>
+</li>
+<li><a href="#缓冲区溢出攻击的防范">缓冲区溢出攻击的防范</a></li>
+</ul>
+<!-- /TOC -->
+        
+          <p class="article-more-link">
+            <a href="/2018/08/18/浅析缓冲区溢出/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://wang66.top/2018/08/18/浅析缓冲区溢出/" data-id="cjkz9ktkg0002s0nj5cmn1mkl" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/缓冲区溢出-c语言/">缓冲区溢出 c语言</a></li></ul>
+
+    </footer>
+  </div>
+  
+  
+</article>
+
+
+
+
+
+
+
   
     <article id="post-信息安全入门" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
@@ -121,7 +198,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://wang66.top/2018/08/05/信息安全入门/" data-id="cjkz6hv2u000b70njn0aytsdi" class="article-share-link">分享</a>
+      <a data-url="http://wang66.top/2018/08/05/信息安全入门/" data-id="cjkz9ktkb0000s0njd85nn4l5" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/知识/">知识</a></li></ul>
@@ -180,7 +257,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://wang66.top/2018/08/05/漏洞发布网站/" data-id="cjkz6hv2s000970njxtjj106z" class="article-share-link">分享</a>
+      <a data-url="http://wang66.top/2018/08/05/漏洞发布网站/" data-id="cjkz9ktml000es0njwvu8k1sv" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/资源/">资源</a></li></ul>
@@ -241,7 +318,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://wang66.top/2018/08/05/渗透工具/" data-id="cjkz6hv13000370njkezyoxpp" class="article-share-link">分享</a>
+      <a data-url="http://wang66.top/2018/08/05/渗透工具/" data-id="cjkz9ktkn0005s0njv19prj3d" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/工具/">工具</a></li></ul>
@@ -298,7 +375,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://wang66.top/2018/08/03/【持续更新】资源分享/" data-id="cjkz6hv2r000870njq5l69puc" class="article-share-link">分享</a>
+      <a data-url="http://wang66.top/2018/08/03/【持续更新】资源分享/" data-id="cjkz9ktkr0006s0nja9skcxe9" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/资源/">资源</a></li></ul>
@@ -354,7 +431,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://wang66.top/2018/08/02/你好哇!/" data-id="cjkz6huzu000070njwunczmbr" class="article-share-link">分享</a>
+      <a data-url="http://wang66.top/2018/08/02/你好哇!/" data-id="cjkz9ktmm000fs0nje6eg5il2" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
@@ -420,9 +497,9 @@
     <h2 class="author">王六六</h2>
     <h3 class="description">It&#39;s raining cats and dogs.</h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>5</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>6</strong><br>文章</div></a>
       <a href="/categories"><div><strong>0</strong><br>分类</div></a>
-      <a href="/tags"><div><strong>4</strong><br>标签</div></a>
+      <a href="/tags"><div><strong>5</strong><br>标签</div></a>
     </div>
 
 
