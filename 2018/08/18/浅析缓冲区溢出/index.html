@@ -267,7 +267,7 @@ height:50vh;
                 
                 
                     <div class="post-intro-read">
-                        <span>Word count: <span class="post-count">4,322</span> / Reading time: <span class="post-count">16 min</span></span>
+                        <span>Word count: <span class="post-count">4,352</span> / Reading time: <span class="post-count">16 min</span></span>
                     </div>
                 
                 <div class="post-intro-meta">
@@ -396,7 +396,8 @@ height:50vh;
         <div class="container container-unloaded">
             <main class="main post-page">
     <article class="article-entry">
-        <p>&emsp;最近一直在学习缓冲区溢出漏洞的攻击，但是关于这一块的内容还是需要很多相关知识的基础，例如编程语言及反汇编工具使用。所以研究透彻还需要不少的时间，这里简单的做一个学习的总结，通过具体的实验案例对缓冲区溢出进行简要的解析。<br>&emsp;汇编语言及编程语言是基础，其次是对反编译工具的使用：比如<strong>gdb</strong>、<strong>IDA pro</strong>、<strong>objdump</strong>等。汇编语言的学习可以看王爽编写的《汇编语言》，很适合初学者学习的一本书。(对于初学者来说，必要的知识屏蔽是很重要的，这本书就是按这个思想编写，所以看这本书的感觉就非常流畅。)<br><a id="more"></a><br>&emsp;缓冲区溢出是一种常见的攻击手段，原因在于缓冲区漏洞非常普遍，并且易于实现。缓冲区溢出漏洞占了远程网络攻击的绝大多数，成为远程攻击的主要手段。在CTF比赛中这一类的题目也是非常热门(pwn题)。利用缓冲区溢出攻击可以导致程序运行失败、系统崩溃等后果。更为严重的是，可以利用它执行非授权指令，甚至可以取得系统特权，进而进行各种非法操作。</p>
+        <p>&emsp;最近一直在学习缓冲区溢出漏洞的攻击，但是关于这一块的内容还是需要很多相关知识的基础，例如编程语言及反汇编工具使用。所以研究透彻还需要不少的时间，这里简单的做一个学习的总结，通过具体的实验案例对缓冲区溢出进行简要的解析，第一篇关于缓冲区的文章，可能还有很多地方解释不到位，之后尽量补全。<br><a id="more"></a><br>&emsp;汇编语言及编程语言是基础，其次是对反编译工具的使用：比如<strong>gdb</strong>、<strong>IDA pro</strong>、<strong>objdump</strong>等。汇编语言的学习可以看王爽编写的《汇编语言》，很适合初学者学习的一本书。(对于初学者来说，必要的知识屏蔽是很重要的，这本书就是按这个思想编写，所以看这本书的感觉就非常流畅。)</p>
+<p>&emsp;缓冲区溢出是一种常见的攻击手段，原因在于缓冲区漏洞非常普遍，并且易于实现。缓冲区溢出漏洞占了远程网络攻击的绝大多数，成为远程攻击的主要手段。在CTF比赛中这一类的题目也是非常热门(pwn题)。利用缓冲区溢出攻击可以导致程序运行失败、系统崩溃等后果。更为严重的是，可以利用它执行非授权指令，甚至可以取得系统特权，进而进行各种非法操作。</p>
 <!-- TOC -->
 <ul>
 <li><a href="#缓冲区溢出及其原理">缓冲区溢出及其原理</a><ul>
@@ -497,6 +498,11 @@ height:50vh;
     <!-- paginator  -->
     <ul class="post-paginator">
         <li class="next">
+            
+                <div class="nextSlogan">Next Post</div>
+                <a href= "/2018/08/25/arp毒化/" title= 来自身边的安全威胁—ARP欺骗攻击 >
+                    <div class="nextTitle">来自身边的安全威胁—ARP欺骗攻击</div>
+                </a>
             
         </li>
         <li class="previous">
@@ -724,9 +730,20 @@ top:50vh;
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 5
+        Total : 6
         </div>
         <!-- search  -->
         
@@ -739,6 +756,11 @@ top:50vh;
     
     <div class="archive-year"> 2018 </div>
     <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/25</span><a class="archive-post-title" href= "/2018/08/25/arp毒化/" >来自身边的安全威胁—ARP欺骗攻击</a>
+        </li>
     
     
         <li class="archive-post-item">
@@ -772,11 +794,17 @@ top:50vh;
     
         <span class="sidebar-tag-name" data-tags="资源"><span class="iconfont-archer">&#xe606;</span>资源</span>
     
-        <span class="sidebar-tag-name" data-tags="工具"><span class="iconfont-archer">&#xe606;</span>工具</span>
+        <span class="sidebar-tag-name" data-tags="知识"><span class="iconfont-archer">&#xe606;</span>知识</span>
     
         <span class="sidebar-tag-name" data-tags="缓冲区"><span class="iconfont-archer">&#xe606;</span>缓冲区</span>
     
-        <span class="sidebar-tag-name" data-tags="知识"><span class="iconfont-archer">&#xe606;</span>知识</span>
+        <span class="sidebar-tag-name" data-tags="工具"><span class="iconfont-archer">&#xe606;</span>工具</span>
+    
+        <span class="sidebar-tag-name" data-tags="局域网"><span class="iconfont-archer">&#xe606;</span>局域网</span>
+    
+        <span class="sidebar-tag-name" data-tags="arp"><span class="iconfont-archer">&#xe606;</span>arp</span>
+    
+        <span class="sidebar-tag-name" data-tags="中间人攻击"><span class="iconfont-archer">&#xe606;</span>中间人攻击</span>
     
     </div>
     <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
