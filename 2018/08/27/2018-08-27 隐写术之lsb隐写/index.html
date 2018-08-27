@@ -15,7 +15,7 @@
     <meta name="description" content="It's raining cats and dogs.">
     <meta http-equiv="Cache-control" content="no-cache">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-    <title>一次恶意PHP脚本初探 · wang66&#39;s blog</title>
+    <title>隐写术之LSB隐写 · wang66&#39;s blog</title>
     <style type="text/css">
     @font-face {
         font-family: 'Oswald-Regular';
@@ -210,7 +210,7 @@
                 <a href="/" >Still Shines.</a>
             </div>
             <div class="post-title">
-                <a href="#" class="post-name">一次恶意PHP脚本初探</a>
+                <a href="#" class="post-name">隐写术之LSB隐写</a>
             </div>
     </div>
     
@@ -242,7 +242,7 @@ height:50vh;
         <h1 class="intro-title">
             <!-- 主页  -->
             
-            一次恶意PHP脚本初探
+            隐写术之LSB隐写
             <!-- 404 -->
             
         </h1>
@@ -261,15 +261,15 @@ height:50vh;
                 
                     <div class= post-intro-tags >
     
-        <a class="post-tag" href="javascript:void(0);" data-tags = "php">php</a>
+        <a class="post-tag" href="javascript:void(0);" data-tags = "隐写术">隐写术</a>
     
-        <a class="post-tag" href="javascript:void(0);" data-tags = "webshell">webshell</a>
+        <a class="post-tag" href="javascript:void(0);" data-tags = "lsb隐写">lsb隐写</a>
     
 </div>
                 
                 
                     <div class="post-intro-read">
-                        <span>Word count: <span class="post-count">2,605</span> / Reading time: <span class="post-count">9 min</span></span>
+                        <span>Word count: <span class="post-count">2,714</span> / Reading time: <span class="post-count">10 min</span></span>
                     </div>
                 
                 <div class="post-intro-meta">
@@ -398,57 +398,33 @@ height:50vh;
         <div class="container container-unloaded">
             <main class="main post-page">
     <article class="article-entry">
-        <p>&emsp;&emsp;这是一篇前段时间写的文章，现在归整到这个博客中，那个时候刚学网络安全不久。当时遇到这个木马也是极其偶然，就当做兴趣进行分析，搞了差不多有一天半的时间，期间收获颇多，果然实践中才是出真知啊。<br><a id="more"></a><br><!-- TOC --></p>
+        <p>&emsp;&emsp;在刚刚过去的网鼎杯第一场比赛中，做到了一道杂项题是关于lsb隐写的。LSB全称为 least significant bit，是最低有效位的意思。Lsb图片隐写是基于lsb算法的一种图片隐写术，以下统称为lsb隐写，这是一种常见的信息隐藏方法。当然关于图像的隐写的方法有很多，统称为隐写术，以后会写一篇总结这类隐写的文章。<a id="more"></a>这里只把lsb隐写单独拿出来分析，因为lsb隐写很实用，算法简单，能存储的信息量也大，更何况是CTF比赛中的常客。还有一个原因是最近本人做的不少杂项题的坑都踩在了lsb隐写上（是我太菜了，大神莫笑。），所以发誓一定要把这类题搞清楚。</p>
+<p><img src="/images/lsb/1.png" alt=""></p>
+<hr>
+<!-- TOC -->
 <ul>
-<li><a href="#木马来源">木马来源</a></li>
-<li><a href="#初始信息分析">初始信息分析</a><ul>
-<li><a href="#1在php环境下浏览器打开">1、在php环境下浏览器打开</a></li>
-<li><a href="#2用notepad打开查看源码">2、用Notepad++打开查看源码</a></li>
-</ul>
-</li>
-<li><a href="#开始破解">开始破解</a></li>
-<li><a href="#主体内容破解">主体内容破解</a><ul>
-<li><a href="#1先从加密函数开始">1、先从加密函数开始</a></li>
-<li><a href="#2了解两个函数">2、了解两个函数</a></li>
-<li><a href="#3继续echo大法">3、继续echo大法：</a></li>
-<li><a href="#4查看源码">4、查看源码</a></li>
-</ul>
-</li>
+<li><a href="#隐写术简介">隐写术简介</a></li>
+<li><a href="#lsb隐写">lsb隐写</a></li>
+<li><a href="#lsb隐写题">lsb隐写题</a></li>
+<li><a href="#后话">后话</a></li>
 </ul>
 <!-- /TOC -->
 <hr>
-<h3 id="木马来源"><a href="#木马来源" class="headerlink" title="木马来源"></a>木马来源</h3><p>&emsp;&emsp;有天早去上课的时候收到学妹的消息说她的服务器被人上传了木马，我当时心里一愣，因为前一天还在和她讨论关于在她网站上存在的安全性问题，结果第二天就被人黑了，不禁感叹现在黑客的效率是真的高啊。<br><img src="/images/php脚本分析/1.png" alt=""><br>为了证明我这不是马后炮，贴出以下聊天记录：<br>前一天:<br><img src="/images/php脚本分析/2.png" alt="前一天"><br>后一天：<br><img src="/images/php脚本分析/3.png" alt="后一天"><br>&emsp;&emsp;她用的是WordPress这个博客系统，wordpress本身的安全性还可以，使用也很方便。但是各种第三方插件的安全性就不敢保证了。她正是因为装了有安全漏洞的第三方插件，所以就被黑客利用了，估计还是大规模攻击的受害者。通过腾讯云的路径提示找到了恶意脚本文件（木马，webshell等在本文中是同一个意思）。再通过查看访问流量看到入侵者的IP地址，查明后发现来源是俄罗斯。俄罗斯黑客在我印象中都是挺厉害的，就打算分析一下源码，下面就把这个过程分享出来。</p>
-<h3 id="初始信息分析"><a href="#初始信息分析" class="headerlink" title="初始信息分析"></a>初始信息分析</h3><p>脚本名：<strong>404.php</strong>（伪装成404文件，起隐藏作用。）</p>
-<h4 id="1、在php环境下浏览器打开"><a href="#1、在php环境下浏览器打开" class="headerlink" title="1、在php环境下浏览器打开"></a>1、在php环境下浏览器打开</h4><p>显示如下：<br><img src="/images/php脚本分析/4.png" alt=""><br>恶意脚本的登录界面，需要输入密码进入，尝试多次弱口令登录没有通过。</p>
-<h4 id="2、用Notepad-打开查看源码"><a href="#2、用Notepad-打开查看源码" class="headerlink" title="2、用Notepad++打开查看源码"></a>2、用Notepad++打开查看源码</h4><p>显示如下：<br><img src="/images/php脚本分析/5.png" alt=""><br>发现是一个经过编码加密后的内容，从这里看不到源码，所以只能先进行破解。</p>
+<h2 id="隐写术简介"><a href="#隐写术简介" class="headerlink" title="隐写术简介"></a>隐写术简介</h2><p>&emsp;&emsp;先简单的讲讲什么是隐写。由于我们识别声音或图片的能力有限，因此稍微改动信息的某一位是不会影响我们识别声音或图片的。隐写和加密之间的相同点就是，都是需要经过特殊的处理才能获得特定的信息。它们之间的不同点简单的说就是，加密的话会是一些奇怪的字符，或数据。隐写的话，就是信息明明就在眼前，但是你却视而不见。古人的藏头诗也是隐写的一种啦。<br><img src="/images/lsb/2.png" alt=""></p>
 <hr>
-<h3 id="开始破解"><a href="#开始破解" class="headerlink" title="开始破解"></a>开始破解</h3><p><strong>第一步</strong><br>观察变量，把中间一大串密文字符忽略（这里用X代替），整体框架显示如下：<br><img src="/images/php脚本分析/6.png" alt=""><br>这里解码较为容易，第一行是一串无规则的字符，存放到一个变量中。再从这个变量中取第几位，和其他字符组成一个完整的单词。比如$MZz9092[9]就是最开头的第0位数到第九位的字符，也就是p。<br><strong>第二步</strong><br>我们加一个echo($AI2908);让浏览器运行的值显示出来，保险起见可以先把其他代码先注释掉。<br>操作如下：<br><img src="/images/php脚本分析/7.png" alt=""><br>显示结果如下：<br><img src="/images/php脚本分析/7-1.png" alt=""><br>这是一个PHP的替换函数。<br><strong>第三步</strong><br>解码下一个变量的值：<strong>$vVzI785</strong><br><img src="/images/php脚本分析/8.png" alt=""><br>&emsp;&emsp;这串代码中有chr（）函数，查ascll码表得知chr（101）是e，通过ascll码表的对应关系，可以解除chr（）的字符，在这其中还存在着十六进制（hex）编码，整个就像是混合编码，机器是能够直接识别，人眼就不容易发现规律了。</p>
-<blockquote>
-<p>编码原理：chr（101）意思就是ascll码表上101个字符 是e<br>         \x61    对应的解码是 a</p>
-</blockquote>
-<p>之后在变量前加个echo让机器自动解码，<strong>$vVzI785</strong>变量和<strong>$ePpo5652</strong>编码原理相同，就一起显示出来：<br><img src="/images/php脚本分析/9.png" alt=""><br>浏览器显示如下：<br><img src="/images/php脚本分析/10.png" alt=""><br>&emsp;&emsp;因为中间没有加换行符，所以显示的结果连在一起，主要加密的内容（X代替的部分）就放在这个括号中。</p>
-<p>最后整理下得到如下：<br><img src="/images/php脚本分析/11.png" alt=""><br>最后一行加密部分解码出来是一个正则表达式：/.*/e 此处没实际作用就先不管它。<br>接下来看主体的编码方式。<br><strong>第四步</strong><br>&emsp;&emsp;存放主体的变量$kJVTr8520是base64加密后再压缩编码。所以解码的顺序就反着来，先解压缩然后base64解码。这里我们继续使用echo（echo大法好！）<br>&emsp;&emsp;把之前x替换的主体放进括号，然后用echo大法构造这行echo($kJVTr8520);这里要把原来的eval删去改成echo。文件尾部图片中已改。</p>
-<p>文件头部：<br><img src="/images/php脚本分析/12.png" alt=""><br>文件尾部：<br><img src="/images/php脚本分析/13.png" alt=""><br>利用echo查看传给这个变量的值。<br>浏览器查看直接得到解码后的“原文”：<br><img src="/images/php脚本分析/14.png" alt=""><br><strong>第五步</strong><br>放到编辑器上整理一下：<br>代码头部：<br><img src="/images/php脚本分析/15.png" alt=""><br>代码尾部：<br><img src="/images/php脚本分析/16.png" alt=""><br>又是一层加密，而且感觉是多重加密，这个脚本的作者应该不是<strong>人</strong>！(估计是程序生成)<br>这段代码可以看成两个部分：<strong>密码验证部分</strong>和<strong>主体</strong>.<br>主体也分成了两个部分：<strong>代码尾部</strong>的base64加密的部分是一段多重base64加密，<strong>主体部分</strong>又是一大串加密编码后的字符传值给一个变量。<br><strong>第六步</strong><br>&emsp;&emsp;这里先从密码验证部分入手，作者之所以把这部分独立出来估计他也是怕忘记密码后没法改吧。所以我们正好可以利用这一点，既然猜不出你的密码，那就自己改咯。<br>先看到第一行代码：<br><img src="/images/php脚本分析/17.png" alt=""><br>密码是md5加密后的，我试过解这串md5但是现有的解码网站都解不出。<br>那就换一个思路，自己改密码值。<br>先查了下已知明文admin经过md5加密后的值是多少：<br><img src="/images/php脚本分析/18.png" alt=""><br>这里就用第一行的密文，替换掉原来的md5：<br><img src="/images/php脚本分析/19.png" alt=""><br>Ps：这里如果直接输$auth_pass=”admin”是不行的。<br><strong>第七步</strong><br>之后再回到之前最开始访问的登录界面，密码处敲入admin。<br><img src="/images/php脚本分析/20.png" alt=""><br>进去了！现在就可以使用这个木马做想做的事情咯~而且功能还挺全的，是个大马。<br><img src="/images/php脚本分析/21.png" alt=""><br>字符编码是：<strong>窗口1251</strong>，属于斯拉夫语系，俄语正是斯拉夫语系的，看来是俄罗斯的木马没跑了。<br>现在到这一步就可以把这个木马收归己有了~<br><strong>第八步</strong><br>再从这里查看源码：<br><img src="/images/php脚本分析/22.png" alt=""><br>诶？发现只是一个静态的界面，执行这段代码没有任何功能，所以从这里我们获得的不是真正的源码。</p>
-<hr>
-<h3 id="主体内容破解"><a href="#主体内容破解" class="headerlink" title="主体内容破解"></a>主体内容破解</h3><p>&emsp;&emsp;精彩的内容来了！接下还是要分析主体部分。规律掌握了，就不再慌张。上面说了主体也是可以看成两个部分，代码部分和加密函数部分。加密函数就是解密代码部分的内容。</p>
-<h4 id="1、先从加密函数开始"><a href="#1、先从加密函数开始" class="headerlink" title="1、先从加密函数开始"></a>1、先从加密函数开始</h4><p><img src="/images/php脚本分析/23.png" alt=""><br>这串密文果然是经过多次base64加密的（真的很麻烦呐），利用多次echo大法解出整理后得到如下：<br><img src="/images/php脚本分析/24.png" alt=""><br>脚本的作者还把变量名起的很复杂难以理解，看来是使用程序生成的，手工破解的我就用简单的字符替换了：<br><img src="/images/php脚本分析/25.png" alt=""><br>现在就比较清晰了。<br>这里主要关注for循环的内容，就能理解加密规则。<br>php中的strlen函数可以获取代码的字符串长度。for循环中i从0开始，也就是第一个字符开始，每循环一次，i自加1跳到下一个字符，直到最后一个字符为止。<br>从第一个字符开始，然后让它和后面的2129405204进行异或（^）的位运算。</p>
-<blockquote>
-<p>（1）拿n这个字符举例：<br><img src="/images/php脚本分析/26.png" alt=""><br>得到的是110（ord就是求n再ascll码中对应的数值）。<br>（2）再让n进行位运算：<br><img src="/images/php脚本分析/27.png" alt=""><br>得到的是:<br><img src="/images/php脚本分析/28.png" alt=""><br>（3）再通过chr函数得到最后的结果为： z<br>这样n就替换成了z。<br>这样整篇大段的字符都被相同的方式替换。最后传值给$a。</p>
-</blockquote>
-<p>知道这个原理后我们就继续用echo显示出传给$a的值：<br><img src="/images/php脚本分析/29.png" alt=""><br>得到以如下代码：<br><img src="/images/php脚本分析/30.png" alt=""><br>又双叒是一层加密。<br>让我想到了杨宗纬的《洋葱》一层一层拨开你的心~<br>稍微欣慰点的是这个变量名不那么奇怪了。</p>
-<h4 id="2、了解两个函数"><a href="#2、了解两个函数" class="headerlink" title="2、了解两个函数"></a>2、了解两个函数</h4><p>先来了解substr和hexdec这两个函数的功能（毕竟对php不熟，磨刀不误砍柴工嘛。）<br><strong>Substr：</strong><br><img src="/images/php脚本分析/31.png" alt=""><br><strong>Hexdec：</strong><br><img src="/images/php脚本分析/32.png" alt=""><br>接下来继续看加密函数，现在这个脚本整体编码的思想就是替换，密码学算法知识尚未涉及，不过花样确实够多，只有这样既能绕过防火墙检测还能被电脑继续执行。<br><img src="/images/php脚本分析/33.png" alt=""><br>这个替换函数的规则是用substr提取字符，并把取出的字符当做是十六进制再转换为十进制，最后再用chr转换为字符进行替换，而且是一次性提取两个。<br>比如“0123456789abcde中”（因为是作为十六进制的，上面一大串代码中就不会出现其它字符了）<br>取到了cd，把cd当成一个十六进制的值转为十进制就是205：<br><img src="/images/php脚本分析/34.png" alt=""><br>如此进行替换。<br>这一部分函数的功能明白后开始继续用echo大法。<br><img src="/images/php脚本分析/35.png" alt=""><br>得到下一串代码：<br><img src="/images/php脚本分析/36.png" alt=""><br>又是一层加密！！不过能预感到这是最后一层了，底部出现了似曾相识的正则替换，<br><img src="/images/php脚本分析/37.png" alt=""><br>但在这里意义同样不大。</p>
-<h4 id="3、继续echo大法："><a href="#3、继续echo大法：" class="headerlink" title="3、继续echo大法："></a>3、继续echo大法：</h4><p><img src="/images/php脚本分析/38.png" alt=""><br>Duang~浏览器运行直接出现网页了，不过这个报错的弹窗是什么鬼？<br><img src="/images/php脚本分析/39.png" alt=""><br>但经历过这么多的我看到这里，内心没有丝毫波动，甚至还有点想笑，一眼看出这是运行JavaScript的结果，真相就在这里了！<br><img src="/images/php脚本分析/40.jpg" alt=""></p>
-<h4 id="4、查看源码"><a href="#4、查看源码" class="headerlink" title="4、查看源码"></a>4、查看源码</h4><p>源码就在这里，但是怎么才能查看呢？<br>我们可以写一个解码用的脚本，让它把让echo显示的值直接写到文件上：</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">$Code = <span class="string">''</span>; <span class="comment">//base64</span></span><br><span class="line">$File = <span class="string">'test.php'</span>;<span class="comment">//解码后保存的文件</span></span><br><span class="line">$Temp = base64_decode($Code);</span><br><span class="line">$temp = gzinflate($Temp);</span><br><span class="line">$FP = fopen($File,<span class="string">'w'</span>);</span><br><span class="line">fwrite($FP,$temp);</span><br><span class="line">fclose($FP);</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"success!"</span>;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
-<p>把之前要解码的字符放上去，最后在同一个目录下生成了一个test.php的文件。文本编辑器打开就是心心念念的源码了，不再是之前得到的静态”源码”!<br><img src="/images/php脚本分析/42.png" alt=""><br>然后找到了刚刚弹窗报错的那段代码。呵，小把戏。一切都一目了然了~<br>剥完这个洋葱后，留下了“欣喜”的泪水。<br><img src="/images/php脚本分析/43.jpg" alt=""></p>
+<h2 id="lsb隐写"><a href="#lsb隐写" class="headerlink" title="lsb隐写"></a>lsb隐写</h2><p>&emsp;&emsp;其实吧一开始我是想把一大堆算法理论和公式摆上来讲讲lsb隐写是什么，但是想想，这种做法是真的可恶啊，摆明不想让人看嘛。所以我想先从一道例题出发，原理什么的将在这个过程中，细细地讲来。<br>&emsp;&emsp;先来看下面一张图，这道题来自实验吧(原题链接:<a href="http://www.shiyanbar.com/ctf/1897)，" target="_blank" rel="noopener">http://www.shiyanbar.com/ctf/1897)，</a><br>题目名字叫—-最低位的轻吻。<br><img src="http://ctf5.shiyanbar.com/stega/01.bmp" alt=""><br>&emsp;&emsp;打开看是一张很著名的图片—–胜利之吻。图片是bmp格式。看到题目中有最低位几个字，如果是对隐写类的题目熟悉的话就能一下子想到是lsb隐写。因为lsb隐写就是利用的图像中的最低有效位。最低有效位这个词在前文中出现很多次了，但是到底是什么意思呢？<br>&emsp;&emsp;首先来讲png图片，png图片是一种无损压缩的位图片形格式，也只有在无损压缩或者无压缩的图片（BMP）上实现lsb隐写。如果图像是jpg图片的话，就没法使用lsb隐写了，原因是jpg图片对像数进行了有损压缩，我们修改的信息就可能会在压缩的过程中被破坏。而png图片虽然也有压缩，但却是无损压缩，这样我们修改的信息也就能得到正确的表达，不至于丢失。BMP的图片也是一样的，是没有经过压缩的。BMP图片一般是特别的大的，因为BMP把所有的像数都按原样储存，没有进行压缩。<br>&emsp;&emsp;png图片中的图像像数一般是由RGB三原色（红绿蓝）组成，每一种颜色占用8位，取值范围为0x00~0xFF，即有256种颜色，一共包含了256的3次方的颜色，即16777216种颜色。而人类的眼睛可以区分约1000万种不同的颜色，这就意味着人类的眼睛无法区分余下的颜色大约有6777216种。<br><img src="/images/lsb/4.png" alt=""><br>&emsp;&emsp;LSB隐写就是修改RGB颜色分量的最低二进制位也就是最低有效位（LSB），而人类的眼睛不会注意到这前后的变化，每个像数可以携带3比特的信息。<br><img src="/images/lsb/5.png" alt=""><br>&emsp;&emsp;上图我们可以看到，十进制的235表示的是绿色，我们修改了在二进制中的最低位，但是颜色看起来依旧没有变化。我们就可以修改最低位中的信息，实现信息的隐写。我修改最低有效位的信息的算法就叫做lsb加密算法，提取最低有效位信息的算法叫做lsb解密算法。<br>&emsp;&emsp;再放两张图加深下理解：<br><img src="/images/lsb/6.png" alt=""><br><img src="/images/lsb/7.png" alt=""><br>&emsp;&emsp;回到题目上来，这里我们使用一款功能很强大的lsb隐写分析工具—StegSolve图片通道查看器（下载地址：<a href="http://www.caesum.com/handbook/Stegsolve.jar)。" target="_blank" rel="noopener">http://www.caesum.com/handbook/Stegsolve.jar)。</a><br>&emsp;&emsp;使用过photoshop的朋友应该对图片通道有些概念，一幅完整的图像，红色绿色蓝色三个通道缺一不可。一幅图像，如果关闭了红色通道，那么图像就偏青色。如果关闭了绿色通道，那么图像就偏洋红色。如果关闭了蓝色通道，那么图像就偏黄色。当然还有个Alpha通道，是一个8位的灰度通道，也可以理解为透明度（粗糙的理解）。关于图像通道详细的讲解可以自行百度，这里不再详细说明。<br>&emsp;&emsp;使用stegsolve打开图片，按右方向键查看各通道显示的图像。一般有些题目会在某一个图像通道中直接显示出flag，但是显然这题不行，看来还需要绕些弯，要获取最低位的图片信息。<br>&emsp;&emsp;所以这道题的思路就是将图片转换成0,1 像素点（图像处理问题），这里可以直接使用MATLAB（MATLAB特别适合图像处理，而且语法特别特别简单）：<br>在命令行窗口输入以下命令：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt; filename=&apos;01.bmp&apos;;</span><br><span class="line">&gt;&gt; imfinfo(filename);</span><br><span class="line">&gt;&gt; A = imread(filename);</span><br><span class="line">&gt;&gt; B = logical(bitget(A,1));</span><br><span class="line">&gt;&gt; imshow(B);</span><br></pre></td></tr></table></figure></p>
+<p>指令详解：<br><img src="/images/lsb/8.png" alt=""><br>&emsp;&emsp;运行得结果如下。扫描这个二维码，就能直接得到flag，有兴趣的朋友可以自己动手扫一下。<br><img src="/images/lsb/9.png" alt=""><br>&emsp;&emsp;这里还可以使用其他的编程算法来解，原理都是一样的，但如果不会matlab语法，该怎么办呢。其实这题还有一种解法，因为只是简单的获取最后一位然后画图，但是为啥stegsolve获取不到呢。<br>&emsp;&emsp;我们先来看下图像信息：<br><img src="/images/lsb/10.png" alt=""><br>&emsp;&emsp;发现是bmp的8位灰度图。猜测是StegSolve解析8位的BMP存在问题？<br>&emsp;&emsp;常见的8位通道RGB图像，3个通道共24位，即一张24位RGB图像里可表现大约1670万种颜色；而16位通道RGB图像，3个通道共48位，2的48次方是多少种颜色。32位深度CMYK（8位×4通道）。<br>&emsp;&emsp;这里的8位、16位、32位指颜色深度（Color Depth）用来度量图像中有多少颜色信息可用于显示或打印像素，其单位是“位（Bit）”，所以颜色深度有时也称为位深度。<br>&emsp;&emsp;常用的颜色深度是1位、8位、24位和32位。1位有两个可能的数值：<strong>0或1。较大的颜色深度（每像素信息的位数更多）意味着数字图像具有较多的可用颜色和较精确的颜色表示。</strong><br>&emsp;&emsp;试试转换成png格式呢再看看呢？用画图另存为png格式（不能直接改后缀）。此时发现文件变大，图像信息如下图：<br><img src="/images/lsb/11.png" alt=""><br>&emsp;&emsp;用StegSolve打开后，在RGB的最后一位看到二维码。（原图在保存的时候显示的类型是256色位图，就是位深度为8，如果保存为24位位图的bmp格式，不转换为png格式，也能用StegSolve找到如上图的二维码。）<br><img src="/images/lsb/12.png" alt=""><br>&emsp;&emsp;所以我们改变图片位深度，就能得到其中的二维码信息。</p>
+<h2 id="lsb隐写题"><a href="#lsb隐写题" class="headerlink" title="lsb隐写题"></a>lsb隐写题</h2><p>&emsp;&emsp;经过上面的例子，我们基本上了解了什么是lsb隐写。一般的lsb隐写我们都能使用工具或者编写程序提取到图片的最低有效位信息，从而得到其中的内容。但是出题人的脑洞不局限于此，lsb隐写还有各种扩展的使用方法。下面是网鼎杯第一场中的一道杂项题，也是一道lsb隐写题。不同的是，光提取最低有效位是不能进行解答的。<br>首先给我们的是一张花花的图是png格式。题目名字是minify，使变小的意思，那应该就是指lsb隐写。<br><img src="/images/lsb/13.png" alt=""><br>&emsp;&emsp;光凭肉眼是真的什么也看不出，我们借助于工具StegSolve进行分析。<br>一路翻下去，除了花花的还是花花的，唯一值得怀疑的地方就在red plane 0 这里是纯黑，<br><img src="/images/lsb/14.png" alt=""><br><img src="/images/lsb/15.png" alt=""><br>&emsp;&emsp;说明这里什么也没有，正常的图片都不会是这样子的，其它通道也都显示正常。所以这个异常给我们什么启示呢？从这里可以真正确定是lsb隐写了。<br>&emsp;&emsp;那我们要从其他的通道比如：blue、alpha、green中找些到信息。整张图片看起来是毫无规则的像素点，那一定想把真正的信息隐藏起来，再用一些毫无规则的像素点干扰我们。我们如果想得到其中的信息，就要去掉这些干扰点。但是到底去掉哪些呢。经过前面的步骤我们知道了信息可能隐藏在plane 0中，所以我们要先把各个通道的plane  0提取出来。Red plane 0因为是空信息，可以不用提取了。我们提取出（File-&gt;Save as）Green plane 0、Alpha plane 0、Blue plane 0，把他们各另存为一张图。然后各个图进行比对（Analyse-&gt;image Combiner），最后发现Alpha plane 0 和Green plane 0 异或运算下的图出现了flag<br><img src="/images/lsb/16.png" alt=""><br>&emsp;&emsp;异或对比常常是为了检查两张图片之间的差异，能发现我们肉眼看不到的及细微的差异。<br><img src="/images/lsb/17.png" alt=""><br>&emsp;&emsp;上图是异或（XOR）对比出一张图片中的区别，所以用这个方法，也能把我们的信息隐藏在其中，但我觉得这并不是一种实用的方法。</p>
+<h2 id="后话"><a href="#后话" class="headerlink" title="后话"></a>后话</h2><p>&emsp;&emsp;CTF中有关隐写术的这类题目真的是考验脑洞了，扩展开讲，还有能有很多很多可以举例的。Lsb隐写还能结合其他的隐写术，不只是能隐藏一些图片，还能把文件写入其中。这类题目这就需要用其他的工具进行文件提取分离，比如binwalk和foremost。当然，万变不离其宗，这里我们只要把原理搞清楚就足够了，剩下的就是解题思路，这就需要开开脑洞了。网上也存在着很多优秀的lsb隐写算法，能够实现更多复杂的操作，有兴趣的朋友可以进一步的去了解。</p>
+<p>参考文章：<a href="https://www.tuicool.com/articles/qINzyum" target="_blank" rel="noopener">https://www.tuicool.com/articles/qINzyum</a></p>
 
     </article>
     <!-- license  -->
     
         <div class="license-wrapper">
             <p>原文作者: <a href="http://wang66.top">王六六</a>
-            <p>原文链接: <a href="http://wang66.top/2018/08/27/一次恶意PHP脚本初探/">http://wang66.top/2018/08/27/一次恶意PHP脚本初探/</a>
-            <p>发表日期: <a href="http://wang66.top/2018/08/27/一次恶意PHP脚本初探/">August 27th 2018, 5:13:10 pm</a>
+            <p>原文链接: <a href="http://wang66.top/2018/08/27/2018-08-27 隐写术之lsb隐写/">http://wang66.top/2018/08/27/2018-08-27 隐写术之lsb隐写/</a>
+            <p>发表日期: <a href="http://wang66.top/2018/08/27/2018-08-27 隐写术之lsb隐写/">August 27th 2018, 9:34:23 pm</a>
             <p>版权声明: 本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
         </div>
     
@@ -456,17 +432,12 @@ height:50vh;
     <ul class="post-paginator">
         <li class="next">
             
-                <div class="nextSlogan">Next Post</div>
-                <a href= "/2018/08/27/lsb隐写/" title= lsb隐写 >
-                    <div class="nextTitle">lsb隐写</div>
-                </a>
-            
         </li>
         <li class="previous">
             
                 <div class="prevSlogan">Previous Post</div>
-                <a href= "/2018/08/25/arp毒化/" title= 来自身边的安全威胁—ARP欺骗攻击 >
-                    <div class="prevTitle">来自身边的安全威胁—ARP欺骗攻击</div>
+                <a href= "/2018/08/27/2018-08-27 一次恶意PHP脚本初探/" title= 一次恶意PHP脚本初探 >
+                    <div class="prevTitle">一次恶意PHP脚本初探</div>
                 </a>
             
         </li>
@@ -624,7 +595,7 @@ top:50vh;
         <div class="toc-catalog">
             <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
         </div>
-        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#木马来源"><span class="toc-number">1.</span> <span class="toc-text">木马来源</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#初始信息分析"><span class="toc-number">2.</span> <span class="toc-text">初始信息分析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1、在php环境下浏览器打开"><span class="toc-number">2.1.</span> <span class="toc-text">1、在php环境下浏览器打开</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2、用Notepad-打开查看源码"><span class="toc-number">2.2.</span> <span class="toc-text">2、用Notepad++打开查看源码</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#开始破解"><span class="toc-number">3.</span> <span class="toc-text">开始破解</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#主体内容破解"><span class="toc-number">4.</span> <span class="toc-text">主体内容破解</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1、先从加密函数开始"><span class="toc-number">4.1.</span> <span class="toc-text">1、先从加密函数开始</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2、了解两个函数"><span class="toc-number">4.2.</span> <span class="toc-text">2、了解两个函数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3、继续echo大法："><span class="toc-number">4.3.</span> <span class="toc-text">3、继续echo大法：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4、查看源码"><span class="toc-number">4.4.</span> <span class="toc-text">4、查看源码</span></a></li></ol></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#隐写术简介"><span class="toc-number">1.</span> <span class="toc-text">隐写术简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#lsb隐写"><span class="toc-number">2.</span> <span class="toc-text">lsb隐写</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#lsb隐写题"><span class="toc-number">3.</span> <span class="toc-text">lsb隐写题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#后话"><span class="toc-number">4.</span> <span class="toc-text">后话</span></a></li></ol>
     </div>
     
     <div class="back-top iconfont-archer">&#xe639;</div>
@@ -637,14 +608,6 @@ top:50vh;
     <div class="sidebar-content sidebar-content-show-archive">
           <div class="sidebar-panel-archives">
     <!-- 在ejs中将archive按照时间排序 -->
-    
-    
-    
-    
-    
-    
-    
-    
     
     
     
@@ -733,48 +696,50 @@ top:50vh;
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">08/27</span><a class="archive-post-title" href= "/2018/08/27/lsb隐写/" >lsb隐写</a>
+            <span class="archive-post-date">08/27</span><a class="archive-post-title" href= "/2018/08/27/2018-08-27 隐写术之lsb隐写/" >隐写术之LSB隐写</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">08/27</span><a class="archive-post-title" href= "/2018/08/27/一次恶意PHP脚本初探/" >一次恶意PHP脚本初探</a>
+            <span class="archive-post-date">08/27</span><a class="archive-post-title" href= "/2018/08/27/2018-08-27 一次恶意PHP脚本初探/" >一次恶意PHP脚本初探</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">08/25</span><a class="archive-post-title" href= "/2018/08/25/arp毒化/" >来自身边的安全威胁—ARP欺骗攻击</a>
+            <span class="archive-post-date">08/25</span><a class="archive-post-title" href= "/2018/08/25/2018-08-25 arp毒化/" >来自身边的安全威胁—ARP欺骗攻击</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">08/18</span><a class="archive-post-title" href= "/2018/08/18/浅析缓冲区溢出/" >浅析缓冲区溢出</a>
+            <span class="archive-post-date">08/18</span><a class="archive-post-title" href= "/2018/08/18/2018-08-18 浅析缓冲区溢出/" >浅析缓冲区溢出</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">08/05</span><a class="archive-post-title" href= "/2018/08/05/信息安全入门/" >信息安全入门</a>
+            <span class="archive-post-date">08/05</span><a class="archive-post-title" href= "/2018/08/05/2018-08-05 信息安全入门/" >信息安全入门</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">08/05</span><a class="archive-post-title" href= "/2018/08/05/漏洞发布网站/" >漏洞发布网站</a>
+            <span class="archive-post-date">08/05</span><a class="archive-post-title" href= "/2018/08/05/资源/2018-08-05 漏洞发布网站/" >漏洞发布网站</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">08/05</span><a class="archive-post-title" href= "/2018/08/05/渗透工具/" >渗透工具【不定期补充】</a>
+            <span class="archive-post-date">08/05</span><a class="archive-post-title" href= "/2018/08/05/资源/2018-08-05 渗透工具/" >渗透工具【不定期补充】</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">08/03</span><a class="archive-post-title" href= "/2018/08/03/【持续更新】资源分享/" >资源分享【持续更新】</a>
+            <span class="archive-post-date">08/03</span><a class="archive-post-title" href= "/2018/08/03/资源/2018-08-03【持续更新】资源分享/" >资源分享【持续更新】</a>
         </li>
     
     </div>
   </div>
         <div class="sidebar-panel-tags">
     <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="知识"><span class="iconfont-archer">&#xe606;</span>知识</span>
     
         <span class="sidebar-tag-name" data-tags="局域网"><span class="iconfont-archer">&#xe606;</span>局域网</span>
     
@@ -786,17 +751,15 @@ top:50vh;
     
         <span class="sidebar-tag-name" data-tags="lsb隐写"><span class="iconfont-archer">&#xe606;</span>lsb隐写</span>
     
-        <span class="sidebar-tag-name" data-tags="工具"><span class="iconfont-archer">&#xe606;</span>工具</span>
-    
         <span class="sidebar-tag-name" data-tags="php"><span class="iconfont-archer">&#xe606;</span>php</span>
     
         <span class="sidebar-tag-name" data-tags="webshell"><span class="iconfont-archer">&#xe606;</span>webshell</span>
     
-        <span class="sidebar-tag-name" data-tags="知识"><span class="iconfont-archer">&#xe606;</span>知识</span>
+        <span class="sidebar-tag-name" data-tags="缓冲区"><span class="iconfont-archer">&#xe606;</span>缓冲区</span>
     
         <span class="sidebar-tag-name" data-tags="资源"><span class="iconfont-archer">&#xe606;</span>资源</span>
     
-        <span class="sidebar-tag-name" data-tags="缓冲区"><span class="iconfont-archer">&#xe606;</span>缓冲区</span>
+        <span class="sidebar-tag-name" data-tags="工具"><span class="iconfont-archer">&#xe606;</span>工具</span>
     
     </div>
     <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
