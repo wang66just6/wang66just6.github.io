@@ -1,8 +1,8 @@
-http://wang66.top/隐写术之LSB隐写.html
-http://wang66.top/一次恶意PHP脚本初探.html
-http://wang66.top/ARP毒化.html
-http://wang66.top/浅析缓冲区溢出.html
-http://wang66.top/信息安全入门.html
-http://wang66.top/漏洞发布网站.html
-http://wang66.top/渗透工具【不定期补充】.html
-http://wang66.top/资源分享【持续更新】.html
+http://wang66.top/2018/隐写术之LSB隐写.html
+http://wang66.top/2018/一次恶意PHP脚本初探.html
+http://wang66.top/2018/ARP毒化.html
+http://wang66.top/2018/浅析缓冲区溢出.html
+http://wang66.top/2018/信息安全入门.html
+http://wang66.top/2018/漏洞发布网站.html
+http://wang66.top/2018/渗透工具【不定期补充】.html
+http://wang66.top/2018/资源分享【持续更新】.html
