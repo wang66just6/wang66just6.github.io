@@ -15,7 +15,7 @@
     <meta name="description" content="It's raining cats and dogs.">
     <meta http-equiv="Cache-control" content="no-cache">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-    <title>wang66&#39;s blog</title>
+    <title>汇编实验（一） · wang66&#39;s blog</title>
     <style type="text/css">
     @font-face {
         font-family: 'Oswald-Regular';
@@ -70,6 +70,8 @@
 
     <link rel="preload" href= /css/style.css?v=20180824 as="style" onload="this.onload=null;this.rel='stylesheet'" />
     <link rel="stylesheet" href= /css/mobile.css?v=20180824 media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
     
     <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
 /* This file is meant as a standalone workflow for
@@ -194,14 +196,23 @@
 </head>
 
     
-        <body class="home-body">
+        <body class="post-body">
     
     
-<header class="header index-header">
+<header class="header">
 
     <div class="read-progress"></div>
     <div class="header-sidebar-menu">&#xe775;</div>
     <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >Still Shines.</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">汇编实验（一）</a>
+            </div>
+    </div>
     
     <a class="home-link" href=/>Still Shines.</a>
 </header>
@@ -222,17 +233,17 @@ height:50vh;
     <!-- 主页  -->
     
     
-    <!-- 文章页  -->
+    <!-- 404页  -->
             
     <div class="site-intro-placeholder"></div>
-    <div class="site-intro-img" style="background-image: url(/intro/index-bg.jpg)"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
     <div class="site-intro-meta">
         <!-- 标题  -->
         <h1 class="intro-title">
             <!-- 主页  -->
             
-            Still Shines.
-            <!-- 文章页  -->
+            汇编实验（一）
+            <!-- 404 -->
             
         </h1>
         <!-- 副标题 -->
@@ -240,12 +251,49 @@ height:50vh;
             <!-- 主页副标题  -->
             
             
-                繁星一样多的可能
-            
-            <!-- 文章页  -->
+            <!-- 404 -->
             
         </p>
         <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "汇编">汇编</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>Word count: <span class="post-count">548</span> / Reading time: <span class="post-count">2 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2018/08/30</span>
+                    
+                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                        <span class="iconfont-archer">&#xe602;</span>
+                        <span id="busuanzi_value_page_pv"></span>
+                    </span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
         
     </div>
 </div>
@@ -346,388 +394,72 @@ height:50vh;
 </script>        
         <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
         <div class="container container-unloaded">
-            <main class="main index-page">
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2018/汇编实验.html" >
-            
-                <span>汇编实验（一）</span>
-        </a>
-        <div class="abstract-content">
-            分析一个奇怪的程序程序源码如下：
-1234567891011121314151617181920212223242526assume cs:codesgcodesg segment		mov ax,4c00h		int 21h		start: 	mov ax,0	s:	nop		nop				mov di,offset s		mov si,offset s2		mov ax,cs:[si]		mov cs:[di],ax			s0:	jmp short s	s1: mov ax,0		int 21h		mov ax,0			s2: jmp short s1		nop		codesg en...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/08/30</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "汇编">汇编</a>
-    
-</div>
-            
-        </div>
+            <main class="main post-page">
+    <article class="article-entry">
+        <h2 id="分析一个奇怪的程序"><a href="#分析一个奇怪的程序" class="headerlink" title="分析一个奇怪的程序"></a>分析一个奇怪的程序</h2><p><strong>程序源码如下：</strong></p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">assume</span> <span class="built_in">cs</span>:codesg</span><br><span class="line">codesg <span class="meta">segment</span></span><br><span class="line"></span><br><span class="line">		<span class="keyword">mov</span> <span class="built_in">ax</span>,<span class="number">4c00h</span></span><br><span class="line">		<span class="keyword">int</span> <span class="number">21h</span></span><br><span class="line">		</span><br><span class="line"><span class="symbol">start:</span> 	<span class="keyword">mov</span> <span class="built_in">ax</span>,<span class="number">0</span></span><br><span class="line"><span class="symbol">	s:</span>	<span class="keyword">nop</span></span><br><span class="line">		<span class="keyword">nop</span></span><br><span class="line">		</span><br><span class="line">		<span class="keyword">mov</span> <span class="built_in">di</span>,offset s</span><br><span class="line">		<span class="keyword">mov</span> <span class="built_in">si</span>,offset s2</span><br><span class="line">		<span class="keyword">mov</span> <span class="built_in">ax</span>,<span class="built_in">cs</span>:[<span class="built_in">si</span>]</span><br><span class="line">		<span class="keyword">mov</span> <span class="built_in">cs</span>:[<span class="built_in">di</span>],<span class="built_in">ax</span></span><br><span class="line">		</span><br><span class="line"><span class="symbol">	s0:</span>	<span class="keyword">jmp</span> short s</span><br><span class="line"><span class="symbol">	s1:</span> <span class="keyword">mov</span> <span class="built_in">ax</span>,<span class="number">0</span></span><br><span class="line">		<span class="keyword">int</span> <span class="number">21h</span></span><br><span class="line">		<span class="keyword">mov</span> <span class="built_in">ax</span>,<span class="number">0</span></span><br><span class="line">		</span><br><span class="line"><span class="symbol">	s2:</span> <span class="keyword">jmp</span> short s1</span><br><span class="line">		<span class="keyword">nop</span></span><br><span class="line">		</span><br><span class="line">codesg ends</span><br><span class="line">end start</span><br></pre></td></tr></table></figure>
+<p><strong>分析过程：</strong><br>猜测结果：<br>&emsp;&emsp;首先看到这个程序发现程序结束的特定语句写在了开头，但是程序入口在start处，还是算是正常。跟着指令往下发现，程序把s处的指令换成了s2处的指令，此时的s处不再是nop，而是s2的那条语句，所以应该在s0运行结束后跳转到s，此时运行的是s2的语句，所以顺序是s-&gt;s0-&gt;s2-&gt;s1,那到底是不是真的就是这样运行的呢，下面用debug调试。</p>
+<p>程序编译完成后debug打开，按u查看指令发现程序的入口在start所指的语句：<br><img src="http://www.bbvdd.com/d/20180830192222zgt.png" alt=""><br>此时076A:0016所指的是076A:0008处的地址也就是s处，此时的寄存器状态如下：<br><img src="http://www.bbvdd.com/d/20180830192258r9v.png" alt=""><br>接下去都是正常运行：<br><img src="http://www.bbvdd.com/d/201808301923297tm.png" alt=""><br>此处把0008处的内容修改为0020给他的内容F6EB，下一条语句跳转到0008处，此时0008处的指令就是s2处的指令，十六进制表示为F6EB。但是接下去运行时发现，又是一个跳转的指令，直接跳到了0000即程序段的开头。<br><img src="http://www.bbvdd.com/d/20180830192408wbf.png" alt=""><br>继续运行下去，程序就结束了。<br><img src="http://www.bbvdd.com/d/20180830192513bu9.png" alt=""></p>
+<p>发现问题:<br>我们看源程序知道运行0020处既s2的指令时，是跳到s1，但是在运行时却直接跳到了程序开头呢？这就是程序奇怪的地方。</p>
+<p>原因分析：<br>&emsp;&emsp;原来我们忽略了此时的jmp指令时更具位移进行转移，原来的s2是要转移到s1处，s1处和s2处的位移是8，既向上8移动个内存单元。当把s处的指令改为s2处的指令时，执行的也是向上8个内存单元，刚刚就在程序段的开头，也就执行程序结束指令了。</p>
+
     </article>
+    <!-- license  -->
     
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2018/隐写术之LSB隐写.html" >
-            
-                <span>隐写术之LSB隐写</span>
-        </a>
-        <div class="abstract-content">
-            <p>&emsp;&emsp;在刚刚过去的网鼎杯第一场比赛中，做到了一道杂项题是关于lsb隐写的。LSB全称为 least significant bit，是最低有效位的意思。Lsb图片隐写是基于lsb算法的一种图片隐写术，以下统称为lsb隐写，这是一种常见的信息隐藏方法。当然关于图像的隐写的方法有很多，统称为隐写术，以后会写一篇总结这类隐写的文章。
+        <div class="license-wrapper">
+            <p>原文作者: <a href="http://wang66.top">王六六</a>
+            <p>原文链接: <a href="http://wang66.top/2018/汇编实验.html">http://wang66.top/2018/汇编实验.html</a>
+            <p>发表日期: <a href="http://wang66.top/2018/汇编实验.html">八月 30日 2018, 7:39:56 早上</a>
+            <p>版权声明: 本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
         </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/08/27</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "隐写术">隐写术</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "lsb隐写">lsb隐写</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2018/一次恶意PHP脚本初探.html" >
-            
-                <span>一次恶意PHP脚本初探</span>
-        </a>
-        <div class="abstract-content">
-            <p>&emsp;&emsp;这是一篇前段时间写的文章，现在归整到这个博客中，那个时候刚学网络安全不久。当时遇到这个木马也是极其偶然，就当做兴趣进行分析，搞了差不多有一天半的时间，期间收获颇多，果然实践中才是出真知啊。<br>
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/08/27</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "php">php</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "webshell">webshell</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2018/ARP毒化.html" >
-            
-                <span>来自身边的安全威胁—ARP欺骗攻击</span>
-        </a>
-        <div class="abstract-content">
-            <p>&emsp;&emsp;小黑是一个电脑技术爱好者，他每天爱做的事情就是宅在家中玩电脑。小黑的隔壁住着一个女生，刚搬来不久，小黑对她很是好奇，但是一直不敢和她搭讪，就想用自己擅长电脑技术，尽可能多的去收集信息了解她(情节需要，请勿模仿)。<br>
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/08/25</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "局域网">局域网</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "arp">arp</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "中间人攻击">中间人攻击</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2018/浅析缓冲区溢出.html" >
-            
-                <span>浅析缓冲区溢出</span>
-        </a>
-        <div class="abstract-content">
-            <p>&emsp;最近一直在学习缓冲区溢出漏洞的攻击，但是关于这一块的内容还是需要很多相关知识的基础，例如编程语言及反汇编工具使用。所以研究透彻还需要不少的时间，这里简单的做一个学习的总结，通过具体的实验案例对缓冲区溢出进行简要的解析，第一篇关于缓冲区的文章，可能还有很多地方解释不到位，之后尽量补全。<br>
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/08/18</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "缓冲区">缓冲区</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2018/信息安全入门.html" >
-            
-                <span>信息安全入门</span>
-        </a>
-        <div class="abstract-content">
-            <p>&emsp;&emsp;很多朋友有一定的计算机基础，想学习更多信息安全的知识，但都不知道从哪儿下手学习，觉得信息安全需要学习的面太广，从而在其中迷失了方向。这里给大家总结一套信息安全的学习思路，提供给大家参考。</p>
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/08/05</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "知识">知识</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2018/漏洞发布网站.html" >
-            
-                <span>漏洞发布网站</span>
-        </a>
-        <div class="abstract-content">
-            <h4 id="安全资源咨询汇总"><a href="#安全资源咨询汇总" class="headerlink" title="安全资源咨询汇总"></a>安全资源咨询汇总</h4>
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/08/05</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "资源">资源</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2018/渗透工具【不定期补充】.html" >
-            
-                <span>渗透工具【不定期补充】</span>
-        </a>
-        <div class="abstract-content">
-            <h4 id="这里放一些比较常用的渗透工具，不定期补充。"><a href="#这里放一些比较常用的渗透工具，不定期补充。" class="headerlink" title="这里放一些比较常用的渗透工具，不定期补充。"></a>这里放一些比较常用的渗透工具，不定期补充。</h4>
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/08/05</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "工具">工具</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2018/资源分享【持续更新】.html" >
-            
-                <span>资源分享【持续更新】</span>
-        </a>
-        <div class="abstract-content">
-            <p>各站点资源分享，持续更新，不定期补充，有推荐的可以在评论中发表哦。</p>
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/08/03</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "资源">资源</a>
-    
-</div>
-            
-        </div>
-    </article>
     
     <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href= "/2018/隐写术之LSB隐写.html" title= 隐写术之LSB隐写 >
+                    <div class="prevTitle">隐写术之LSB隐写</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
     
+    
+    <!--PC和WAP自适应版-->
+
+    <!--PC版-->
+
+
+    
+    
+    <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+    <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+    <div id="comment"></div>
+    <script>
+    new Valine({
+        el: '#comment' ,
+        notify: "true", 
+        verify: false, 
+        appId: "kBws43cqYyOkzvJkwd7PwiQ3-gzGzoHsz",
+        appKey: "IEbfjsLgEhcgfFfWicWSYdhf",
+        placeholder: "来评论一下吧~",
+        path:window.location.pathname, 
+		avatar: 'robohash' // (''/mp/identicon/monsterid/wavatar/robohash/retro/hide)
+    });
+    </script>
+
+
+    <!-- 评论 -->
 </main>
             <!-- profile -->
-            
-            <div class="profile">
-    <img class="profile-avatar" src= /avatar/3.jpg >
-    <div class="profile-name">王六六</div>
-    
-    <div class="profile-signature">
-        It&#39;s raining cats and dogs.
-    </div>
-    
-    
-    <div class="profile-social">
-        
-    
-        
-            
-                <a href="mailto:wangji19971013@qq.com" class="iconfont-archer email" title=email ></a>
-            
-        
-    
-        
-            
-                <a href="//github.com/fi3ework" class="iconfont-archer github" target="_blank" title=github></a>
-            
-        
-    
-        
-            
-                <span class="iconfont-archer wechat" title=wechat>
-                  
-                  <img class="profile-qr" src="/assets/wechat.png" />
-                </span>
-            
-        
-    
-        
-            
-                <span class="iconfont-archer qq" title=qq>
-                  
-                  <img class="profile-qr" src="/assets/qq.jpg" />
-                </span>
-            
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-
-    </div>
-    
-    
-        <div class="friends">
-            <div>FRIENDS</div>
-            
-                
-                    <span>
-                        <a href= //http://www.shentoushi.top target="_black">渗透师</a>
-                    </span>
-                
-            
-                
-                    <span>
-                        <a href= //http://www.jilehui.top target="_black">靶场</a>
-                    </span>
-                
-            
-                
-                    <span>
-                        <a href= //http://github.com target="_black">Github</a>
-                    </span>
-                
-            
-        </div>
-    
-    
-        <div class="about-me">
-            <a href = "/about" >ABOUT ME</a>
-        </div>
-    
-</div>
             
         </div>
         <footer class="footer footer-unloaded">
@@ -833,6 +565,24 @@ setInterval("createtime()",250);
 </footer>
     </div>
     <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#分析一个奇怪的程序"><span class="toc-number">1.</span> <span class="toc-text">分析一个奇怪的程序</span></a></li></ol>
+    </div>
     
     <div class="back-top iconfont-archer">&#xe639;</div>
     <div class="sidebar sidebar-hide">
@@ -1098,6 +848,8 @@ jsonContent:
     
     </div>
     <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
      
     </body>
 </html>
