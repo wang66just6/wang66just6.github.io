@@ -400,7 +400,8 @@ height:50vh;
         <div class="container container-unloaded">
             <main class="main post-page">
     <article class="article-entry">
-        <p>&emsp;&emsp;小黑是一个电脑技术爱好者，他每天爱做的事情就是宅在家中玩电脑。小黑的隔壁住着一个女生，刚搬来不久，小黑对她很是好奇，但是一直不敢和她搭讪，就想用自己擅长电脑技术，尽可能多的去收集信息了解她(情节需要，请勿模仿)。<br><a id="more"></a><br><img src="http://www.bbvdd.com/d/201808252222304of.png" alt=""><br>&emsp;&emsp;小黑首先想到的就是连入她家的无线网，经过之前的了解，他已经知道了女生家中的wifi名称，然后尝试了弱口令登录，随便试了几下没想到真的通过验证了。(关于无线密码破解这部分内容将在下一篇文章中讲到，这里只讲同一个局域网环境中的攻击，所以本文省略这个步骤。)小黑很高兴，省了不少步骤，心想这个女生的安全意识真的有待提高啊。</p>
+        <p>小黑是一个电脑技术爱好者，他每天爱做的事情就是宅在家中玩电脑。小黑的隔壁住着一个女生，刚搬来不久，小黑对她很是好奇，但是一直不敢和她搭讪，就想用自己擅长电脑技术，尽可能多的去收集信息了解她(情节需要，请勿模仿)。</p>
+<p><img src="http://www.bbvdd.com/d/201808252222304of.png" alt=""><br>小黑首先想到的就是连入她家的无线网，经过之前的了解，他已经知道了女生家中的wifi名称，然后尝试了弱口令登录，随便试了几下没想到真的通过验证了。(关于无线密码破解这部分内容将在下一篇文章中讲到，这里只讲同一个局域网环境中的攻击，所以本文省略这个步骤。)小黑很高兴，省了不少步骤，心想这个女生的安全意识真的有待提高啊。</p>
 <h2 id="了解网络环境"><a href="#了解网络环境" class="headerlink" title="了解网络环境"></a>了解网络环境</h2><p>接下来小黑要先了解下自己的网络环境，首先他查看了自己的ip地址,自己现在的ip地址是<strong>192.168.1.132</strong>(这里用的是ubuntu的Linux ，很多工具要自己装，在Kali上工具都是齐全的哦。)<br><img src="http://www.bbvdd.com/d/20180825222326end.png" alt=""><br>之后就是要看一下这个局域网中有哪些设备，那就用nmap扫一下吧。</p>
 <blockquote>
 <p>nmap  -sP  192.168.1.1-254   也可以输入  nmap  -sP  192.168.1.0/24</p>
@@ -411,7 +412,8 @@ height:50vh;
 </blockquote>
 <p>这里先看下ARP缓存表：<br><img src="http://www.bbvdd.com/d/201808252224528tc.png" alt=""><br>刚开始ARP缓存表中没有192.168.1.106，这里ping一下之后再看ARP缓存表上就有了。<br>接下来，小黑就可以进行arp欺骗攻击了。</p>
 <hr>
-<h2 id="攻击原理"><a href="#攻击原理" class="headerlink" title="攻击原理"></a>攻击原理</h2><p>&emsp;&emsp;在小黑的记忆中，这种攻击手段也叫做中间人攻击MITM(Man-in-the-Middle Attack)，算是一种古老的方法了，但仍有很多变种的中间人攻击是有效的，能够很容易地欺骗外行并且入侵他们。MITM攻击就是攻击者扮演中间人并且实施攻击。MITM攻击它可以劫持一段会话，称为会话劫持，可以窃取密码和其他机密，即使使用了SSL加密。<br>&emsp;&emsp;这里使用的arp欺骗也被称为arp缓存中毒，是在内网的MITM攻击。Arp投毒的实现过程非常简单，我们只需要欺骗目标机器使其确信我们的攻击主机就是它的网关，再伪装成目标机器与网关欺骗网关，这样所有的流量都会通过我们的攻击主机，我们就能截获目标机器与网关的通信数据了。网络中所有的机器都包含ARP缓存，它存储了本地网络中最近时间的MAC地址与ip地址的对应关系，我们要达成攻击目标的话就需要对这个缓存进行投毒。因为地址解析协议(arp)和arp投毒还涵盖了许多其他方面的知识，所以可以先了解下arp的原理及这种攻击如何在底层的协议中发挥作用。<br><img src="http://www.bbvdd.com/d/20180825222554c0u.png" alt=""></p>
+<h2 id="攻击原理"><a href="#攻击原理" class="headerlink" title="攻击原理"></a>攻击原理</h2><p>&emsp;&emsp;在小黑的记忆中，这种攻击手段也叫做中间人攻击MITM(Man-in-the-Middle Attack)，算是一种古老的方法了，但仍有很多变种的中间人攻击是有效的，能够很容易地欺骗外行并且入侵他们。MITM攻击就是攻击者扮演中间人并且实施攻击。MITM攻击它可以劫持一段会话，称为会话劫持，可以窃取密码和其他机密，即使使用了SSL加密。</p>
+<p>&emsp;&emsp;这里使用的arp欺骗也被称为arp缓存中毒，是在内网的MITM攻击。Arp投毒的实现过程非常简单，我们只需要欺骗目标机器使其确信我们的攻击主机就是它的网关，再伪装成目标机器与网关欺骗网关，这样所有的流量都会通过我们的攻击主机，我们就能截获目标机器与网关的通信数据了。网络中所有的机器都包含ARP缓存，它存储了本地网络中最近时间的MAC地址与ip地址的对应关系，我们要达成攻击目标的话就需要对这个缓存进行投毒。因为地址解析协议(arp)和arp投毒还涵盖了许多其他方面的知识，所以可以先了解下arp的原理及这种攻击如何在底层的协议中发挥作用。<br><img src="http://www.bbvdd.com/d/20180825222554c0u.png" alt=""></p>
 <h2 id="进行中间人攻击"><a href="#进行中间人攻击" class="headerlink" title="进行中间人攻击"></a>进行中间人攻击</h2><p>接下来小黑就开始攻击了，先从收集女生手机上浏览的图片信息开始吧：<br><strong>第一步:</strong>启用IP转发：</p>
 <blockquote>
 <p>echo 1 &gt; / proc/sys/net/ipv4/ip_forward</p>
@@ -436,7 +438,8 @@ height:50vh;
 <blockquote>
 <p>dsniff  -i  ens33</p>
 </blockquote>
-<p><img src="http://www.bbvdd.com/d/20180825222919bij.png" alt=""><br>&emsp;&emsp;此时处于监听状态，被欺骗手机上用浏览器访问ftp站点，输入用户名和密码后，攻击者主机上的dnsiff就能成功捕获。<br>&emsp;&emsp;虽然能看到图片(而且不是全部的图片都能接受到)，但小黑想要的不仅仅是这些，他觉得还需要获得更多的信息。他又使用了另一个工具：<strong>Ettercap</strong>。</p>
+<p><img src="http://www.bbvdd.com/d/20180825222919bij.png" alt=""><br>此时处于监听状态，被欺骗手机上用浏览器访问ftp站点，输入用户名和密码后，攻击者主机上的dnsiff就能成功捕获。</p>
+<p>虽然能看到图片(而且不是全部的图片都能接受到)，但小黑想要的不仅仅是这些，他觉得还需要获得更多的信息。他又使用了另一个工具：<strong>Ettercap</strong>。</p>
 <hr>
 <h2 id="Ettercap"><a href="#Ettercap" class="headerlink" title="Ettercap"></a>Ettercap</h2><p>&emsp;&emsp;Ettercap是一个多用途的开源工具，可以用来执行嗅探、主机分析等。Ettercap可以使用GUI(图形)和CLI(命令行)模式。下面将使用Ettercap来讲几个关于中间人攻击的实例：</p>
 <blockquote>
@@ -803,6 +806,8 @@ top:50vh;
     
     
     
+    
+    
     <div class="total-and-search">
         <div class="total-archive">
         Total : 10
@@ -880,21 +885,21 @@ top:50vh;
     
         <span class="sidebar-tag-name" data-tags="中间人攻击"><span class="iconfont-archer">&#xe606;</span>中间人攻击</span>
     
-        <span class="sidebar-tag-name" data-tags="社会工程学"><span class="iconfont-archer">&#xe606;</span>社会工程学</span>
-    
         <span class="sidebar-tag-name" data-tags="知识"><span class="iconfont-archer">&#xe606;</span>知识</span>
     
-        <span class="sidebar-tag-name" data-tags="缓冲区"><span class="iconfont-archer">&#xe606;</span>缓冲区</span>
-    
         <span class="sidebar-tag-name" data-tags="汇编"><span class="iconfont-archer">&#xe606;</span>汇编</span>
+    
+        <span class="sidebar-tag-name" data-tags="php"><span class="iconfont-archer">&#xe606;</span>php</span>
+    
+        <span class="sidebar-tag-name" data-tags="webshell"><span class="iconfont-archer">&#xe606;</span>webshell</span>
+    
+        <span class="sidebar-tag-name" data-tags="缓冲区"><span class="iconfont-archer">&#xe606;</span>缓冲区</span>
     
         <span class="sidebar-tag-name" data-tags="工具"><span class="iconfont-archer">&#xe606;</span>工具</span>
     
         <span class="sidebar-tag-name" data-tags="资源"><span class="iconfont-archer">&#xe606;</span>资源</span>
     
-        <span class="sidebar-tag-name" data-tags="php"><span class="iconfont-archer">&#xe606;</span>php</span>
-    
-        <span class="sidebar-tag-name" data-tags="webshell"><span class="iconfont-archer">&#xe606;</span>webshell</span>
+        <span class="sidebar-tag-name" data-tags="社会工程学"><span class="iconfont-archer">&#xe606;</span>社会工程学</span>
     
         <span class="sidebar-tag-name" data-tags="隐写术"><span class="iconfont-archer">&#xe606;</span>隐写术</span>
     

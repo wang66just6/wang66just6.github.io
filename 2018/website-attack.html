@@ -267,7 +267,7 @@ height:50vh;
                 
                 
                     <div class="post-intro-read">
-                        <span>Word count: <span class="post-count">3,507</span> / Reading time: <span class="post-count">12 min</span></span>
+                        <span>Word count: <span class="post-count">3,509</span> / Reading time: <span class="post-count">12 min</span></span>
                     </div>
                 
                 <div class="post-intro-meta">
@@ -396,8 +396,10 @@ height:50vh;
         <div class="container container-unloaded">
             <main class="main post-page">
     <article class="article-entry">
-        <p>&emsp;&emsp;网络给了我们方便的同时，但也并不总是那么美好。还记得邀请苍蝇到它的客厅做客的蜘蛛吗？还记得帮助蝎子渡河的乌龟吗？这些故事都包含了猎物的天真和猎手的肮脏。互联网也是如此，其中中充斥着诱惑的陷阱、阴暗的角落、恶意的行为。网站钓鱼就是其中的一种。<br><a id="more"></a><br>&emsp;&emsp;网站钓鱼相信不少人都听说过，它就是一种针对性的社会工程学攻击。现代社会工程学攻击通常以交谈、欺骗、假冒或伪装等方式开始，从合法用户那里套取用户的敏感信息，比如系统配置、密码或其他有助于进一步攻击的有用信息，然后再利用此类信息结合黑客技术实施攻击。此类攻击虽然在技术上实现难度不大，但确非常行之有效。因为人性的弱点，总是能被轻而易举地利用。</p>
-<p>&emsp;&emsp;本人曾经就受到过网站钓鱼攻击，进而遭受了一系列的损失。那个时的我还是互联网的小白，并不知其中原理，现在细想起来对此有了更深刻的感悟，对那些欺骗害人的狡诈之徒也是深恶痛绝。但要想防御此类攻击，就要先了解其攻击原理。正所谓：“不知攻，焉知防。”我们就站在攻击者的角度，看看此类攻击是如何发生的。</p>
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>网络给了我们方便的同时，但也并不总是那么美好。还记得邀请苍蝇到它的客厅做客的蜘蛛吗？还记得帮助蝎子渡河的乌龟吗？这些故事都包含了猎物的天真和猎手的肮脏。互联网也是如此，其中中充斥着诱惑的陷阱、阴暗的角落、恶意的行为。网站钓鱼就是其中的一种。 </p>
+<p>网站钓鱼相信不少人都听说过，它就是一种针对性的社会工程学攻击。现代社会工程学攻击通常以交谈、欺骗、假冒或伪装等方式开始，从合法用户那里套取用户的敏感信息，比如系统配置、密码或其他有助于进一步攻击的有用信息，然后再利用此类信息结合黑客技术实施攻击。此类攻击虽然在技术上实现难度不大，但确非常行之有效。因为人性的弱点，总是能被轻而易举地利用。</p>
+<p>本人曾经就受到过网站钓鱼攻击，进而遭受了一系列的损失。那个时的我还是互联网的小白，并不知其中原理，现在细想起来对此有了更深刻的感悟，对那些欺骗害人的狡诈之徒也是深恶痛绝。但要想防御此类攻击，就要先了解其攻击原理。正所谓：“不知攻，焉知防。”我们就站在攻击者的角度，看看此类攻击是如何发生的。</p>
+<hr>
 <h2 id="社会工程学攻击工具包SET"><a href="#社会工程学攻击工具包SET" class="headerlink" title="社会工程学攻击工具包SET"></a>社会工程学攻击工具包SET</h2><p>&emsp;&emsp;这里首先介绍一个在kali中提供的功能十分强大的社会工程学工具包（SET），它可以与metasploit进行协作使用，进行针对性的社会工程学攻击。</p>
 <p>&emsp;&emsp;SET工具包在kali的漏洞利用工具集中，黑客可以利用SET执行一连串的连环攻击，涵盖了社会工程学攻击的完整流程。SET中包括的工具很多，比如针对性邮件钓鱼（Spear-Phishing）攻击、网站钓鱼（website Atack）攻击、群发邮件（Mass  Mailer）攻击、还有伪造短信（SMS Spoofing）攻击等。<br><img src="/images/website-fish/1.png" alt=""><br>&emsp;&emsp;接下来就是利用这个工具包，制作一个钓鱼网页，之后欺骗用户进入钓鱼网页，使用户的个人信息及密码遭到泄露。那如何欺骗用户进入这个钓鱼网页呢，这就需要攻击策划。</p>
 <h2 id="网站钓鱼社会工程学攻击策划"><a href="#网站钓鱼社会工程学攻击策划" class="headerlink" title="网站钓鱼社会工程学攻击策划"></a>网站钓鱼社会工程学攻击策划</h2><p>&emsp;&emsp;先来说说我当时受骗的情景。在2016年11月份一次坐公交的时候，自己的iPhone7手机被偷了，我下站后第一时间就是把iPhone锁定，之后也报了警。当时内心可以说是十分焦急。而在第二天的时候，突然邮箱收到一封邮件，上面说iphone已经找到。邮件如下：<br><img src="/images/website-fish/2.png" alt=""><br>打开后显示的是下图的页面：<br><img src="/images/website-fish/3.png" alt=""><br>&emsp;&emsp;看到这个消息的我脑袋一热也没多想，二话不说点了进去。打开是一个苹果官方登录的页面，（现在这个网址已经打不开了）。我在进入这个登录页面的时候，下意识的把密码输了进去，但是跳转页面一直在加载，这个时候我开始意识到不对劲。回头看了下邮件的发送方，发现并不是苹果的官方邮箱，而是来自个人：<br><img src="/images/website-fish/4.png" alt=""><br>&emsp;&emsp;这时候才知道，这是个钓鱼网页，我这是上当受骗了！而且用户名和密码也已经被攻击者知道了。只能用《凉凉》这首歌代表我那时候的心情了，虽然这首歌还没在2016年出现。<br>&emsp;&emsp;知道密码泄露后，我赶紧更换了密码，祈祷攻击者没有马上利用密码登录账户。当然事情还没结束，因为我是多个平台使用的都是同一个密码（很糟糕的习惯），紧接着发现我的QQ和微信都登录不上去了。不过幸运的是，在手机被偷的当天，我已经把手机号给冻结，并且绑定到了新的手机卡上，我利用手机号找回了QQ和微信。否则手机号一旦被攻击者利用，那支付宝和银行账户都可能被盗，从而造成更多的损失。尽管个人信息泄露的风险解除了，但是手机也再也没有机会找回。<br>&emsp;&emsp;从上面的过程也可以分析出，攻击者是如何利用弱点进行攻击欺骗的。我们可以把这攻击过程套入一个社会工程学技术框架中，看看攻击者是如何进行布局的。</p>
@@ -598,7 +600,7 @@ top:50vh;
         <div class="toc-catalog">
             <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
         </div>
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#社会工程学攻击工具包SET"><span class="toc-number">1.</span> <span class="toc-text">社会工程学攻击工具包SET</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#网站钓鱼社会工程学攻击策划"><span class="toc-number">2.</span> <span class="toc-text">网站钓鱼社会工程学攻击策划</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#信息搜集环节"><span class="toc-number">2.1.</span> <span class="toc-text">信息搜集环节</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#诱导环节"><span class="toc-number">2.2.</span> <span class="toc-text">诱导环节</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#设计托词环节"><span class="toc-number">2.3.</span> <span class="toc-text">设计托词环节</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#心理影响和操纵环节"><span class="toc-number">2.4.</span> <span class="toc-text">心理影响和操纵环节</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#钓鱼网站的制作"><span class="toc-number">3.</span> <span class="toc-text">钓鱼网站的制作</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#简单的克隆页面"><span class="toc-number">3.1.</span> <span class="toc-text">简单的克隆页面</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#更精心的伪装"><span class="toc-number">3.2.</span> <span class="toc-text">更精心的伪装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#常被仿冒的网站"><span class="toc-number">3.3.</span> <span class="toc-text">常被仿冒的网站</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#如何防范防范钓鱼网站"><span class="toc-number">4.</span> <span class="toc-text">如何防范防范钓鱼网站</span></a></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#社会工程学攻击工具包SET"><span class="toc-number">2.</span> <span class="toc-text">社会工程学攻击工具包SET</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#网站钓鱼社会工程学攻击策划"><span class="toc-number">3.</span> <span class="toc-text">网站钓鱼社会工程学攻击策划</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#信息搜集环节"><span class="toc-number">3.1.</span> <span class="toc-text">信息搜集环节</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#诱导环节"><span class="toc-number">3.2.</span> <span class="toc-text">诱导环节</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#设计托词环节"><span class="toc-number">3.3.</span> <span class="toc-text">设计托词环节</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#心理影响和操纵环节"><span class="toc-number">3.4.</span> <span class="toc-text">心理影响和操纵环节</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#钓鱼网站的制作"><span class="toc-number">4.</span> <span class="toc-text">钓鱼网站的制作</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#简单的克隆页面"><span class="toc-number">4.1.</span> <span class="toc-text">简单的克隆页面</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#更精心的伪装"><span class="toc-number">4.2.</span> <span class="toc-text">更精心的伪装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#常被仿冒的网站"><span class="toc-number">4.3.</span> <span class="toc-text">常被仿冒的网站</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#如何防范防范钓鱼网站"><span class="toc-number">5.</span> <span class="toc-text">如何防范防范钓鱼网站</span></a></li></ol>
     </div>
     
     <div class="back-top iconfont-archer">&#xe639;</div>
@@ -611,6 +613,8 @@ top:50vh;
     <div class="sidebar-content sidebar-content-show-archive">
           <div class="sidebar-panel-archives">
     <!-- 在ejs中将archive按照时间排序 -->
+    
+    
     
     
     
@@ -794,21 +798,21 @@ top:50vh;
     
         <span class="sidebar-tag-name" data-tags="中间人攻击"><span class="iconfont-archer">&#xe606;</span>中间人攻击</span>
     
-        <span class="sidebar-tag-name" data-tags="社会工程学"><span class="iconfont-archer">&#xe606;</span>社会工程学</span>
-    
         <span class="sidebar-tag-name" data-tags="知识"><span class="iconfont-archer">&#xe606;</span>知识</span>
     
-        <span class="sidebar-tag-name" data-tags="缓冲区"><span class="iconfont-archer">&#xe606;</span>缓冲区</span>
-    
         <span class="sidebar-tag-name" data-tags="汇编"><span class="iconfont-archer">&#xe606;</span>汇编</span>
+    
+        <span class="sidebar-tag-name" data-tags="php"><span class="iconfont-archer">&#xe606;</span>php</span>
+    
+        <span class="sidebar-tag-name" data-tags="webshell"><span class="iconfont-archer">&#xe606;</span>webshell</span>
+    
+        <span class="sidebar-tag-name" data-tags="缓冲区"><span class="iconfont-archer">&#xe606;</span>缓冲区</span>
     
         <span class="sidebar-tag-name" data-tags="工具"><span class="iconfont-archer">&#xe606;</span>工具</span>
     
         <span class="sidebar-tag-name" data-tags="资源"><span class="iconfont-archer">&#xe606;</span>资源</span>
     
-        <span class="sidebar-tag-name" data-tags="php"><span class="iconfont-archer">&#xe606;</span>php</span>
-    
-        <span class="sidebar-tag-name" data-tags="webshell"><span class="iconfont-archer">&#xe606;</span>webshell</span>
+        <span class="sidebar-tag-name" data-tags="社会工程学"><span class="iconfont-archer">&#xe606;</span>社会工程学</span>
     
         <span class="sidebar-tag-name" data-tags="隐写术"><span class="iconfont-archer">&#xe606;</span>隐写术</span>
     
