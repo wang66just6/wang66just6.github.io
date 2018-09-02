@@ -396,10 +396,8 @@ height:50vh;
         <div class="container container-unloaded">
             <main class="main post-page">
     <article class="article-entry">
-        <p>网络给了我们方便的同时，但也并不总是那么美好。还记得邀请苍蝇到它的客厅做客的蜘蛛吗？还记得帮助蝎子渡河的乌龟吗？这些故事都包含了猎物的天真和猎手的肮脏。互联网也是如此，其中中充斥着诱惑的陷阱、阴暗的角落、恶意的行为。网站钓鱼就是其中的一种。<a id="more"></a></p>
-<p>网站钓鱼相信不少人都听说过，它就是一种针对性的社会工程学攻击。现代社会工程学攻击通常以交谈、欺骗、假冒或伪装等方式开始，从合法用户那里套取用户的敏感信息，比如系统配置、密码或其他有助于进一步攻击的有用信息，然后再利用此类信息结合黑客技术实施攻击。此类攻击虽然在技术上实现难度不大，但确非常行之有效。因为人性的弱点，总是能被轻而易举地利用。</p>
-<p>本人曾经就受到过网站钓鱼攻击，进而遭受了一系列的损失。那个时的我还是互联网的小白，并不知其中原理，现在细想起来对此有了更深刻的感悟，对那些欺骗害人的狡诈之徒也是深恶痛绝。但要想防御此类攻击，就要先了解其攻击原理。正所谓：“不知攻，焉知防。”我们就站在攻击者的角度，看看此类攻击是如何发生的。</p>
-<hr>
+        <p>&emsp;&emsp;网络给了我们方便的同时，但也并不总是那么美好。还记得邀请苍蝇到它的客厅做客的蜘蛛吗？还记得帮助蝎子渡河的乌龟吗？这些故事都包含了猎物的天真和猎手的肮脏。互联网也是如此，其中中充斥着诱惑的陷阱、阴暗的角落、恶意的行为。网站钓鱼就是其中的一种。<br><a id="more"></a><br>&emsp;&emsp;网站钓鱼相信不少人都听说过，它就是一种针对性的社会工程学攻击。现代社会工程学攻击通常以交谈、欺骗、假冒或伪装等方式开始，从合法用户那里套取用户的敏感信息，比如系统配置、密码或其他有助于进一步攻击的有用信息，然后再利用此类信息结合黑客技术实施攻击。此类攻击虽然在技术上实现难度不大，但确非常行之有效。因为人性的弱点，总是能被轻而易举地利用。</p>
+<p>&emsp;&emsp;本人曾经就受到过网站钓鱼攻击，进而遭受了一系列的损失。那个时的我还是互联网的小白，并不知其中原理，现在细想起来对此有了更深刻的感悟，对那些欺骗害人的狡诈之徒也是深恶痛绝。但要想防御此类攻击，就要先了解其攻击原理。正所谓：“不知攻，焉知防。”我们就站在攻击者的角度，看看此类攻击是如何发生的。</p>
 <h2 id="社会工程学攻击工具包SET"><a href="#社会工程学攻击工具包SET" class="headerlink" title="社会工程学攻击工具包SET"></a>社会工程学攻击工具包SET</h2><p>&emsp;&emsp;这里首先介绍一个在kali中提供的功能十分强大的社会工程学工具包（SET），它可以与metasploit进行协作使用，进行针对性的社会工程学攻击。</p>
 <p>&emsp;&emsp;SET工具包在kali的漏洞利用工具集中，黑客可以利用SET执行一连串的连环攻击，涵盖了社会工程学攻击的完整流程。SET中包括的工具很多，比如针对性邮件钓鱼（Spear-Phishing）攻击、网站钓鱼（website Atack）攻击、群发邮件（Mass  Mailer）攻击、还有伪造短信（SMS Spoofing）攻击等。<br><img src="/images/website-fish/1.png" alt=""><br>&emsp;&emsp;接下来就是利用这个工具包，制作一个钓鱼网页，之后欺骗用户进入钓鱼网页，使用户的个人信息及密码遭到泄露。那如何欺骗用户进入这个钓鱼网页呢，这就需要攻击策划。</p>
 <h2 id="网站钓鱼社会工程学攻击策划"><a href="#网站钓鱼社会工程学攻击策划" class="headerlink" title="网站钓鱼社会工程学攻击策划"></a>网站钓鱼社会工程学攻击策划</h2><p>&emsp;&emsp;先来说说我当时受骗的情景。在2016年11月份一次坐公交的时候，自己的iPhone7手机被偷了，我下站后第一时间就是把iPhone锁定，之后也报了警。当时内心可以说是十分焦急。而在第二天的时候，突然邮箱收到一封邮件，上面说iphone已经找到。邮件如下：<br><img src="/images/website-fish/2.png" alt=""><br>打开后显示的是下图的页面：<br><img src="/images/website-fish/3.png" alt=""><br>&emsp;&emsp;看到这个消息的我脑袋一热也没多想，二话不说点了进去。打开是一个苹果官方登录的页面，（现在这个网址已经打不开了）。我在进入这个登录页面的时候，下意识的把密码输了进去，但是跳转页面一直在加载，这个时候我开始意识到不对劲。回头看了下邮件的发送方，发现并不是苹果的官方邮箱，而是来自个人：<br><img src="/images/website-fish/4.png" alt=""><br>&emsp;&emsp;这时候才知道，这是个钓鱼网页，我这是上当受骗了！而且用户名和密码也已经被攻击者知道了。只能用《凉凉》这首歌代表我那时候的心情了，虽然这首歌还没在2016年出现。<br>&emsp;&emsp;知道密码泄露后，我赶紧更换了密码，祈祷攻击者没有马上利用密码登录账户。当然事情还没结束，因为我是多个平台使用的都是同一个密码（很糟糕的习惯），紧接着发现我的QQ和微信都登录不上去了。不过幸运的是，在手机被偷的当天，我已经把手机号给冻结，并且绑定到了新的手机卡上，我利用手机号找回了QQ和微信。否则手机号一旦被攻击者利用，那支付宝和银行账户都可能被盗，从而造成更多的损失。尽管个人信息泄露的风险解除了，但是手机也再也没有机会找回。<br>&emsp;&emsp;从上面的过程也可以分析出，攻击者是如何利用弱点进行攻击欺骗的。我们可以把这攻击过程套入一个社会工程学技术框架中，看看攻击者是如何进行布局的。</p>
@@ -416,7 +414,7 @@ height:50vh;
 <h3 id="更精心的伪装"><a href="#更精心的伪装" class="headerlink" title="更精心的伪装"></a>更精心的伪装</h3><p>如果伪装的更像点，就要伪造一个相似的url。关于域名的伪造，下面这张图就能说明其原理：<br><img src="/images/website-fish/17.png" alt=""><br>是否恍然大悟？再来看一个“完美伪装”的域名：<br><img src="/images/website-fish/18.png" alt=""><br>&emsp;&emsp;这或许是用肉眼最难分辨的钓鱼网站，没有之一，网站的URL地址显示的是苹果官网，网址旁边是安全字样和绿色小锁，表示网站信息基于https加密传输，完全没什么问题，然而它就是一个钓鱼网站（演示网站）。<br><img src="/images/website-fish/19.png" alt=""><br>&emsp;&emsp;虽然HTTPS的使用有助于保障互联网用户在浏览器和网站之间的数据安全，但越来越多的网络钓鱼方案正在利用人们对绿色小挂锁的无知。随着免费SSL证书和浏览器指示标志的最新变化，网络钓鱼网站伪装成合法化变得越来越容易。网络钓鱼防范公司PhishLabs发布的报告显示，在HTTPS页面上托管钓鱼网站的速度明显快于整个HTTPS的采用速度。<br>&emsp;&emsp;再来看这个域名到底哪里有问题。这种伪造方式称为“同形异义词”攻击。其实并不是新方法，最早能追溯到2001年。不过由于一些现实情况，该问题目前依然存在于不少浏览器。它使用的a其实是西里尔文的a，虽然看起来都是A，但计算机显然是把它们当成不同的字符来对待。<br><img src="/images/website-fish/20.png" alt=""><br>据了解，这是一位名叫徐正东的中国研究人员报告的一种钓鱼方法。基于这种方法，也能用俄文拼出一个www. tаоbао.com (真实域名：<a href="http://www.taobao.com" target="_blank" rel="noopener">www.taobao.com</a> )。<br><img src="/images/website-fish/21.png" alt=""><br>其中t和b是英文，a和o是俄文，如果用上面这个网站的话，搜到的结果如下：<br><img src="/images/website-fish/22.png" alt=""><br>表面上看起来极其相似，但在计算机中所识别的含义确是大不相同。</p>
 <h3 id="常被仿冒的网站"><a href="#常被仿冒的网站" class="headerlink" title="常被仿冒的网站"></a>常被仿冒的网站</h3><p>&emsp;&emsp;12321网络不良与垃圾信息举报受理中心(<a href="http://www.12321.cn" target="_blank" rel="noopener">www.12321.cn</a>) 公布了2018年7月被举报钓鱼网站TOP10。根据接到网民举报的短信、邮件、网站等信息，2018年7月，被举报的钓鱼网站前十名如下：<br><img src="/images/website-fish/23.png" alt=""><br>&emsp;&emsp;所以看到这类大型企业，各类银行及金融公司的网站，一定要小心防范，不轻易相信第三方给的链接。包括还有一些促销，优惠活动的页面。</p>
 <h2 id="如何防范防范钓鱼网站"><a href="#如何防范防范钓鱼网站" class="headerlink" title="如何防范防范钓鱼网站"></a>如何防范防范钓鱼网站</h2><p>如果要辨别自己遇到的是否为钓鱼网站，可以通过以下一些方法。<br><strong>一、留意域名</strong><br>&emsp;&emsp;辨别钓鱼网站的最直接的方法就是对比它的域名是不是官方域名，请一定要仔细查看所打开页面后的具体网址，而不是只看打开网页前的网址。如果不是官方域名，哪怕页面再相似，那么我们都可以断定其为钓鱼网站。如：假冒网站通常将英文字母I被替换为数字1，CCTV被换成CCYV或者CCTV－VIP这样的仿造域名，包括上面更加真假难辨的“同形异义词”。<br><strong>二、查看链接</strong><br>&emsp;&emsp;首先，网购要选择信任的网站，千万不要贪图便宜轻信“低价”网站。其次，支付前一定要确认购物网站网址是否正确，切勿单击来自陌生人的电子邮件和即时消息中的链接或所有看上去可疑的链接。因为即便是来自朋友和家人的消息也可能是伪造的。<br><strong>三、观察网站内容</strong><br>&emsp;&emsp;仿冒网站上没有链接，用户可点击栏目或图片中的各个链接看是否能打开。并且假冒网站上的字体样式是不一致的，并且模糊不清。如果发现访问的网站突然“改版”了，和之前的页面布局大不相同，就要提高警惕。<br><strong>四、查看安全证书</strong><br>&emsp;&emsp;针对大型电子商务网站或网银站点需要查看其安全证书。目前大型的电子商务网站或网络银行站点都应用了可信证书类产品，这类的网站网址都是“https”开头的，如果发现网址信息不是“https”开头，需要对该网站谨慎对待。<br><strong>五、尝试输入法</strong><br>&emsp;&emsp;当我们在收到他人发送来的一个网址时，我们可以打开这个网站，一旦提示您需要登录或者输入其他信息，就可以采用“尝试输入法”，也就是随意输入一个用户名及密码，如果这个网站提示您登录成功或者进入一个不正常的页面，那么我们可以断定其为钓鱼网站。<br><strong>最后</strong>，要安装防火墙、杀毒软件并定期更新。养成以上良好好习惯，识别跟防范钓鱼网站诈骗。</p>
-<p>参考文章：<br><a href="http://www.sohu.com/a/120567788_255236" target="_blank" rel="noopener">http://www.sohu.com/a/120567788_255236</a><br><a href="http://news.zol.com.cn/636/6360545.html" target="_blank" rel="noopener">http://news.zol.com.cn/636/6360545.html</a><br>《metasploit渗透测试魔鬼训练营》</p>
+<p>参考文章：<br>《metasploit渗透测试魔鬼训练营》<br><a href="http://www.sohu.com/a/120567788_255236" target="_blank" rel="noopener">http://www.sohu.com/a/120567788_255236</a><br><a href="http://news.zol.com.cn/636/6360545.html" target="_blank" rel="noopener">http://news.zol.com.cn/636/6360545.html</a></p>
 
     </article>
     <!-- license  -->
@@ -431,6 +429,11 @@ height:50vh;
     <!-- paginator  -->
     <ul class="post-paginator">
         <li class="next">
+            
+                <div class="nextSlogan">Next Post</div>
+                <a href= "/2018/soyouwangtubehack.html" title= 所以你想成为黑客？ >
+                    <div class="nextTitle">所以你想成为黑客？</div>
+                </a>
             
         </li>
         <li class="previous">
@@ -719,9 +722,16 @@ top:50vh;
     
     
     
+    
+    
+    
+    
+    
+    
+    
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 10
+        Total : 11
         </div>
         <!-- search  -->
         
@@ -734,6 +744,11 @@ top:50vh;
     
     <div class="archive-year"> 2018 </div>
     <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/02</span><a class="archive-post-title" href= "/2018/soyouwangtubehack.html" >所以你想成为黑客？</a>
+        </li>
     
     
         <li class="archive-post-item">
@@ -790,31 +805,31 @@ top:50vh;
         <div class="sidebar-panel-tags">
     <div class="sidebar-tags-name">
     
+        <span class="sidebar-tag-name" data-tags="资源"><span class="iconfont-archer">&#xe606;</span>资源</span>
+    
         <span class="sidebar-tag-name" data-tags="局域网"><span class="iconfont-archer">&#xe606;</span>局域网</span>
     
         <span class="sidebar-tag-name" data-tags="arp"><span class="iconfont-archer">&#xe606;</span>arp</span>
     
         <span class="sidebar-tag-name" data-tags="中间人攻击"><span class="iconfont-archer">&#xe606;</span>中间人攻击</span>
     
+        <span class="sidebar-tag-name" data-tags="php"><span class="iconfont-archer">&#xe606;</span>php</span>
+    
+        <span class="sidebar-tag-name" data-tags="webshell"><span class="iconfont-archer">&#xe606;</span>webshell</span>
+    
         <span class="sidebar-tag-name" data-tags="社会工程学"><span class="iconfont-archer">&#xe606;</span>社会工程学</span>
+    
+        <span class="sidebar-tag-name" data-tags="知识"><span class="iconfont-archer">&#xe606;</span>知识</span>
+    
+        <span class="sidebar-tag-name" data-tags="缓冲区"><span class="iconfont-archer">&#xe606;</span>缓冲区</span>
     
         <span class="sidebar-tag-name" data-tags="汇编"><span class="iconfont-archer">&#xe606;</span>汇编</span>
     
         <span class="sidebar-tag-name" data-tags="工具"><span class="iconfont-archer">&#xe606;</span>工具</span>
     
-        <span class="sidebar-tag-name" data-tags="知识"><span class="iconfont-archer">&#xe606;</span>知识</span>
-    
-        <span class="sidebar-tag-name" data-tags="php"><span class="iconfont-archer">&#xe606;</span>php</span>
-    
-        <span class="sidebar-tag-name" data-tags="webshell"><span class="iconfont-archer">&#xe606;</span>webshell</span>
-    
-        <span class="sidebar-tag-name" data-tags="资源"><span class="iconfont-archer">&#xe606;</span>资源</span>
-    
         <span class="sidebar-tag-name" data-tags="隐写术"><span class="iconfont-archer">&#xe606;</span>隐写术</span>
     
         <span class="sidebar-tag-name" data-tags="lsb隐写"><span class="iconfont-archer">&#xe606;</span>lsb隐写</span>
-    
-        <span class="sidebar-tag-name" data-tags="缓冲区"><span class="iconfont-archer">&#xe606;</span>缓冲区</span>
     
     </div>
     <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
