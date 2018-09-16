@@ -341,24 +341,25 @@
     
     
     <article class="index-post">
-        <a class="abstract-title" href = "/2018/汇编实验.html" >
+        <a class="abstract-title" href = "/2018/linux-rookit.html" >
             
-                <span>汇编实验（一）</span>
+                <span>Linux后门检测与系统恢复</span>
         </a>
         <div class="abstract-content">
-            分析一个奇怪的程序程序源码如下：
-1234567891011121314151617181920212223242526assume cs:codesgcodesg segment		mov ax,4c00h		int 21h		start: 	mov ax,0	s:	nop		nop				mov di,offset s		mov si,offset s2		mov ax,cs:[si]		mov cs:[di],ax			s0:	jmp short s	s1: mov ax,0		int 21h		mov ax,0			s2: jmp short s1		nop		codesg en...
+            <p>小白是某公司的Linux系统管理员。某天小白突然觉得公司的机器存在异常，并经常有被人监控的感觉。于是他通过分析日志、监控网络通信等手段发现该系统有很大的可能被黑客入侵并留了rootkit后门。
         </div>
         <div class="abstract-post-meta">
             <!-- date  -->
             <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/08/30</span>
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/09/16</span>
             </div>
             <!-- tags  -->
             
             <div class= abstract-tags >
     
-        <a class="post-tag" href="javascript:void(0);" data-tags = "汇编">汇编</a>
+        <a class="post-tag" href="javascript:void(0);" data-tags = "linux">linux</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "rootkit">rootkit</a>
     
 </div>
             
