@@ -2,9 +2,16 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://wang66.top/2018/vulnhub-rotating-fortress101.html</loc>
+    
+    <lastmod>2018-10-03T15:40:33.538Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://wang66.top/2018/vulnhub-lampiao1.html</loc>
     
-    <lastmod>2018-10-02T05:19:49.347Z</lastmod>
+    <lastmod>2018-10-03T15:32:37.461Z</lastmod>
     
   </url>
   
@@ -142,14 +149,14 @@
   </url>
   
   <url>
-    <loc>http://wang66.top/tags/index.html</loc>
+    <loc>http://wang66.top/categories/index.html</loc>
     
     <lastmod>2018-08-01T23:02:17.626Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://wang66.top/categories/index.html</loc>
+    <loc>http://wang66.top/tags/index.html</loc>
     
     <lastmod>2018-08-01T23:02:17.626Z</lastmod>
     
