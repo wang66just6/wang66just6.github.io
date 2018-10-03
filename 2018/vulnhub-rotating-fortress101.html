@@ -398,7 +398,7 @@ height:50vh;
     <article class="article-entry">
         <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>刚开始以为这只是个普通的题目，嗯，心想经历了这么多套路，这肯定也没什么的。但事实证明我错了。出题人的脑洞是真的大，触及到知识盲区的时候，也是毫无办法。勉强拿到第四个flag。剩下的真的是参考了大神的解法。<a id="more"></a><br><img src="/images/rf1/1.png" alt=""><br><strong>题目描述：</strong>服务器的管理员宙斯从他的项目“旋转城堡”中退出了，但他不希望这个项目随着他的退休而取消。为了找到这个项目的继任者，他提出了一个挑战。你能进入旋转城堡，逃离孤立，拿到root权限吗？</p>
 <h2 id="基本信息"><a href="#基本信息" class="headerlink" title="基本信息"></a>基本信息</h2><p>已经知道靶机ip地址为：192.168.1.130，用nmap进行端口扫描：<br><img src="/images/rf1/2.png" alt=""><br>扫描结果显示虚拟机开启了<strong>80</strong>端口，和一个不知道干什么的<strong>27025</strong>端口。</p>
-<h2 id="Flag-1"><a href="#Flag-1" class="headerlink" title="Flag 1"></a>Flag 1</h2><p>先浏览器访问80端口：<br><img src="/images/rf1/3.png" alt=""><br>页面显示我不是管理员，访问被限制了。url上的janus.php中的janus是罗马神话的开端之神，就理解为门神吧。这些题目中其实夹杂着很多神话任务，但是作者并没有把他们联系地很紧密。所以对解题没什么帮助，看看就好。</p>
+<h2 id="Flag-1"><a href="#Flag-1" class="headerlink" title="Flag 1"></a>Flag 1</h2><p>先浏览器访问80端口：<br><img src="/images/rf1/3.png" alt=""><br>页面显示我不是管理员，访问被限制了。url上的janus.php中的janus是罗马神话的开端之神，就理解为门神吧。这些题目中其实夹杂着很多神话人物，但是作者并没有把他们联系地很紧密。所以对解题没什么帮助，看看就好。</p>
 <p>题目信息给的这么少，源码也是没什么东西，那应该能在数据包中有所发现，就用burpsuite抓包看看：<br><img src="/images/rf1/4.png" alt=""></p>
 <p>看到我们发送的请求中Cookie一栏有一个isAdmin=0。那应该很明显了，我们把它改为1再发送。就得到了如下的页面，拿到了第一个flag。<br><img src="/images/rf1/5.png" alt=""></p>
 <h2 id="Flag-2"><a href="#Flag-2" class="headerlink" title="Flag 2"></a>Flag 2</h2><p>根据第一个flag提示的路径，我们进入一个新网页。背景是一个动态图，一个旋转的城堡，难怪题目叫这个名字。<br><img src="/images/rf1/6.png" alt=""><br>网页上有三个超链接的地方，home就是刚才看到的，再先查看下news：<br><img src="/images/rf1/7.png" alt=""><br>显示了三段加密后的密文，现在也想不出有什么规律，先放一放。</p>
@@ -829,6 +829,34 @@ top:50vh;
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     <div class="total-and-search">
         <div class="total-archive">
         Total : 18
@@ -950,23 +978,23 @@ top:50vh;
     
         <span class="sidebar-tag-name" data-tags="中间人攻击"><span class="iconfont-archer">&#xe606;</span>中间人攻击</span>
     
-        <span class="sidebar-tag-name" data-tags="vulnhub"><span class="iconfont-archer">&#xe606;</span>vulnhub</span>
-    
         <span class="sidebar-tag-name" data-tags="资源"><span class="iconfont-archer">&#xe606;</span>资源</span>
-    
-        <span class="sidebar-tag-name" data-tags="密码学"><span class="iconfont-archer">&#xe606;</span>密码学</span>
     
         <span class="sidebar-tag-name" data-tags="linux"><span class="iconfont-archer">&#xe606;</span>linux</span>
     
         <span class="sidebar-tag-name" data-tags="rootkit"><span class="iconfont-archer">&#xe606;</span>rootkit</span>
     
-        <span class="sidebar-tag-name" data-tags="社会工程学"><span class="iconfont-archer">&#xe606;</span>社会工程学</span>
+        <span class="sidebar-tag-name" data-tags="vulnhub"><span class="iconfont-archer">&#xe606;</span>vulnhub</span>
+    
+        <span class="sidebar-tag-name" data-tags="密码学"><span class="iconfont-archer">&#xe606;</span>密码学</span>
     
         <span class="sidebar-tag-name" data-tags="Vulnhub"><span class="iconfont-archer">&#xe606;</span>Vulnhub</span>
     
-        <span class="sidebar-tag-name" data-tags="知识"><span class="iconfont-archer">&#xe606;</span>知识</span>
+        <span class="sidebar-tag-name" data-tags="社会工程学"><span class="iconfont-archer">&#xe606;</span>社会工程学</span>
     
         <span class="sidebar-tag-name" data-tags="汇编"><span class="iconfont-archer">&#xe606;</span>汇编</span>
+    
+        <span class="sidebar-tag-name" data-tags="知识"><span class="iconfont-archer">&#xe606;</span>知识</span>
     
         <span class="sidebar-tag-name" data-tags="php"><span class="iconfont-archer">&#xe606;</span>php</span>
     
