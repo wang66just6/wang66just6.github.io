@@ -404,7 +404,7 @@ height:50vh;
 <h2 id="Flag-2"><a href="#Flag-2" class="headerlink" title="Flag 2"></a>Flag 2</h2><p>根据第一个flag提示的路径，我们进入一个新网页。背景是一个动态图，一个旋转的城堡，难怪题目叫这个名字。<br><img src="/images/rf1/6.png" alt=""><br>网页上有三个超链接的地方，home就是刚才看到的，再先查看下news：<br><img src="/images/rf1/7.png" alt=""><br>显示了三段加密后的密文，现在也想不出有什么规律，先放一放。</p>
 <p>第三个wheel界面，好像访问受限：<br><img src="/images/rf1/8.png" alt=""><br>看看页面查看源码呢？发现有一行注释，告诉我们的东西也是模模糊糊的，Loki不就是北欧神话的吗。<br><img src="/images/rf1/9.png" alt=""><br>以上都没发现什么有价值的，那接着还是用dirb扫描路径：<br><img src="/images/rf1/10.png" alt=""><br>发现存一个rotbots.txt，这让人眼前一亮，打开它：<br><img src="/images/rf1/11.png" alt=""><br>显示了两个路径，先访问/icons/loki.bin,会提示下载一个文件loki.bin：<br><img src="/images/rf1/12.png" alt=""></p>
 <p>访问第二个路径是用户名密码：<br><img src="/images/rf1/13.png" alt=""><br>第二个路径的名字为eris.php，eris是希腊女神，象征着冲突和不和谐，这么奇怪的网页名字，意味着，这个网页没什么用。（事实证明，在多次尝试后，这个网页确实只是个摆设，和后面的解题并没有任何联系。）</p>
-<p>先看下载下来的文件。首先用cat查看了一下里面的内容，看着看着，就在里面直接看到了flag，还包括那段密文的解码：<br><img src="/images/rf1/14.png" alt=""><br>flag2就这样拿到了？简直太容易了吧！之后看攻略才知道，这其实不是真确步骤。<br><img src="/images/rf1/15.png" alt=""><br>正确的步骤在这里（我又做了一遍……）：<br>先给这个文件运行权限，运行后要我们输入密码：<br><img src="/images/rf1/16.png" alt=""><br>但密码是啥呢，这里需要反编译了，我们使用dbg：<br><img src="/images/rf1/17.png" alt=""><br>代码不多，很简单的一个程序，从其中发现一行跳转到验证密码的代码：<br> 我们用break在这个地方设置断点，然后让程序运行：<br><img src="/images/rf1/18.png" alt=""><br>之后可以发现，我们随便输入的密码上面有一行字符串，这就是真正的密码：<strong>xBspsiONMSNXeVuiomF</strong>。<br>然后继续运行程序，输入密码后，显示得到flag2和之前消息的中密文的解密提示：<br><img src="/images/rf1/19.png" alt=""></p>
+<p>先看下载下来的文件。首先用cat查看了一下里面的内容，看着看着，就在里面直接看到了flag，还包括那段密文的解码：<br><img src="/images/rf1/14.png" alt=""><br>flag2就这样拿到了？简直太容易了吧！之后看攻略才知道，这其实不是正确步骤。<br><img src="/images/rf1/15.png" alt=""><br>正确的步骤在这里（我又做了一遍……）：<br>先给这个文件运行权限，运行后要我们输入密码：<br><img src="/images/rf1/16.png" alt=""><br>但密码是啥呢，这里需要反编译了，我们使用dbg：<br><img src="/images/rf1/17.png" alt=""><br>代码不多，很简单的一个程序，从其中发现一行跳转到验证密码的代码：<br> 我们用break在这个地方设置断点，然后让程序运行：<br><img src="/images/rf1/18.png" alt=""><br>之后可以发现，我们随便输入的密码上面有一行字符串，这就是真正的密码：<strong>xBspsiONMSNXeVuiomF</strong>。<br>然后继续运行程序，输入密码后，显示得到flag2和之前消息的中密文的解密提示：<br><img src="/images/rf1/19.png" alt=""></p>
 <h2 id="Flag-3"><a href="#Flag-3" class="headerlink" title="Flag 3"></a>Flag 3</h2><p>密文是使用凯撒加密的方式，也就是说，明文转为ascll码，并使之加上某一个数值后，也就是key，再转为字符。我们需要多次尝试吧key找到，或者直接暴力破解，猜测key在1-99之间，我们此时需要编写一个脚本帮助我们破解：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line"><span class="comment">#放入密文</span></span><br><span class="line">data = <span class="string">"""|125||104||120||118||++||107||100||118||++||100||118||110||104||103||++||112||104||++||119||114||++||112||100||110||104|</span></span><br><span class="line"><span class="string">|++||100||113||++||104||113||102||114||103||104||117||++||105||114||117||++||114||120||117||++||120||115||103||100||119|</span></span><br><span class="line"><span class="string">|104||118||//||++||119||107||108||118||++||108||118||++||112||104||++||119||104||118||119||108||113||106||++||108||119|</span></span><br><span class="line"><span class="string">|++||114||120||119||//||++||108||105||++||108||119||++||122||114||117||110||118||++||108||++||122||108||111||111||++|</span></span><br><span class="line"><span class="string">|101||104||++||118||104||113||103||108||113||106||++||108||119||++||119||114||++||119||107||104||++||117||104||118||119|</span></span><br><span class="line"><span class="string">|++||114||105||++||124||114||120||++||100||118||++||122||104||111||111||++||100||118||++||100||++||103||104||102||114|</span></span><br><span class="line"><span class="string">|103||104||117||//||++||119||108||117||//| """</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#去掉密文中除了数字以为的符号，并分三个为一组，因为这里解码为第三消息，是三个一组的</span></span><br><span class="line">newdata = re.sub(<span class="string">"\D"</span>,<span class="string">""</span>,data)</span><br><span class="line">n=<span class="number">3</span>  //如果解码第一个消息和第二个消息，则n=<span class="number">2</span></span><br><span class="line">splitted =[newdata[i:i+n] <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>,len(newdata),n)]</span><br><span class="line">integers = map(int, splitted)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">decode</span><span class="params">(key)</span>:</span></span><br><span class="line">    plaintext = <span class="string">''</span></span><br><span class="line">    <span class="keyword">for</span> char <span class="keyword">in</span> integers:</span><br><span class="line">        plaintext = plaintext + chr(char - key) //解码第一个和第二个消息的时候是（char + key）</span><br><span class="line">    <span class="keyword">if</span> re.match(<span class="string">'^[A-Za-z]+$'</span>,plaintext)://正则匹配，如果存在非英文字母的，则不显示</span><br><span class="line">        <span class="keyword">print</span> plaintext</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">key</span><span class="params">()</span>:</span></span><br><span class="line">    k=<span class="number">0</span></span><br><span class="line">    <span class="keyword">while</span> k&lt;=<span class="number">99</span>:</span><br><span class="line">        decode(k)</span><br><span class="line">        k += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">key()</span><br></pre></td></tr></table></figure>
 <p>这个脚本是用python写的，时间紧迫，所以特别简陋，不要过分在意ToT。。。。 </p>
@@ -843,20 +843,6 @@ top:50vh;
     
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     <div class="total-and-search">
         <div class="total-archive">
         Total : 18
@@ -968,17 +954,13 @@ top:50vh;
         <div class="sidebar-panel-tags">
     <div class="sidebar-tags-name">
     
-        <span class="sidebar-tag-name" data-tags="恶意代码"><span class="iconfont-archer">&#xe606;</span>恶意代码</span>
-    
-        <span class="sidebar-tag-name" data-tags="计算机病毒"><span class="iconfont-archer">&#xe606;</span>计算机病毒</span>
-    
         <span class="sidebar-tag-name" data-tags="局域网"><span class="iconfont-archer">&#xe606;</span>局域网</span>
     
         <span class="sidebar-tag-name" data-tags="arp"><span class="iconfont-archer">&#xe606;</span>arp</span>
     
         <span class="sidebar-tag-name" data-tags="中间人攻击"><span class="iconfont-archer">&#xe606;</span>中间人攻击</span>
     
-        <span class="sidebar-tag-name" data-tags="资源"><span class="iconfont-archer">&#xe606;</span>资源</span>
+        <span class="sidebar-tag-name" data-tags="密码学"><span class="iconfont-archer">&#xe606;</span>密码学</span>
     
         <span class="sidebar-tag-name" data-tags="linux"><span class="iconfont-archer">&#xe606;</span>linux</span>
     
@@ -986,7 +968,11 @@ top:50vh;
     
         <span class="sidebar-tag-name" data-tags="vulnhub"><span class="iconfont-archer">&#xe606;</span>vulnhub</span>
     
-        <span class="sidebar-tag-name" data-tags="密码学"><span class="iconfont-archer">&#xe606;</span>密码学</span>
+        <span class="sidebar-tag-name" data-tags="资源"><span class="iconfont-archer">&#xe606;</span>资源</span>
+    
+        <span class="sidebar-tag-name" data-tags="恶意代码"><span class="iconfont-archer">&#xe606;</span>恶意代码</span>
+    
+        <span class="sidebar-tag-name" data-tags="计算机病毒"><span class="iconfont-archer">&#xe606;</span>计算机病毒</span>
     
         <span class="sidebar-tag-name" data-tags="Vulnhub"><span class="iconfont-archer">&#xe606;</span>Vulnhub</span>
     
