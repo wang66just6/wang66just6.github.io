@@ -341,6 +341,49 @@
     
     
     <article class="index-post">
+        <a class="abstract-title" href = "/2018/vulnhub-ch4inrulz1-0-1.html" >
+            
+                <span>Vulnhub渗透笔记之ch4inrulz:1.0.1</span>
+        </a>
+        <div class="abstract-content">
+            题目背景：Frank有一个网站，他是一个具有正常安全背景的聪明的开发人员；他总喜欢遵循模式。我们的目标就是发现任何关键的漏洞并获得对系统的访问权限。最终需要获得root权限及flag。
+信息收集使用netdiscover发现靶机ip地址为：192.168.1.133：
+
+使用nmap对ip进行扫描：
+
+nmap  -p-  192.168.1.133
+
+
+看到靶机开启了21,22,80和8011端口。现试了ftp登录，但是没有找到有用的东西。
+网站渗透再访问80端口，可以看到是frank的网站。
+
+浏览网站之后，也没有发现什么线索。
+使用dirb扫描网站路径：
+
+一个个路径尝试之后，看到...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/10/05</span>
+            </div>
+            <!-- tags  -->
+            
+            <div class= abstract-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "vulnhub">vulnhub</a>
+    
+</div>
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
         <a class="abstract-title" href = "/2018/vulnhub-rotating-fortress101.html" >
             
                 <span>Vulnhub渗透笔记之Rotating Fortress:1.0.1(上)</span>
@@ -597,36 +640,6 @@
             <div class= abstract-tags >
     
         <a class="post-tag" href="javascript:void(0);" data-tags = "社会工程学">社会工程学</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2018/汇编实验.html" >
-            
-                <span>汇编实验（一）</span>
-        </a>
-        <div class="abstract-content">
-            分析一个奇怪的程序程序源码如下：
-1234567891011121314151617181920212223242526assume cs:codesgcodesg segment		mov ax,4c00h		int 21h		start: 	mov ax,0	s:	nop		nop				mov di,offset s		mov si,offset s2		mov ax,cs:[si]		mov cs:[di],ax			s0:	jmp short s	s1: mov ax,0		int 21h		mov ax,0			s2: jmp short s1		nop		codesg en...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/08/30</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "汇编">汇编</a>
     
 </div>
             
@@ -983,9 +996,20 @@ setInterval("createtime()",250);
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 18
+        Total : 19
         </div>
         <!-- search  -->
         
@@ -998,6 +1022,11 @@ setInterval("createtime()",250);
     
     <div class="archive-year"> 2018 </div>
     <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/05</span><a class="archive-post-title" href= "/2018/vulnhub-ch4inrulz1-0-1.html" >Vulnhub渗透笔记之ch4inrulz:1.0.1</a>
+        </li>
     
     
         <li class="archive-post-item">
@@ -1094,45 +1123,45 @@ setInterval("createtime()",250);
         <div class="sidebar-panel-tags">
     <div class="sidebar-tags-name">
     
+        <span class="sidebar-tag-name" data-tags="vulnhub"><span class="iconfont-archer">&#xe606;</span>vulnhub</span>
+    
         <span class="sidebar-tag-name" data-tags="局域网"><span class="iconfont-archer">&#xe606;</span>局域网</span>
     
         <span class="sidebar-tag-name" data-tags="arp"><span class="iconfont-archer">&#xe606;</span>arp</span>
     
         <span class="sidebar-tag-name" data-tags="中间人攻击"><span class="iconfont-archer">&#xe606;</span>中间人攻击</span>
     
-        <span class="sidebar-tag-name" data-tags="恶意代码"><span class="iconfont-archer">&#xe606;</span>恶意代码</span>
-    
-        <span class="sidebar-tag-name" data-tags="计算机病毒"><span class="iconfont-archer">&#xe606;</span>计算机病毒</span>
-    
-        <span class="sidebar-tag-name" data-tags="vulnhub"><span class="iconfont-archer">&#xe606;</span>vulnhub</span>
+        <span class="sidebar-tag-name" data-tags="资源"><span class="iconfont-archer">&#xe606;</span>资源</span>
     
         <span class="sidebar-tag-name" data-tags="linux"><span class="iconfont-archer">&#xe606;</span>linux</span>
     
         <span class="sidebar-tag-name" data-tags="rootkit"><span class="iconfont-archer">&#xe606;</span>rootkit</span>
     
+        <span class="sidebar-tag-name" data-tags="恶意代码"><span class="iconfont-archer">&#xe606;</span>恶意代码</span>
+    
+        <span class="sidebar-tag-name" data-tags="计算机病毒"><span class="iconfont-archer">&#xe606;</span>计算机病毒</span>
+    
         <span class="sidebar-tag-name" data-tags="密码学"><span class="iconfont-archer">&#xe606;</span>密码学</span>
     
-        <span class="sidebar-tag-name" data-tags="资源"><span class="iconfont-archer">&#xe606;</span>资源</span>
+        <span class="sidebar-tag-name" data-tags="工具"><span class="iconfont-archer">&#xe606;</span>工具</span>
+    
+        <span class="sidebar-tag-name" data-tags="知识"><span class="iconfont-archer">&#xe606;</span>知识</span>
+    
+        <span class="sidebar-tag-name" data-tags="Vulnhub"><span class="iconfont-archer">&#xe606;</span>Vulnhub</span>
+    
+        <span class="sidebar-tag-name" data-tags="汇编"><span class="iconfont-archer">&#xe606;</span>汇编</span>
+    
+        <span class="sidebar-tag-name" data-tags="隐写术"><span class="iconfont-archer">&#xe606;</span>隐写术</span>
+    
+        <span class="sidebar-tag-name" data-tags="lsb隐写"><span class="iconfont-archer">&#xe606;</span>lsb隐写</span>
+    
+        <span class="sidebar-tag-name" data-tags="缓冲区"><span class="iconfont-archer">&#xe606;</span>缓冲区</span>
     
         <span class="sidebar-tag-name" data-tags="php"><span class="iconfont-archer">&#xe606;</span>php</span>
     
         <span class="sidebar-tag-name" data-tags="webshell"><span class="iconfont-archer">&#xe606;</span>webshell</span>
     
         <span class="sidebar-tag-name" data-tags="社会工程学"><span class="iconfont-archer">&#xe606;</span>社会工程学</span>
-    
-        <span class="sidebar-tag-name" data-tags="Vulnhub"><span class="iconfont-archer">&#xe606;</span>Vulnhub</span>
-    
-        <span class="sidebar-tag-name" data-tags="知识"><span class="iconfont-archer">&#xe606;</span>知识</span>
-    
-        <span class="sidebar-tag-name" data-tags="汇编"><span class="iconfont-archer">&#xe606;</span>汇编</span>
-    
-        <span class="sidebar-tag-name" data-tags="工具"><span class="iconfont-archer">&#xe606;</span>工具</span>
-    
-        <span class="sidebar-tag-name" data-tags="缓冲区"><span class="iconfont-archer">&#xe606;</span>缓冲区</span>
-    
-        <span class="sidebar-tag-name" data-tags="隐写术"><span class="iconfont-archer">&#xe606;</span>隐写术</span>
-    
-        <span class="sidebar-tag-name" data-tags="lsb隐写"><span class="iconfont-archer">&#xe606;</span>lsb隐写</span>
     
     </div>
     <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
