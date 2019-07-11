@@ -71,6 +71,8 @@
     <link rel="preload" href="/css/style.css?v=20180824" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <link rel="stylesheet" href="/css/mobile.css?v=20180824" media="(max-width: 980px)">
     
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    
     <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
 /* This file is meant as a standalone workflow for
 - testing support for link[rel=preload]
@@ -194,10 +196,8 @@
 </head>
 
     
-        <body class="home-body">
     
-    
-<header class="header index-header">
+<header class="header">
 
     <div class="read-progress"></div>
     <div class="header-sidebar-menu">&#xe775;</div>
@@ -206,32 +206,21 @@
     <a class="home-link" href="/">Still Shines.</a>
 </header>
     <div class="wrapper">
-        <div class="site-intro" style="height:50vh;">
+        <div class="site-intro" style>
     
     <!-- 主页  -->
-    
-    
-    <!-- 文章页  -->
             
     <div class="site-intro-placeholder"></div>
-    <div class="site-intro-img" style="background-image: url(/intro/5.jpg)"></div>
+    <div class="site-intro-img" style="background-image: url(/)"></div>
     <div class="site-intro-meta">
         <!-- 标题  -->
         <h1 class="intro-title">
             <!-- 主页  -->
             
-            Still Shines.
-            <!-- 文章页  -->
-            
         </h1>
         <!-- 副标题 -->
         <p class="intro-subtitle">
             <!-- 主页副标题  -->
-            
-            
-                繁星一样多的可能
-            
-            <!-- 文章页  -->
             
         </p>
         <!-- 文章页meta -->
@@ -343,293 +332,23 @@
     
     
     <article class="index-post">
-        <a class="abstract-title" href="/2019/Common-assembly-instruction.html">
+        <a class="abstract-title" href="/2018/资源分享【持续更新】.html">
             
-                <span>常用汇编指令</span>
+                <span>资源分享【持续更新】</span>
         </a>
         <div class="abstract-content">
-            一、数据传输指令
-它们在存贮器和寄存器、寄存器和输入输出端口之间传送数据.
-
-1. 通用数据传送指令.1234567891011121314MOV     传送字或字节.MOVSX   先符号扩展,再传送.MOVZX   先零扩展,再传送.PUSH    把字压入堆栈.POP     把字弹出堆栈.PUSHA   把AX,CX,DX,BX,SP,BP,SI,DI依次压入堆栈.POPA    把DI,SI,BP,SP,BX,DX,CX,AX依次弹出堆栈.PUSHAD  把EAX,ECX,EDX,EBX,ESP,EBP,ESI,EDI依次压入堆栈.POPAD   把EDI,ESI,EBP,E...
+            <p>各站点资源分享，持续更新，不定期补充，有推荐的可以在评论中发表哦。</p>
         </div>
         <div class="abstract-post-meta">
             <!-- date  -->
             <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/07/11</span>
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/08/03</span>
             </div>
             <!-- tags  -->
             
             <div class="abstract-tags">
     
-        <a class="post-tag" href="javascript:void(0);" data-tags="汇编">汇编</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href="/2019/powershell-attack.html">
-            
-                <span>PowerShell攻击技术</span>
-        </a>
-        <div class="abstract-content">
-            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>在渗透测试中，PowerShell起到很重要的作用。PowerShell的可扩展性和其强大的功能让微软操作系统的可控制程度上升到了一个前所未有的等级。简单地说，Powershell 是运行在windows机器上实现系统和应用程序管理自动化的命令行脚本环境，而它可以算是颠覆了传统的命令行提示符-cmd.exe。一旦攻击者可以在一台计算机上运行代码，就会下载PowerShell脚本文件(.ps1)到磁盘中执行，甚至无需写到磁盘中执行，直接在内存中运行。
-        </p></div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/05/02</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class="abstract-tags">
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags="渗透测试">渗透测试</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags="powershell">powershell</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href="/2018/vulnhub-ch4inrulz1-0-1.html">
-            
-                <span>Vulnhub渗透笔记之ch4inrulz:1.0.1</span>
-        </a>
-        <div class="abstract-content">
-            <h2 id="题目背景："><a href="#题目背景：" class="headerlink" title="题目背景："></a>题目背景：</h2><p><img src="/images/ch4inrulz/1.png" alt><br>
-        </p></div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/10/05</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class="abstract-tags">
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags="vulnhub">vulnhub</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href="/2018/vulnhub-rotating-fortress101.html">
-            
-                <span>Vulnhub渗透笔记之Rotating Fortress:1.0.1(上)</span>
-        </a>
-        <div class="abstract-content">
-            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>刚开始以为这只是个普通的题目，嗯，心想经历了这么多套路，这肯定也没什么的。但事实证明我错了。出题人的脑洞是真的大，触及到知识盲区的时候，也是毫无办法。勉强拿到第四个flag。剩下的真的是参考了大神的解法。
-        </p></div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/10/03</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class="abstract-tags">
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags="vulnhub">vulnhub</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href="/2018/vulnhub-lampiao1.html">
-            
-                <span>VulnHub渗透笔记之Lampio1</span>
-        </a>
-        <div class="abstract-content">
-            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>很简单的一题，用的还是老套路，给人的惊喜不是很多。<br><img src="/images/lampiao/1.png" alt>
-        </p></div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/10/02</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class="abstract-tags">
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags="vulnhub">vulnhub</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href="/2018/vulnhub-wankada1.html">
-            
-                <span>Vulnhub渗透笔记之wankanda1</span>
-        </a>
-        <div class="abstract-content">
-            <h2 id="新的任务"><a href="#新的任务" class="headerlink" title="新的任务"></a>新的任务</h2><p>一个新的“振金”市场将在暗网上出现。你的目标：拿到root文件里包含矿山的精确定位。<br><img src="/images/wankanda1/1.png" alt>
-        </p></div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/10/01</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class="abstract-tags">
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags="vulnhub">vulnhub</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href="/2018/vulnhub-node1.html">
-            
-                <span>Vulnhub渗透笔记之Node:1</span>
-        </a>
-        <div class="abstract-content">
-            <p>在漫长的拖延和犹豫之后，终于打算向vulnhub“下手”了，很早就打算把vulnhub上的题刷一遍。Vulnhub确实是一个非常不错的网站，上面的靶机都是非常值得探索的。然后对于渗透测试来讲，个人感觉动手实践才是快速提高的最有效的方法，之前的阶段一直停留在理论学习，所以今后还是要多动手操作呀。接下来开始进入正题：本次记录的是对vulnhub上的node1虚拟机的渗透过程。
-        </p></div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/09/30</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class="abstract-tags">
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags="vulnhub">vulnhub</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href="/2018/The-mathematics-of-cryptography.html">
-            
-                <span>浅谈密码学中的数学基础</span>
-        </a>
-        <div class="abstract-content">
-            <p>&emsp;&emsp;密码学研究的是一种将信息隐藏的方法。在双方信息交互中，如果不想自己信息中的内容被其他任何无关的人看到，那就必须使用密码进行加密。密码学是用来保证信息安全的一种必要的手段，可以这样说，没有密码学的存在，信息安全也就成了空谈。
-        </p></div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/09/24</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class="abstract-tags">
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags="密码学">密码学</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href="/2018/linux-rookit.html">
-            
-                <span>Linux后门检测与系统恢复</span>
-        </a>
-        <div class="abstract-content">
-            <p>小白是某公司的Linux系统管理员。某天小白突然觉得公司的机器存在异常，并经常有被人监控的感觉。于是他通过分析日志、监控网络通信等手段发现该系统有很大的可能被黑客入侵并留了rootkit后门。
-        </p></div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/09/16</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class="abstract-tags">
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags="linux">linux</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags="rootkit">rootkit</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href="/2018/HistoryofMCD.html">
-            
-                <span>恶意代码发展简史</span>
-        </a>
-        <div class="abstract-content">
-            <p>1977年夏天，作家托马斯•捷•瑞安出版了一本名为《P-1的春天》的科幻小说，作者在书中描写了一种可以在计算机中互相传染的病毒，这种病毒最后控制了 7,000 台计算机，造成了一场灾难。这本书曾在美国一度畅销，但在当时的人们看来，都觉得书中所写的事情是几十年甚至是几百年后都不会发生的。然而就在几年后，虚拟科幻小说世界中的东西，竟然真的成为了现实中电脑使用者的噩梦。
-        </p></div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/09/10</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class="abstract-tags">
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags="恶意代码">恶意代码</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags="计算机病毒">计算机病毒</a>
+        <a class="post-tag" href="javascript:void(0);" data-tags="资源">资源</a>
     
 </div>
             
@@ -639,155 +358,11 @@
     <!-- paginator  -->
     
     <nav class="page-nav">
-        <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/">NEXT &#62;</a>
+        <a class="extend prev" rel="prev" href="/archives/page/2/">&#60; PREV</a><a class="page-number" href="/archives/">1</a><a class="page-number" href="/archives/page/2/">2</a><span class="page-number current">3</span>
     </nav>
     
 </main>
             <!-- profile -->
-            
-            <div class="profile">
-    <img class="profile-avatar" src="/avatar/3.jpg">
-    <div class="profile-name">王六六</div>
-    
-    <div class="profile-signature">
-        It&#39;s raining cats and dogs.
-    </div>
-    
-    
-    <div class="profile-social">
-        
-    
-        
-            
-                <a href="mailto:wangji19971013@qq.com" class="iconfont-archer email" title="email"></a>
-            
-        
-    
-        
-            
-                <a href="//github.com/wang66just6" class="iconfont-archer github" target="_blank" title="github"></a>
-            
-        
-    
-        
-            
-                <span class="iconfont-archer wechat" title="wechat">
-                  
-                  <img class="profile-qr" src="/assets/wechat.png">
-                </span>
-            
-        
-    
-        
-            
-                <span class="iconfont-archer qq" title="qq">
-                  
-                  <img class="profile-qr" src="/assets/qq.jpg">
-                </span>
-            
-        
-    
-        
-            
-                <a href="//weibo.com/wang66just6" class="iconfont-archer weibo" target="_blank" title="weibo"></a>
-            
-        
-    
-        
-    
-        
-    
-        
-    
-        
-            
-                <a href="//twitter.com/wang66just6" class="iconfont-archer twitter" target="_blank" title="twitter"></a>
-            
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-
-    </div>
-    
-    
-        <div class="friends">
-            <div>FRIENDS</div>
-            
-                
-                    <span>
-                        <a href="http://treey567.com" target="_black">Treey567</a>
-                    </span>
-                
-            
-                
-                    <span>
-                        <a href="//www.shentoushi.top" target="_black">渗透师</a>
-                    </span>
-                
-            
-                
-                    <span>
-                        <a href="http://blog.six-gov.cn" target="_black">North tea</a>
-                    </span>
-                
-            
-                
-                    <span>
-                        <a href="//www.si1eo.top" target="_black">Si1eo's Blog</a>
-                    </span>
-                
-            
-                
-                    <span>
-                        <a href="//imcaiji.xyz" target="_black">Minecraft</a>
-                    </span>
-                
-            
-                
-                    <span>
-                        <a href="//www.leouranus.cn" target="_black">Leo</a>
-                    </span>
-                
-            
-                
-                    <span>
-                        <a href="//www.tutugreen.com" target="_black">丫明の小站</a>
-                    </span>
-                
-            
-                
-                    <span>
-                        <a href="//www.barrypan.cn" target="_black">barrypan</a>
-                    </span>
-                
-            
-        </div>
-    
-    
-        <div class="about-me">
-            <a href="/about">ABOUT ME</a>
-        </div>
-    
-</div>
             
         </div>
         <footer class="footer footer-unloaded">
