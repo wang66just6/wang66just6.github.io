@@ -1,0 +1,1512 @@
+<!DOCTYPE html>
+<html>
+    <!-- title -->
+
+
+
+
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="author" content="王六六">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="王六六">
+    <meta name="keywords" content="王六六的博客 | 王六六">
+    <meta name="description" content="It's raining cats and dogs.">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>正则表达式学习[转载] · wang66&#39;s blog</title>
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s 1;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+</style>
+
+    <link rel="preload" href="/css/style.css?v=20180824" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="stylesheet" href="/css/mobile.css?v=20180824" media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+(function( w ){
+	"use strict";
+	// rel=preload support test
+	if( !w.loadCSS ){
+		w.loadCSS = function(){};
+	}
+	// define on the loadCSS obj
+	var rp = loadCSS.relpreload = {};
+	// rel=preload feature support test
+	// runs once and returns a function for compat purposes
+	rp.support = (function(){
+		var ret;
+		try {
+			ret = w.document.createElement( "link" ).relList.supports( "preload" );
+		} catch (e) {
+			ret = false;
+		}
+		return function(){
+			return ret;
+		};
+	})();
+
+	// if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+	// then change that media back to its intended value on load
+	rp.bindMediaToggle = function( link ){
+		// remember existing media attr for ultimate state, or default to 'all'
+		var finalMedia = link.media || "all";
+
+		function enableStylesheet(){
+			link.media = finalMedia;
+		}
+
+		// bind load handlers to enable media
+		if( link.addEventListener ){
+			link.addEventListener( "load", enableStylesheet );
+		} else if( link.attachEvent ){
+			link.attachEvent( "onload", enableStylesheet );
+		}
+
+		// Set rel and non-applicable media type to start an async request
+		// note: timeout allows this to happen async to let rendering continue in IE
+		setTimeout(function(){
+			link.rel = "stylesheet";
+			link.media = "only x";
+		});
+		// also enable media after 3 seconds,
+		// which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+		setTimeout( enableStylesheet, 3000 );
+	};
+
+	// loop through link elements in DOM
+	rp.poly = function(){
+		// double check this to prevent external calls from running
+		if( rp.support() ){
+			return;
+		}
+		var links = w.document.getElementsByTagName( "link" );
+		for( var i = 0; i < links.length; i++ ){
+			var link = links[ i ];
+			// qualify links to those with rel=preload and as=style attrs
+			if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+				// prevent rerunning on link
+				link.setAttribute( "data-loadcss", true );
+				// bind listeners to toggle media back
+				rp.bindMediaToggle( link );
+			}
+		}
+	};
+
+	// if unsupported, run the polyfill
+	if( !rp.support() ){
+		// run once at least
+		rp.poly();
+
+		// rerun poly on an interval until onload
+		var run = w.setInterval( rp.poly, 500 );
+		if( w.addEventListener ){
+			w.addEventListener( "load", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		} else if( w.attachEvent ){
+			w.attachEvent( "onload", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		}
+	}
+
+
+	// commonjs
+	if( typeof exports !== "undefined" ){
+		exports.loadCSS = loadCSS;
+	}
+	else {
+		w.loadCSS = loadCSS;
+	}
+}( typeof global !== "undefined" ? global : this ) );
+</script>
+
+    <link rel="icon" href="/assets/favicon.ico">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script">
+    <link rel="preload" href="/scripts/main.js" as="script">
+    <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
+    <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
+    
+    <!-- fancybox -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/">Still Shines.</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">正则表达式学习[转载]</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href="/">Still Shines.</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro" style="height:50vh;">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            正则表达式学习[转载]
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class="post-intro-tags">
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="开发">开发</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="正则表达式">正则表达式</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>Word count: <span class="post-count">3.5k</span> / Reading time: <span class="post-count">14 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2019/09/12</span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+        <script>
+ 
+  // get user agent
+  var browser = {
+    versions: function () {
+      var u = window.navigator.userAgent;
+      return {
+        userAgent: u,
+        trident: u.indexOf('Trident') > -1, //IE内核
+        presto: u.indexOf('Presto') > -1, //opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+        iPad: u.indexOf('iPad') > -1, //是否为iPad
+        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+      };
+    }()
+  }
+  console.log("userAgent:" + browser.versions.userAgent);
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded');
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in');
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb(){
+    if (browser.versions.uc) {
+      console.log("UCBrowser");
+      fontLoaded();
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular']
+        },
+        loading: function () {  //所有字体开始加载
+          // console.log('loading');
+        },
+        active: function () {  //所有字体已渲染
+          fontLoaded();
+        },
+        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout');
+          fontLoaded();
+        },
+        timeout: 5000 // Set the timeout to two seconds
+      });
+    }
+  }
+
+  function asyncErr(){
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (cb) { o.addEventListener('load', function (e) { cb(null, e); }, false); }
+    if (err) { o.addEventListener('error', function (e) { err(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+
+  var asyncLoadWithFallBack = function(arr, success, reject) {
+      var currReject = function(){
+        reject()
+        arr.shift()
+        if(arr.length)
+          async(arr[0], success, currReject)
+        }
+
+      async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack([
+    "https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", 
+    "https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js",
+    "/lib/webfontloader.min.js"
+  ], asyncCb, asyncErr)
+</script>        
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <h2 id="什么是正则表达式"><a href="#什么是正则表达式" class="headerlink" title="什么是正则表达式?"></a>什么是正则表达式?</h2><p>正则表达式是一组由字母和符号组成的特殊文本, 它可以用来从文本中找出满足你想要的格式的句子.一个正则表达式是在一个主体字符串中从左到右匹配字符串时的一种样式.例如”Regular expression”是一个完整的句子, 但我们常使用缩写的术语”regex”或”regexp”.正则表达式可以用来替换文本中的字符串,验证形式,提取字符串等等.<a id="more"></a></p>
+<p>想象你正在写一个应用, 然后你想设定一个用户命名的规则, 让用户名包含字符,数字,下划线和连字符,以及限制字符的个数,好让名字看起来没那么丑.我们使用以下正则表达式来验证一个用户名:</p>
+<p><br><br></p>
+<p align="center"><br>  <img src="http://img.treeyhub.com/wang66/regexp-cn.png" alt="Regular expression"><br></p>
+
+<p>以上的正则表达式可以接受 <code>john_doe</code>, <code>jo-hn_doe</code>, <code>john12_as</code>.但不匹配<code>Jo</code>, 因为它包含了大写的字母而且太短了.</p>
+<h1 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h1><ul>
+<li><a href="#1-基本匹配">1. 基本匹配</a></li>
+<li><a href="#2-元字符">2. 元字符</a><ul>
+<li><a href="#21-点运算符-">2.1 点运算符 .</a></li>
+<li><a href="#22-字符集">2.2 字符集</a><ul>
+<li><a href="#221-否定字符集">2.2.1 否定字符集</a><ul>
+<li><a href="#23-重复次数">2.3 重复次数</a></li>
+</ul>
+</li>
+<li><a href="#231--号">2.3.1 * 号</a></li>
+<li><a href="#232--号">2.3.2   号</a></li>
+<li><a href="#233--号">2.3.3 ? 号</a><ul>
+<li><a href="#24--号">2.4 {} 号</a></li>
+<li><a href="#25--特征标群">2.5 (…) 特征标群</a></li>
+<li><a href="#26--或运算符">2.6 | 或运算符</a></li>
+<li><a href="#27-转码特殊字符">2.7 转码特殊字符</a></li>
+<li><a href="#28-锚点">2.8 锚点</a></li>
+</ul>
+</li>
+<li><a href="#281--号">2.8.1 ^ 号</a></li>
+<li><a href="#282--号">2.8.2 $ 号</a><ul>
+<li><a href="#3-简写字符集">3. 简写字符集</a></li>
+<li><a href="#4-前后关联约束前后预查">4. 前后关联约束(前后预查)</a></li>
+<li><a href="#41--前置约束存在">4.1 ?=… 前置约束(存在)</a></li>
+<li><a href="#42--前置约束-排除">4.2 ?!… 前置约束-排除</a></li>
+<li><a href="#43---后置约束-存在">4.3 ?&lt;= … 后置约束-存在</a></li>
+<li><a href="#44--后置约束-排除">4.4 ?&lt;!… 后置约束-排除</a></li>
+<li><a href="#5-标志">5. 标志</a></li>
+<li><a href="#51-忽略大小写-case-insensitive">5.1 忽略大小写 (Case Insensitive)</a></li>
+<li><a href="#52-全局搜索-global-search">5.2 全局搜索 (Global search)</a></li>
+<li><a href="#53-多行修饰符-multiline">5.3 多行修饰符 (Multiline)</a></li>
+<li><a href="#额外补充">额外补充</a></li>
+<li><a href="#贡献">贡献</a></li>
+<li><a href="#许可证">许可证</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="1-基本匹配"><a href="#1-基本匹配" class="headerlink" title="1. 基本匹配"></a>1. 基本匹配</h2><p>正则表达式其实就是在执行搜索时的格式, 它由一些字母和数字组合而成.<br>例如: 一个正则表达式 <code>the</code>, 它表示一个规则: 由字母<code>t</code>开始,接着是<code>h</code>,再接着是<code>e</code>.</p>
+<pre>
+"the" => The fat cat sat on <a href="#learn-regex"><strong>the</strong></a> mat. 
+</pre>
+
+<p><a href="https://regex101.com/r/dmRygT/1" target="_blank" rel="noopener">在线练习</a></p>
+<p>正则表达式<code>123</code>匹配字符串<code>123</code>. 它逐个字符的与输入的正则表达式做比较.</p>
+<p>正则表达式是大小写敏感的, 所以<code>The</code>不会匹配<code>the</code>.</p>
+<pre>
+"The" => <a href="#learn-regex"><strong>The</strong></a> fat cat sat on the mat.
+</pre>
+
+<p><a href="https://regex101.com/r/1paXsy/1" target="_blank" rel="noopener">在线练习</a></p>
+<h2 id="2-元字符"><a href="#2-元字符" class="headerlink" title="2. 元字符"></a>2. 元字符</h2><p>正则表达式主要依赖于元字符.<br>元字符不代表他们本身的字面意思, 他们都有特殊的含义. 一些元字符写在方括号中的时候有一些特殊的意思. 以下是一些元字符的介绍:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">元字符</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">.</td>
+<td>句号匹配任意单个字符除了换行符.</td>
+</tr>
+<tr>
+<td style="text-align:center">[ ]</td>
+<td>字符种类. 匹配方括号内的任意字符.</td>
+</tr>
+<tr>
+<td style="text-align:center">[^ ]</td>
+<td>否定的字符种类. 匹配除了方括号里的任意字符</td>
+</tr>
+<tr>
+<td style="text-align:center">*</td>
+<td>匹配&gt;=0个重复的在*号之前的字符.</td>
+</tr>
+<tr>
+<td style="text-align:center">+</td>
+<td>匹配&gt;1个重复的+号前的字符.</td>
+</tr>
+<tr>
+<td style="text-align:center">?</td>
+<td>标记?之前的字符为可选.</td>
+</tr>
+<tr>
+<td style="text-align:center">{n,m}</td>
+<td>匹配num个中括号之前的字符 (n &lt;= num &lt;= m).</td>
+</tr>
+<tr>
+<td style="text-align:center">(xyz)</td>
+<td>字符集, 匹配与 xyz 完全相等的字符串.</td>
+</tr>
+<tr>
+<td style="text-align:center">&#124;</td>
+<td>或运算符,匹配符号前或后的字符.</td>
+</tr>
+<tr>
+<td style="text-align:center">&#92;</td>
+<td>转义字符,用于匹配一些保留的字符 <code>[ ] ( ) { } . * + ? ^ $ \ &#124;</code></td>
+</tr>
+<tr>
+<td style="text-align:center">^</td>
+<td>从开始行开始匹配.</td>
+</tr>
+<tr>
+<td style="text-align:center">$</td>
+<td>从末端开始匹配.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-1-点运算符"><a href="#2-1-点运算符" class="headerlink" title="2.1 点运算符 ."></a>2.1 点运算符 <code>.</code></h2><p><code>.</code>是元字符中最简单的例子.<br><code>.</code>匹配任意单个字符, 但不匹配换行符.<br>例如, 表达式<code>.ar</code>匹配一个任意字符后面跟着是<code>a</code>和<code>r</code>的字符串.</p>
+<pre>
+".ar" => The <a href="#learn-regex"><strong>car</strong></a> <a href="#learn-regex"><strong>par</strong></a>ked in the <a href="#learn-regex"><strong>gar</strong></a>age.
+</pre>
+
+<p><a href="https://regex101.com/r/xc9GkU/1" target="_blank" rel="noopener">在线练习</a></p>
+<h2 id="2-2-字符集"><a href="#2-2-字符集" class="headerlink" title="2.2 字符集"></a>2.2 字符集</h2><p>字符集也叫做字符类.<br>方括号用来指定一个字符集.<br>在方括号中使用连字符来指定字符集的范围.<br>在方括号中的字符集不关心顺序.<br>例如, 表达式<code>[Tt]he</code> 匹配 <code>the</code> 和 <code>The</code>.</p>
+<pre>
+"[Tt]he" => <a href="#learn-regex"><strong>The</strong></a> car parked in <a href="#learn-regex"><strong>the</strong></a> garage.
+</pre>
+
+<p><a href="https://regex101.com/r/2ITLQ4/1" target="_blank" rel="noopener">在线练习</a></p>
+<p>方括号的句号就表示句号.<br>表达式 <code>ar[.]</code> 匹配 <code>ar.</code>字符串</p>
+<pre>
+"ar[.]" => A garage is a good place to park a c<a href="#learn-regex"><strong>ar.</strong></a>
+</pre>
+
+<p><a href="https://regex101.com/r/wL3xtE/1" target="_blank" rel="noopener">在线练习</a></p>
+<h3 id="2-2-1-否定字符集"><a href="#2-2-1-否定字符集" class="headerlink" title="2.2.1 否定字符集"></a>2.2.1 否定字符集</h3><p>一般来说 <code>^</code> 表示一个字符串的开头, 但它用在一个方括号的开头的时候, 它表示这个字符集是否定的.<br>例如, 表达式<code>[^c]ar</code> 匹配一个后面跟着<code>ar</code>的除了<code>c</code>的任意字符.</p>
+<pre>
+"[^c]ar" => The car <a href="#learn-regex"><strong>par</strong></a>ked in the <a href="#learn-regex"><strong>gar</strong></a>age.
+</pre>
+
+<p><a href="https://regex101.com/r/nNNlq3/1" target="_blank" rel="noopener">在线练习</a></p>
+<h2 id="2-3-重复次数"><a href="#2-3-重复次数" class="headerlink" title="2.3 重复次数"></a>2.3 重复次数</h2><p>后面跟着元字符 <code>+</code>, <code>*</code> or <code>?</code> 的, 用来指定匹配子模式的次数.<br>这些元字符在不同的情况下有着不同的意思.</p>
+<h3 id="2-3-1-号"><a href="#2-3-1-号" class="headerlink" title="2.3.1 * 号"></a>2.3.1 <code>*</code> 号</h3><p><code>*</code>号匹配 在<code>*</code>之前的字符出现<code>大于等于0</code>次.<br>例如, 表达式 <code>a*</code> 匹配以0或更多个a开头的字符, 因为有0个这个条件, 其实也就匹配了所有的字符. 表达式<code>[a-z]*</code> 匹配一个行中所有以小写字母开头的字符串.</p>
+<pre>
+"[a-z]*" => T<a href="#learn-regex"><strong>he</strong></a> <a href="#learn-regex"><strong>car</strong></a> <a href="#learn-regex"><strong>parked</strong></a> <a href="#learn-regex"><strong>in</strong></a> <a href="#learn-regex"><strong>the</strong></a> <a href="#learn-regex"><strong>garage</strong></a> #21.
+</pre>
+
+<p><a href="https://regex101.com/r/7m8me5/1" target="_blank" rel="noopener">在线练习</a></p>
+<p><code>*</code>字符和<code>.</code>字符搭配可以匹配所有的字符<code>.*</code>.<br><code>*</code>和表示匹配空格的符号<code>\s</code>连起来用, 如表达式<code>\s*cat\s*</code>匹配0或更多个空格开头和0或更多个空格结尾的cat字符串.</p>
+<pre>
+"\s*cat\s*" => The fat<a href="#learn-regex"><strong> cat </strong></a>sat on the <a href="#learn-regex">con<strong>cat</strong>enation</a>.
+</pre>
+
+<p><a href="https://regex101.com/r/gGrwuz/1" target="_blank" rel="noopener">在线练习</a></p>
+<h3 id="2-3-2-号"><a href="#2-3-2-号" class="headerlink" title="2.3.2 + 号"></a>2.3.2 <code>+</code> 号</h3><p><code>+</code>号匹配<code>+</code>号之前的字符出现 &gt;=1 次个字符.<br>例如表达式<code>c.+t</code> 匹配以首字母<code>c</code>开头以<code>t</code>结尾,中间跟着任意个字符的字符串.</p>
+<pre>
+"c.+t" => The fat <a href="#learn-regex"><strong>cat sat on the mat</strong></a>.
+</pre>
+
+<p><a href="https://regex101.com/r/Dzf9Aa/1" target="_blank" rel="noopener">在线练习</a></p>
+<h3 id="2-3-3-号"><a href="#2-3-3-号" class="headerlink" title="2.3.3 ? 号"></a>2.3.3 <code>?</code> 号</h3><p>在正则表达式中元字符 <code>?</code> 标记在符号前面的字符为可选, 即出现 0 或 1 次.<br>例如, 表达式 <code>[T]?he</code> 匹配字符串 <code>he</code> 和 <code>The</code>.</p>
+<pre>
+"[T]he" => <a href="#learn-regex"><strong>The</strong></a> car is parked in the garage.
+</pre>
+
+<p><a href="https://regex101.com/r/cIg9zm/1" target="_blank" rel="noopener">在线练习</a></p>
+<pre>
+"[T]?he" => <a href="#learn-regex"><strong>The</strong></a> car is parked in t<a href="#learn-regex"><strong>he</strong></a> garage.
+</pre>
+
+<p><a href="https://regex101.com/r/kPpO2x/1" target="_blank" rel="noopener">在线练习</a></p>
+<h2 id="2-4-号"><a href="#2-4-号" class="headerlink" title="2.4 {} 号"></a>2.4 <code>{}</code> 号</h2><p>在正则表达式中 <code>{}</code> 是一个量词, 常用来一个或一组字符可以重复出现的次数.<br>例如,  表达式 <code>[0-9]{2,3}</code> 匹配 2~3 位 0~9 的数字.</p>
+<pre>
+"[0-9]{2,3}" => The number was 9.<a href="#learn-regex"><strong>999</strong></a>7 but we rounded it off to <a href="#learn-regex"><strong>10</strong></a>.0.
+</pre>
+
+<p><a href="https://regex101.com/r/juM86s/1" target="_blank" rel="noopener">在线练习</a></p>
+<p>我们可以省略第二个参数.<br>例如, <code>[0-9]{2,}</code> 匹配至少两位 0~9 的数字.</p>
+<p>如果逗号也省略掉则表示重复固定的次数.<br>例如, <code>[0-9]{3}</code> 匹配3位数字</p>
+<pre>
+"[0-9]{2,}" => The number was 9.<a href="#learn-regex"><strong>9997</strong></a> but we rounded it off to <a href="#learn-regex"><strong>10</strong></a>.0.
+</pre>
+
+<p><a href="https://regex101.com/r/Gdy4w5/1" target="_blank" rel="noopener">在线练习</a></p>
+<pre>
+"[0-9]{3}" => The number was 9.<a href="#learn-regex"><strong>999</strong></a>7 but we rounded it off to 10.0.
+</pre>
+
+<p><a href="https://regex101.com/r/Sivu30/1" target="_blank" rel="noopener">在线练习</a></p>
+<h2 id="2-5-特征标群"><a href="#2-5-特征标群" class="headerlink" title="2.5 (...) 特征标群"></a>2.5 <code>(...)</code> 特征标群</h2><p>特征标群是一组写在 <code>(...)</code> 中的子模式. 例如之前说的 <code>{}</code> 是用来表示前面一个字符出现指定次数. 但如果在 <code>{}</code> 前加入特征标群则表示整个标群内的字符重复 N 次. 例如, 表达式 <code>(ab)*</code> 匹配连续出现 0 或更多个 <code>ab</code>.</p>
+<p>我们还可以在 <code>()</code> 中用或字符 <code>|</code> 表示或. 例如, <code>(c|g|p)ar</code> 匹配 <code>car</code> 或 <code>gar</code> 或 <code>par</code>.</p>
+<pre>
+"(c|g|p)ar" => The <a href="#learn-regex"><strong>car</strong></a> is <a href="#learn-regex"><strong>par</strong></a>ked in the <a href="#learn-regex"><strong>gar</strong></a>age.
+</pre>
+
+<p><a href="https://regex101.com/r/tUxrBG/1" target="_blank" rel="noopener">在线练习</a></p>
+<h2 id="2-6-或运算符"><a href="#2-6-或运算符" class="headerlink" title="2.6 | 或运算符"></a>2.6 <code>|</code> 或运算符</h2><p>或运算符就表示或, 用作判断条件.</p>
+<p>例如 <code>(T|t)he|car</code> 匹配 <code>(T|t)he</code> 或 <code>car</code>.</p>
+<pre>
+"(T|t)he|car" => <a href="#learn-regex"><strong>The</strong></a> <a href="#learn-regex"><strong>car</strong></a> is parked in <a href="#learn-regex"><strong>the</strong></a> garage.
+</pre>
+
+<p><a href="https://regex101.com/r/fBXyX0/1" target="_blank" rel="noopener">在线练习</a></p>
+<h2 id="2-7-转码特殊字符"><a href="#2-7-转码特殊字符" class="headerlink" title="2.7 转码特殊字符"></a>2.7 转码特殊字符</h2><p>反斜线 <code>\</code> 在表达式中用于转码紧跟其后的字符. 用于指定 <code>{ } [ ] / \ + * . $ ^ | ?</code> 这些特殊字符. 如果想要匹配这些特殊字符则要在其前面加上反斜线 <code>\</code>.</p>
+<p>例如 <code>.</code> 是用来匹配除换行符外的所有字符的. 如果想要匹配句子中的 <code>.</code> 则要写成 <code>\.</code>.</p>
+<pre>
+"(f|c|m)at\.?" => The <a href="#learn-regex"><strong>fat</strong></a> <a href="#learn-regex"><strong>cat</strong></a> sat on the <a href="#learn-regex"><strong>mat.</strong></a>
+</pre>
+
+<p><a href="https://regex101.com/r/DOc5Nu/1" target="_blank" rel="noopener">在线练习</a></p>
+<h2 id="2-8-锚点"><a href="#2-8-锚点" class="headerlink" title="2.8 锚点"></a>2.8 锚点</h2><p>在正则表达式中, 想要匹配指定开头或结尾的字符串就要使用到锚点. <code>^</code> 指定开头, <code>$</code> 指定结尾.</p>
+<h3 id="2-8-1-号"><a href="#2-8-1-号" class="headerlink" title="2.8.1 ^ 号"></a>2.8.1 <code>^</code> 号</h3><p><code>^</code> 用来检查匹配的字符串是否在所匹配字符串的开头.</p>
+<p>例如, 在 <code>abc</code> 中使用表达式 <code>^a</code> 会得到结果 <code>a</code>. 但如果使用 <code>^b</code> 将匹配不到任何结果. 应为在字符串 <code>abc</code> 中并不是以 <code>b</code> 开头.</p>
+<p>例如, <code>^(T|t)he</code> 匹配以 <code>The</code> 或 <code>the</code> 开头的字符串.</p>
+<pre>
+"(T|t)he" => <a href="#learn-regex"><strong>The</strong></a> car is parked in <a href="#learn-regex"><strong>the</strong></a> garage.
+</pre>
+
+<p><a href="https://regex101.com/r/5ljjgB/1" target="_blank" rel="noopener">在线练习</a></p>
+<pre>
+"^(T|t)he" => <a href="#learn-regex"><strong>The</strong></a> car is parked in the garage.
+</pre>
+
+<p><a href="https://regex101.com/r/jXrKne/1" target="_blank" rel="noopener">在线练习</a></p>
+<h3 id="2-8-2-号"><a href="#2-8-2-号" class="headerlink" title="2.8.2 $ 号"></a>2.8.2 <code>$</code> 号</h3><p>同理于 <code>^</code> 号, <code>$</code> 号用来匹配字符是否是最后一个.</p>
+<p>例如, <code>(at\.)$</code> 匹配以 <code>at.</code> 结尾的字符串.</p>
+<pre>
+"(at\.)" => The fat c<a href="#learn-regex"><strong>at.</strong></a> s<a href="#learn-regex"><strong>at.</strong></a> on the m<a href="#learn-regex"><strong>at.</strong></a>
+</pre>
+
+<p><a href="https://regex101.com/r/y4Au4D/1" target="_blank" rel="noopener">在线练习</a></p>
+<pre>
+"(at\.)$" => The fat cat. sat. on the m<a href="#learn-regex"><strong>at.</strong></a>
+</pre>
+
+<p><a href="https://regex101.com/r/t0AkOd/1" target="_blank" rel="noopener">在线练习</a></p>
+<h2 id="3-简写字符集"><a href="#3-简写字符集" class="headerlink" title="3. 简写字符集"></a>3. 简写字符集</h2><p>正则表达式提供一些常用的字符集简写. 如下:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">简写</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">.</td>
+<td>除换行符外的所有字符</td>
+</tr>
+<tr>
+<td style="text-align:center">\w</td>
+<td>匹配所有字母数字, 等同于 <code>[a-zA-Z0-9_]</code></td>
+</tr>
+<tr>
+<td style="text-align:center">\W</td>
+<td>匹配所有非字母数字, 即符号, 等同于: <code>[^\w]</code></td>
+</tr>
+<tr>
+<td style="text-align:center">\d</td>
+<td>匹配数字: <code>[0-9]</code></td>
+</tr>
+<tr>
+<td style="text-align:center">\D</td>
+<td>匹配非数字: <code>[^\d]</code></td>
+</tr>
+<tr>
+<td style="text-align:center">\s</td>
+<td>匹配所有空格字符, 等同于: <code>[\t\n\f\r\p{Z}]</code></td>
+</tr>
+<tr>
+<td style="text-align:center">\S</td>
+<td>匹配所有非空格字符: <code>[^\s]</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="4-前后关联约束-前后预查"><a href="#4-前后关联约束-前后预查" class="headerlink" title="4. 前后关联约束(前后预查)"></a>4. 前后关联约束(前后预查)</h2><p>前置约束和后置约束都属于<strong>非捕获簇</strong>(用于匹配不在匹配列表中的格式).<br>前置约束用于判断所匹配的格式是否在另一个确定的格式之后.</p>
+<p>例如, 我们想要获得所有跟在 <code>$</code> 符号后的数字, 我们可以使用正向向后约束 <code>(?&lt;=\$)[0-9\.]*</code>.<br>这个表达式匹配 <code>$</code> 开头, 之后跟着 <code>0,1,2,3,4,5,6,7,8,9,.</code> 这些字符可以出现大于等于 0 次.</p>
+<p>前后关联约束如下:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">符号</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">?=</td>
+<td>前置约束-存在</td>
+</tr>
+<tr>
+<td style="text-align:center">?!</td>
+<td>前置约束-排除</td>
+</tr>
+<tr>
+<td style="text-align:center">?&lt;=</td>
+<td>后置约束-存在</td>
+</tr>
+<tr>
+<td style="text-align:center">?&lt;!</td>
+<td>后置约束-排除</td>
+</tr>
+</tbody>
+</table>
+<h3 id="4-1-前置约束-存在"><a href="#4-1-前置约束-存在" class="headerlink" title="4.1 ?=... 前置约束(存在)"></a>4.1 <code>?=...</code> 前置约束(存在)</h3><p><code>?=...</code> 前置约束(存在), 表示第一部分表达式必须跟在 <code>?=...</code>定义的表达式之后.</p>
+<p>返回结果只瞒住第一部分表达式.<br>定义一个前置约束(存在)要使用 <code>()</code>. 在括号内部使用一个问号和等号: <code>(?=...)</code>. </p>
+<p>前置约束的内容写在括号中的等号后面.<br>例如, 表达式 <code>[T|t]he(?=\sfat)</code> 匹配 <code>The</code> 和 <code>the</code>, 在括号中我们又定义了前置约束(存在) <code>(?=\sfat)</code> ,即 <code>The</code> 和 <code>the</code> 后面紧跟着 <code>(空格)fat</code>.</p>
+<pre>
+"[T|t]he(?=\sfat)" => <a href="#learn-regex"><strong>The</strong></a> fat cat sat on the mat.
+</pre>
+
+<p><a href="https://regex101.com/r/IDDARt/1" target="_blank" rel="noopener">在线练习</a></p>
+<h3 id="4-2-前置约束-排除"><a href="#4-2-前置约束-排除" class="headerlink" title="4.2 ?!... 前置约束-排除"></a>4.2 <code>?!...</code> 前置约束-排除</h3><p>前置约束-排除 <code>?!</code> 用于筛选所有匹配结果, 筛选条件为 其后不跟随着定义的格式<br><code>前置约束-排除</code>  定义和 <code>前置约束(存在)</code> 一样, 区别就是 <code>=</code> 替换成 <code>!</code> 也就是 <code>(?!...)</code>. </p>
+<p>表达式 <code>[T|t]he(?!\sfat)</code> 匹配 <code>The</code> 和 <code>the</code>, 且其后不跟着 <code>(空格)fat</code>.</p>
+<pre>
+"[T|t]he(?!\sfat)" => The fat cat sat on <a href="#learn-regex"><strong>the</strong></a> mat.
+</pre>
+
+<p><a href="https://regex101.com/r/V32Npg/1" target="_blank" rel="noopener">在线练习</a></p>
+<h3 id="4-3-lt-后置约束-存在"><a href="#4-3-lt-后置约束-存在" class="headerlink" title="4.3 ?&lt;= ... 后置约束-存在"></a>4.3 <code>?&lt;= ...</code> 后置约束-存在</h3><p>后置约束-存在 记作<code>(?&lt;=...)</code> 用于筛选所有匹配结果, 筛选条件为 其前跟随着定义的格式.<br>例如, 表达式 <code>(?&lt;=[T|t]he\s)(fat|mat)</code> 匹配 <code>fat</code> 和 <code>mat</code>, 且其前跟着 <code>The</code> 或 <code>the</code>.</p>
+<pre>
+"(?<=[t|t]he\s)(fat|mat)" => The <a href="#learn-regex"><strong>fat</strong></a> cat sat on the <a href="#learn-regex"><strong>mat</strong></a>.
+</=[t|t]he\s)(fat|mat)"></pre>
+
+<p><a href="https://regex101.com/r/avH165/1" target="_blank" rel="noopener">在线练习</a></p>
+<h3 id="4-4-lt-后置约束-排除"><a href="#4-4-lt-后置约束-排除" class="headerlink" title="4.4 ?&lt;!... 后置约束-排除"></a>4.4 <code>?&lt;!...</code> 后置约束-排除</h3><p>后置约束-排除 记作 <code>(?&lt;!...)</code> 用于筛选所有匹配结果, 筛选条件为 其前不跟着定义的格式.<br>例如, 表达式 <code>(?&lt;!(T|t)he\s)(cat)</code> 匹配 <code>cat</code>, 且其前不跟着 <code>The</code> 或 <code>the</code>.</p>
+<pre>
+"(?&lt;![T|t]he\s)(cat)" => The cat sat on <a href="#learn-regex"><strong>cat</strong></a>.
+</pre>
+
+<p><a href="https://regex101.com/r/8Efx5G/1" target="_blank" rel="noopener">在线练习</a></p>
+<h2 id="5-标志"><a href="#5-标志" class="headerlink" title="5. 标志"></a>5. 标志</h2><p>标志也叫修饰语, 因为它可以用来修改表达式的搜索结果.<br>这些标志可以任意的组合使用, 它也是整个正则表达式的一部分.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">标志</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">i</td>
+<td>忽略大小写.</td>
+</tr>
+<tr>
+<td style="text-align:center">g</td>
+<td>全局搜索.</td>
+</tr>
+<tr>
+<td style="text-align:center">m</td>
+<td>多行的: 锚点元字符 <code>^</code> <code>$</code> 工作范围在每行的起始.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="5-1-忽略大小写-Case-Insensitive"><a href="#5-1-忽略大小写-Case-Insensitive" class="headerlink" title="5.1 忽略大小写 (Case Insensitive)"></a>5.1 忽略大小写 (Case Insensitive)</h3><p>修饰语 <code>i</code> 用于忽略大小写.<br>例如, 表达式 <code>/The/gi</code> 表示在全局搜索 <code>The</code>, 在后面的 <code>i</code> 将其条件修改为忽略大小写, 则变成搜索 <code>the</code> 和 <code>The</code>, <code>g</code> 表示全局搜索.</p>
+<pre>
+"The" => <a href="#learn-regex"><strong>The</strong></a> fat cat sat on the mat.
+</pre>
+
+<p><a href="https://regex101.com/r/dpQyf9/1" target="_blank" rel="noopener">在线练习</a></p>
+<pre>
+"/The/gi" => <a href="#learn-regex"><strong>The</strong></a> fat cat sat on <a href="#learn-regex"><strong>the</strong></a> mat.
+</pre>
+
+<p><a href="https://regex101.com/r/ahfiuh/1" target="_blank" rel="noopener">在线练习</a></p>
+<h3 id="5-2-全局搜索-Global-search"><a href="#5-2-全局搜索-Global-search" class="headerlink" title="5.2 全局搜索 (Global search)"></a>5.2 全局搜索 (Global search)</h3><p>修饰符 <code>g</code> 常用于执行一个全局搜索匹配, 即(不仅仅返回第一个匹配的, 而是返回全部).<br>例如, 表达式 <code>/.(at)/g</code> 表示搜索 任意字符(除了换行) + <code>at</code>, 并返回全部结果.</p>
+<pre>
+"/.(at)/" => The <a href="#learn-regex"><strong>fat</strong></a> cat sat on the mat.
+</pre>
+
+<p><a href="https://regex101.com/r/jnk6gM/1" target="_blank" rel="noopener">在线练习</a></p>
+<pre>
+"/.(at)/g" => The <a href="#learn-regex"><strong>fat</strong></a> <a href="#learn-regex"><strong>cat</strong></a> <a href="#learn-regex"><strong>sat</strong></a> on the <a href="#learn-regex"><strong>mat</strong></a>.
+</pre>
+
+<p><a href="https://regex101.com/r/dO1nef/1" target="_blank" rel="noopener">在线练习</a></p>
+<h3 id="5-3-多行修饰符-Multiline"><a href="#5-3-多行修饰符-Multiline" class="headerlink" title="5.3 多行修饰符 (Multiline)"></a>5.3 多行修饰符 (Multiline)</h3><p>多行修饰符 <code>m</code> 常用于执行一个多行匹配.</p>
+<p>像之前介绍的 <code>(^,$)</code> 用于检查格式是否是在待检测字符串的开头或结尾. 但我们如果想要它在每行的开头和结尾生效, 我们需要用到多行修饰符 <code>m</code>.</p>
+<p>例如, 表达式 <code>/at(.)?$/gm</code> 表示在待检测字符串每行的末尾搜索 <code>at</code>后跟一个或多个 <code>.</code> 的字符串, 并返回全部结果.</p>
+<pre>
+"/.at(.)?$/" => The fat
+                cat sat
+                on the <a href="#learn-regex"><strong>mat.</strong></a>
+</pre>
+
+<p><a href="https://regex101.com/r/hoGMkP/1" target="_blank" rel="noopener">在线练习</a></p>
+<pre>
+"/.at(.)?$/gm" => The <a href="#learn-regex"><strong>fat</strong></a>
+                  cat <a href="#learn-regex"><strong>sat</strong></a>
+                  on the <a href="#learn-regex"><strong>mat.</strong></a>
+</pre>
+
+<p><a href="https://regex101.com/r/E88WE2/1" target="_blank" rel="noopener">在线练习</a></p>
+<h2 id="额外补充"><a href="#额外补充" class="headerlink" title="额外补充"></a>额外补充</h2><ul>
+<li><p><em>正整数</em>: <code>^\d+$</code></p>
+</li>
+<li><p><em>负整数</em>: <code>^-\d+$</code></p>
+</li>
+<li><p><em>手机国家号</em>: <code>^+?[\d\s]{3,}$</code></p>
+</li>
+<li><p><em>手机号</em>: <code>^+?[\d\s]+(?[\d\s]{10,}$</code></p>
+</li>
+<li><p><em>整数</em>: <code>^-?\d+$</code></p>
+</li>
+<li><p><em>用户名</em>: <code>^[\w\d_.]{4,16}$</code></p>
+</li>
+<li><p><em>数字和英文字母</em>: <code>^[a-zA-Z0-9]*$</code></p>
+</li>
+<li><p><em>数字和应为字母和空格</em>: <code>^[a-zA-Z0-9 ]*$</code></p>
+</li>
+<li><p><em>密码</em>: <code>^(?=^.{6,}$)((?=.*[A-Za-z0-9])(?=.*[A-Z])(?=.*[a-z]))^.*$</code></p>
+</li>
+<li><p><em>邮箱</em>: <code>^([a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4})*$</code></p>
+</li>
+<li><p><em>IP4 地址</em>: <code>^((?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))*$</code></p>
+</li>
+<li><p><em>纯小写字母</em>: <code>^([a-z])*$</code></p>
+</li>
+<li><p><em>纯大写字母</em>: <code>^([A-Z])*$</code></p>
+</li>
+<li><p><em>URL</em>: <code>^(((http|https|ftp):\/\/)?([[a-zA-Z0-9]\-\.])+(\.)([[a-zA-Z0-9]]){2,4}([[a-zA-Z0-9]\/+=%&amp;_\.~?\-]*))*$</code></p>
+</li>
+<li><p><em>VISA 信用卡号</em>: <code>^(4[0-9]{12}(?:[0-9]{3})?)*$</code></p>
+</li>
+<li><p><em>日期 (MM/DD/YYYY)</em>: <code>^(0?[1-9]|1[012])[- /.](0?[1-9]|[12][0-9]|3[01])[- /.](19|20)?[0-9]{2}$</code></p>
+</li>
+<li><p><em>日期 (YYYY/MM/DD)</em>: <code>^(19|20)?[0-9]{2}[- /.](0?[1-9]|1[012])[- /.](0?[1-9]|[12][0-9]|3[01])$</code></p>
+</li>
+<li><p><em>MasterCard 信用卡号</em>: <code>^(5[1-5][0-9]{14})*$</code></p>
+</li>
+</ul>
+<h2 id="贡献"><a href="#贡献" class="headerlink" title="贡献"></a>贡献</h2><ul>
+<li>报告问题</li>
+<li>开放合并请求</li>
+<li>传播此文档</li>
+<li>直接和我联系 <a href="mailto:ziishaned@gmail.com" target="_blank" rel="noopener">ziishaned@gmail.com</a> 或 <a href="https://twitter.com/ziishaned" target="_blank" rel="noopener"><img src="https://img.shields.io/twitter/url/https/twitter.com/ziishaned.svg?style=social&amp;label=Follow%20%40ziishaned" alt="Twitter URL"></a></li>
+</ul>
+<h2 id="许可证"><a href="#许可证" class="headerlink" title="许可证"></a>许可证</h2><p>MIT &copy; <a href="https://twitter.com/ziishaned" target="_blank" rel="noopener">Zeeshan Ahmad</a></p>
+<blockquote>
+<p>原文来自：<a href="https://github.com/ziishaned/learn-regex" target="_blank" rel="noopener">https://github.com/ziishaned/learn-regex</a></p>
+</blockquote>
+
+    </article>
+    <!-- license  -->
+    
+        <div class="license-wrapper">
+            <p>原文作者: <a href="http://wang66.top">王六六</a>
+            </p><p>原文链接: <a href="http://wang66.top/2019/regexpstudy.html">http://wang66.top/2019/regexpstudy.html</a>
+            </p><p>发表日期: <a href="http://wang66.top/2019/regexpstudy.html">九月 12日 2019, 2:07:25 下午</a>
+            </p><p>版权声明: 本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
+        </div>
+    
+    <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href="/2019/port-knocking.html" title="端口敲门">
+                    <div class="prevTitle">端口敲门</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!--PC和WAP自适应版-->
+
+    <!--PC版-->
+
+
+    
+    
+    <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+    <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+    <div id="comment"></div>
+    <script>
+    new Valine({
+        el: '#comment' ,
+        notify: "true", 
+        verify: false, 
+        appId: "kBws43cqYyOkzvJkwd7PwiQ3-gzGzoHsz",
+        appKey: "IEbfjsLgEhcgfFfWicWSYdhf",
+        placeholder: "来评论一下吧~",
+        path:window.location.pathname, 
+		avatar: 'robohash' // (''/mp/identicon/monsterid/wavatar/robohash/retro/hide)
+    });
+    </script>
+
+
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:wangji19971013@qq.com" class="iconfont-archer email" title="email"></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/wang66just6" class="iconfont-archer github" target="_blank" title="github"></a>
+            
+        
+    
+        
+            
+                <span class="iconfont-archer wechat" title="wechat">
+                  
+                  <img class="profile-qr" src="/assets/wechat.png">
+                </span>
+            
+        
+    
+        
+            
+                <span class="iconfont-archer qq" title="qq">
+                  
+                  <img class="profile-qr" src="/assets/qq.jpg">
+                </span>
+            
+        
+    
+        
+            
+                <a href="//weibo.com/wang66just6" class="iconfont-archer weibo" target="_blank" title="weibo"></a>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a href="//twitter.com/wang66just6" class="iconfont-archer twitter" target="_blank" title="twitter"></a>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span><br>
+		<p>Hosted by <a href="https://pages.coding.me" style="font-weight: bold">Coding Pages</a></p>
+		<span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+	<script>
+		var now = new Date(); 
+		function createtime() { 
+			var grt= new Date("08/01/2018 12:00:00");//此处修改你的建站时间或者网站上线时间 
+			now.setTime(now.getTime()+250); 
+			days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); 
+			hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); 
+			if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); 
+			mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} 
+			seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); 
+			snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} 
+			document.getElementById("timeDate").innerHTML = "本站已安全运行 "+dnum+" 天 "; 
+			document.getElementById("times").innerHTML = hnum + " 小时 " + mnum + " 分 " + snum + " 秒"; 
+		} 
+	setInterval("createtime()",250);
+	</script>
+    </div>
+    <!-- 不蒜子  -->
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#什么是正则表达式"><span class="toc-number">1.</span> <span class="toc-text">什么是正则表达式?</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#目录"><span class="toc-number"></span> <span class="toc-text">目录</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-基本匹配"><span class="toc-number">1.</span> <span class="toc-text">1. 基本匹配</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-元字符"><span class="toc-number">2.</span> <span class="toc-text">2. 元字符</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-1-点运算符"><span class="toc-number">3.</span> <span class="toc-text">2.1 点运算符 .</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-2-字符集"><span class="toc-number">4.</span> <span class="toc-text">2.2 字符集</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-1-否定字符集"><span class="toc-number">4.1.</span> <span class="toc-text">2.2.1 否定字符集</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-3-重复次数"><span class="toc-number">5.</span> <span class="toc-text">2.3 重复次数</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-1-号"><span class="toc-number">5.1.</span> <span class="toc-text">2.3.1 * 号</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-2-号"><span class="toc-number">5.2.</span> <span class="toc-text">2.3.2 + 号</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-3-号"><span class="toc-number">5.3.</span> <span class="toc-text">2.3.3 ? 号</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-4-号"><span class="toc-number">6.</span> <span class="toc-text">2.4 {} 号</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-5-特征标群"><span class="toc-number">7.</span> <span class="toc-text">2.5 (...) 特征标群</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-6-或运算符"><span class="toc-number">8.</span> <span class="toc-text">2.6 | 或运算符</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-7-转码特殊字符"><span class="toc-number">9.</span> <span class="toc-text">2.7 转码特殊字符</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-8-锚点"><span class="toc-number">10.</span> <span class="toc-text">2.8 锚点</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-8-1-号"><span class="toc-number">10.1.</span> <span class="toc-text">2.8.1 ^ 号</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-8-2-号"><span class="toc-number">10.2.</span> <span class="toc-text">2.8.2 $ 号</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-简写字符集"><span class="toc-number">11.</span> <span class="toc-text">3. 简写字符集</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-前后关联约束-前后预查"><span class="toc-number">12.</span> <span class="toc-text">4. 前后关联约束(前后预查)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-前置约束-存在"><span class="toc-number">12.1.</span> <span class="toc-text">4.1 ?=... 前置约束(存在)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-前置约束-排除"><span class="toc-number">12.2.</span> <span class="toc-text">4.2 ?!... 前置约束-排除</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-lt-后置约束-存在"><span class="toc-number">12.3.</span> <span class="toc-text">4.3 ?&lt;= ... 后置约束-存在</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-4-lt-后置约束-排除"><span class="toc-number">12.4.</span> <span class="toc-text">4.4 ?&lt;!... 后置约束-排除</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-标志"><span class="toc-number">13.</span> <span class="toc-text">5. 标志</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-忽略大小写-Case-Insensitive"><span class="toc-number">13.1.</span> <span class="toc-text">5.1 忽略大小写 (Case Insensitive)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2-全局搜索-Global-search"><span class="toc-number">13.2.</span> <span class="toc-text">5.2 全局搜索 (Global search)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-3-多行修饰符-Multiline"><span class="toc-number">13.3.</span> <span class="toc-text">5.3 多行修饰符 (Multiline)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#额外补充"><span class="toc-number">14.</span> <span class="toc-text">额外补充</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#贡献"><span class="toc-number">15.</span> <span class="toc-text">贡献</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#许可证"><span class="toc-number">16.</span> <span class="toc-text">许可证</span></a></li></ol>
+    </div>
+    
+    <div class="back-top iconfont-archer">&#xe639;</div>
+    <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-panel-archives">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 21
+        </div>
+        <!-- search  -->
+        
+    </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2019 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/12</span><a class="archive-post-title" href="/2019/regexpstudy.html">正则表达式学习[转载]</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/08</span><a class="archive-post-title" href="/2019/port-knocking.html">端口敲门</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/19</span><a class="archive-post-title" href="/2019/Information-collection.html">信息收集总结</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/02</span><a class="archive-post-title" href="/2019/powershell-attack.html">PowerShell攻击技术</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2018 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/05</span><a class="archive-post-title" href="/2018/vulnhub-ch4inrulz1-0-1.html">Vulnhub渗透笔记之ch4inrulz:1.0.1</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/03</span><a class="archive-post-title" href="/2018/vulnhub-rotating-fortress101.html">Vulnhub渗透笔记之Rotating Fortress:1.0.1(上)</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/02</span><a class="archive-post-title" href="/2018/vulnhub-lampiao1.html">VulnHub渗透笔记之Lampio1</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/01</span><a class="archive-post-title" href="/2018/vulnhub-wankada1.html">Vulnhub渗透笔记之wankanda1</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/30</span><a class="archive-post-title" href="/2018/vulnhub-node1.html">Vulnhub渗透笔记之Node:1</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/24</span><a class="archive-post-title" href="/2018/The-mathematics-of-cryptography.html">浅谈密码学中的数学基础</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/16</span><a class="archive-post-title" href="/2018/linux-rookit.html">Linux后门检测与系统恢复</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/10</span><a class="archive-post-title" href="/2018/HistoryofMCD.html">恶意代码发展简史</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/02</span><a class="archive-post-title" href="/2018/soyouwantobeahacker.html">所以你想成为黑客？</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/01</span><a class="archive-post-title" href="/2018/website-attack.html">社会工程学攻击之网站钓鱼</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/30</span><a class="archive-post-title" href="/2018/汇编实验.html">汇编实验（一）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/27</span><a class="archive-post-title" href="/2018/隐写术之LSB隐写.html">隐写术之LSB隐写</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/27</span><a class="archive-post-title" href="/2018/一次恶意PHP脚本初探.html">一次恶意PHP脚本初探</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/25</span><a class="archive-post-title" href="/2018/ARP毒化.html">来自身边的安全威胁—ARP欺骗攻击</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/18</span><a class="archive-post-title" href="/2018/浅析缓冲区溢出.html">浅析缓冲区溢出</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/05</span><a class="archive-post-title" href="/2018/信息安全入门.html">信息安全入门</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/05</span><a class="archive-post-title" href="/2018/漏洞发布网站.html">漏洞发布网站</a>
+        </li>
+    
+    </ul></div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="局域网"><span class="iconfont-archer">&#xe606;</span>局域网</span>
+    
+        <span class="sidebar-tag-name" data-tags="arp"><span class="iconfont-archer">&#xe606;</span>arp</span>
+    
+        <span class="sidebar-tag-name" data-tags="中间人攻击"><span class="iconfont-archer">&#xe606;</span>中间人攻击</span>
+    
+        <span class="sidebar-tag-name" data-tags="恶意代码"><span class="iconfont-archer">&#xe606;</span>恶意代码</span>
+    
+        <span class="sidebar-tag-name" data-tags="计算机病毒"><span class="iconfont-archer">&#xe606;</span>计算机病毒</span>
+    
+        <span class="sidebar-tag-name" data-tags="渗透测试"><span class="iconfont-archer">&#xe606;</span>渗透测试</span>
+    
+        <span class="sidebar-tag-name" data-tags="linux"><span class="iconfont-archer">&#xe606;</span>linux</span>
+    
+        <span class="sidebar-tag-name" data-tags="rootkit"><span class="iconfont-archer">&#xe606;</span>rootkit</span>
+    
+        <span class="sidebar-tag-name" data-tags="密码学"><span class="iconfont-archer">&#xe606;</span>密码学</span>
+    
+        <span class="sidebar-tag-name" data-tags="资源"><span class="iconfont-archer">&#xe606;</span>资源</span>
+    
+        <span class="sidebar-tag-name" data-tags="powershell"><span class="iconfont-archer">&#xe606;</span>powershell</span>
+    
+        <span class="sidebar-tag-name" data-tags="vulnhub"><span class="iconfont-archer">&#xe606;</span>vulnhub</span>
+    
+        <span class="sidebar-tag-name" data-tags="开发"><span class="iconfont-archer">&#xe606;</span>开发</span>
+    
+        <span class="sidebar-tag-name" data-tags="正则表达式"><span class="iconfont-archer">&#xe606;</span>正则表达式</span>
+    
+        <span class="sidebar-tag-name" data-tags="社会工程学"><span class="iconfont-archer">&#xe606;</span>社会工程学</span>
+    
+        <span class="sidebar-tag-name" data-tags="知识"><span class="iconfont-archer">&#xe606;</span>知识</span>
+    
+        <span class="sidebar-tag-name" data-tags="php"><span class="iconfont-archer">&#xe606;</span>php</span>
+    
+        <span class="sidebar-tag-name" data-tags="webshell"><span class="iconfont-archer">&#xe606;</span>webshell</span>
+    
+        <span class="sidebar-tag-name" data-tags="汇编"><span class="iconfont-archer">&#xe606;</span>汇编</span>
+    
+        <span class="sidebar-tag-name" data-tags="缓冲区"><span class="iconfont-archer">&#xe606;</span>缓冲区</span>
+    
+        <span class="sidebar-tag-name" data-tags="隐写术"><span class="iconfont-archer">&#xe606;</span>隐写术</span>
+    
+        <span class="sidebar-tag-name" data-tags="lsb隐写"><span class="iconfont-archer">&#xe606;</span>lsb隐写</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br>
+    1、请确保node版本大于6.2<br>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+        <span class="sidebar-category-name" data-categories="资源"><span class="iconfont-archer">&#xe60a;</span>资源</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: "/",
+        author: "王六六"
+    }
+</script>
+    <!-- CDN failover -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ === 'undefined')
+        {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
+        }
+    </script>
+    <script src="/scripts/main.js"></script>
+    <!-- algolia -->
+    
+    <!-- busuanzi  -->
+    
+    <!-- CNZZ  -->
+    
+    </div>
+    <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
+     
+    </body>
+</html>
+
+
