@@ -258,7 +258,7 @@
                 
                 
                     <div class="post-intro-read">
-                        <span>Word count: <span class="post-count">2.3k</span> / Reading time: <span class="post-count">8 min</span></span>
+                        <span>Word count: <span class="post-count">2.2k</span> / Reading time: <span class="post-count">7 min</span></span>
                     </div>
                 
                 <div class="post-intro-meta">
@@ -386,7 +386,7 @@
 <p>翻译自 <a href="https://manybutfinite.com/post/how-the-kernel-manages-your-memory/（懒了，80以上机翻。。）" target="_blank" rel="noopener">https://manybutfinite.com/post/how-the-kernel-manages-your-memory/（懒了，80以上机翻。。）</a></p>
 </blockquote>
 <p>———————————————————<strong>禁止ZDDR白嫖结界</strong>———————————————————</p>
-<p>在讨论完进程在<a href="https://wang66.top/2020/Anatomy%20of%20a%20Program%20in%20Memory.html">虚拟地址中的布局后</a>之后，我们转向内核及其管理用户内存的机制。同样使用gonzo的程序举例：</p>
+<p>在讨论完进程在<a href="https://wang66.top/2020/Anatomy%20of%20a%20Program%20in%20Memory.html">虚拟地址中的布局后</a>之后，我们转向内核及其管理用户内存的机制。同样使用gonzo的程序举例：<br>&lt;–!more–&gt;</p>
 <p><img src="http://static.duartes.org/img/blogPosts/mm_struct.png" alt="Linux kernel mm_struct"></p>
 <p>Linux进程在内核中是以一个task_struct实例来实现的，称为进程描述符。task_struct的mm字段指向了内存描述符，即mm_struct，它是一份可执行程序的内存结构概要。如上图所示，它存储了内存各个内存端的起始位置和结束位置，进程使用的物理内存页的数量，进程使用的虚拟地址空间等信息。在内存描述符内部，还有两个内存管理的重要结构：虚拟内存区域（virtual memory areas）和页表（page tables）。Gonzo的内存区域如下图所示:</p>
 <p><img src="http://static.duartes.org/img/blogPosts/memoryDescriptorAndMemoryAreas.png" alt="Kernel memory descriptor and memory areas"></p>
@@ -399,8 +399,7 @@
 <p><img src="http://static.duartes.org/img/blogPosts/x86PageTableEntry4KB.png" alt="x86 Page Table Entry (PTE) for 4KB page"></p>
 <p>Linux具有读取和设置PTE中的每个标记的功能。位P告诉处理器虚拟页是否在物理内存中<strong>存在</strong>。如果清除(等于0)，则访问该页将触发页错误。请记住，当这个位为0时，<strong>内核可以对剩下的字段做它想做的任何事情</strong>。R/W旗代表读/写;如果清除，页面是只读的。U/S标志代表用户/管理员;如果清除，则该页面只能由内核访问。这些标志用于实现我们前面看到的只读内存和受保护的内核空间。</p>
 <p>位D和A分别表示<strong>脏页</strong>和<strong>访问</strong>。脏页面具有写操作，而已访问的页面具有写操作或读操作。两个标志都是粘性的:处理器只设置它们，它们必须由内核清除。最后，PTE存储与此页面对应的初始物理地址，并对齐到4KB。这个看起来很天真的字段是一些痛苦的根源，因为它将可寻址物理内存限制为<a href="http://www.google.com/search?hl=en&amp;q=2^20+*+2^12+字节+in+GB" target="_blank" rel="noopener">4 GB</a>。其他的PTE字段是另一天的，物理地址扩展也是。</p>
-<p>A virtual page is the unit of memory protection because all of its bytes share the U/S and R/W flags. However, the same physical memory could be mapped by different pages, possibly with different protection flags. Notice that execute permissions are nowhere to be seen in the PTE. This is why classic x86 paging allows code on the stack to be executed, making it easier to exploit stack buffer overflows (it’s still possible to exploit non-executable stacks using <a href="http://en.wikipedia.org/wiki/Return-to-libc_attack" target="_blank" rel="noopener">return-to-libc</a> and other techniques). This lack of a PTE no-execute flag illustrates a broader fact: permission flags in a VMA may or may not translate cleanly into hardware protection. The kernel does what it can, but ultimately the architecture limits what is possible.</p>
-<p>虚拟页面是内存保护单元，因为它的所有字节都共享U/S和R/W标志。但是，相同的物理内存可以由不同的页面映射，可能使用不同的保护标志。注意,执行权限在PTE不见了。这就是为什么经典x86分页允许代码执行到栈上,使其更容易利用堆栈缓冲区溢出(仍然可以利用非可执行的堆栈使用[return-to-libc] (<a href="http://en.wikipedia.org/wiki/Return-to-libc_attack)和其他技术)。这种PTE不执行标志的缺乏说明了一个更广泛的事实:VMA中的权限标志可能转换成硬件保护，也可能不转换成硬件保护。内核做它所能做的，但是最终架构限制了它所能做的。" target="_blank" rel="noopener">http://en.wikipedia.org/wiki/Return-to-libc_attack)和其他技术)。这种PTE不执行标志的缺乏说明了一个更广泛的事实:VMA中的权限标志可能转换成硬件保护，也可能不转换成硬件保护。内核做它所能做的，但是最终架构限制了它所能做的。</a></p>
+<p>虚拟页面是内存保护单元，因为它的所有字节都共享U/S和R/W标志。但是，相同的物理内存可以由不同的页面映射，可能使用不同的保护标志。注意,执行权限在PTE不见了。这就是为什么经典x86分页允许代码执行到栈上,使其更容易利用堆栈缓冲区溢出(仍然可以利用非可执行的堆栈使用return-to-libc和其他技术)。这种PTE不执行标志的缺乏说明了一个更广泛的事实:VMA中的权限标志可能转换成硬件保护，也可能不转换成硬件保护。内核做它所能做的，但是最终架构限制了它所能做的。</p>
 <p><img src="http://static.duartes.org/img/blogPosts/physicalAddressSpace.png" alt="Physical Address Space"></p>
 <p>在Linux中，每个页面帧都由一个<a href="http://lxr.linux.no/linux+v2.6.28/include/ Linux /mm_types.h#L32" target="_blank" rel="noopener">描述符</a>和<a href="http://lxr.linux.no/linux+v2.6.28/include/ Linux /page-flags.h#L14" target="_blank" rel="noopener">几个标记</a>跟踪。这些描述符一起跟踪计算机中的整个物理内存;每个页面帧的精确状态总是已知的。物理内存使用<a href="http://en.wikipedia.org/wiki/Buddy_memory_allocation" target="_blank" rel="noopener">buddy内存分配</a>技术进行管理，因此，如果可以通过buddy系统进行分配，那么页面框架是<strong>免费的</strong>。已分配的页帧可以是<strong>匿名的</strong>，保存程序数据，也可以是在<strong>页面缓存</strong>中，保存存储在文件或块设备中的数据。还有其他新奇的页面框架用法，但现在先不考虑它们。Windows有一个类似的页帧号(PFN)数据库来跟踪物理内存。</p>
 <p>让我们将虚拟内存区域、页表条目和页帧放在一起，以了解它们是如何工作的。下面是一个用户堆的例子:</p>
@@ -419,7 +418,7 @@
         <div class="license-wrapper">
             <p>原文作者: <a href="http://wang66.top">王六六</a>
             </p><p>原文链接: <a href="http://wang66.top/2020/How-The-Kernel-Manages-Your-Memory.html">http://wang66.top/2020/How-The-Kernel-Manages-Your-Memory.html</a>
-            </p><p>发表日期: <a href="http://wang66.top/2020/How-The-Kernel-Manages-Your-Memory.html">四月 24日 2020, 4:15:33 下午</a>
+            </p><p>发表日期: <a href="http://wang66.top/2020/How-The-Kernel-Manages-Your-Memory.html">April 24th 2020, 4:15:33 pm</a>
             </p><p>版权声明: 本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
         </div>
     
@@ -876,6 +875,10 @@ top:50vh;
     
     
     
+    
+    
+    
+    
     <div class="total-and-search">
         <div class="total-archive">
         Total : 23
@@ -1030,15 +1033,15 @@ top:50vh;
         <div class="sidebar-panel-tags">
     <div class="sidebar-tags-name">
     
+        <span class="sidebar-tag-name" data-tags="系统原理"><span class="iconfont-archer">&#xe606;</span>系统原理</span>
+    
+        <span class="sidebar-tag-name" data-tags="翻译"><span class="iconfont-archer">&#xe606;</span>翻译</span>
+    
         <span class="sidebar-tag-name" data-tags="局域网"><span class="iconfont-archer">&#xe606;</span>局域网</span>
     
         <span class="sidebar-tag-name" data-tags="arp"><span class="iconfont-archer">&#xe606;</span>arp</span>
     
         <span class="sidebar-tag-name" data-tags="中间人攻击"><span class="iconfont-archer">&#xe606;</span>中间人攻击</span>
-    
-        <span class="sidebar-tag-name" data-tags="系统原理"><span class="iconfont-archer">&#xe606;</span>系统原理</span>
-    
-        <span class="sidebar-tag-name" data-tags="翻译"><span class="iconfont-archer">&#xe606;</span>翻译</span>
     
         <span class="sidebar-tag-name" data-tags="恶意代码"><span class="iconfont-archer">&#xe606;</span>恶意代码</span>
     
@@ -1048,27 +1051,27 @@ top:50vh;
     
         <span class="sidebar-tag-name" data-tags="密码学"><span class="iconfont-archer">&#xe606;</span>密码学</span>
     
-        <span class="sidebar-tag-name" data-tags="powershell"><span class="iconfont-archer">&#xe606;</span>powershell</span>
-    
         <span class="sidebar-tag-name" data-tags="linux"><span class="iconfont-archer">&#xe606;</span>linux</span>
     
         <span class="sidebar-tag-name" data-tags="rootkit"><span class="iconfont-archer">&#xe606;</span>rootkit</span>
+    
+        <span class="sidebar-tag-name" data-tags="powershell"><span class="iconfont-archer">&#xe606;</span>powershell</span>
     
         <span class="sidebar-tag-name" data-tags="开发"><span class="iconfont-archer">&#xe606;</span>开发</span>
     
         <span class="sidebar-tag-name" data-tags="正则表达式"><span class="iconfont-archer">&#xe606;</span>正则表达式</span>
     
-        <span class="sidebar-tag-name" data-tags="资源，翻译"><span class="iconfont-archer">&#xe606;</span>资源，翻译</span>
-    
         <span class="sidebar-tag-name" data-tags="vulnhub"><span class="iconfont-archer">&#xe606;</span>vulnhub</span>
     
+        <span class="sidebar-tag-name" data-tags="资源，翻译"><span class="iconfont-archer">&#xe606;</span>资源，翻译</span>
+    
         <span class="sidebar-tag-name" data-tags="社会工程学"><span class="iconfont-archer">&#xe606;</span>社会工程学</span>
+    
+        <span class="sidebar-tag-name" data-tags="知识"><span class="iconfont-archer">&#xe606;</span>知识</span>
     
         <span class="sidebar-tag-name" data-tags="php"><span class="iconfont-archer">&#xe606;</span>php</span>
     
         <span class="sidebar-tag-name" data-tags="webshell"><span class="iconfont-archer">&#xe606;</span>webshell</span>
-    
-        <span class="sidebar-tag-name" data-tags="知识"><span class="iconfont-archer">&#xe606;</span>知识</span>
     
         <span class="sidebar-tag-name" data-tags="汇编"><span class="iconfont-archer">&#xe606;</span>汇编</span>
     
