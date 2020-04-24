@@ -332,6 +332,43 @@
     
     
     <article class="index-post">
+        <a class="abstract-title" href="/2020/Anatomy of a Program in Memory的副本.html">
+            
+                <span>How The Kernel Manages Your Memory</span>
+        </a>
+        <div class="abstract-content">
+            
+翻译自 https://manybutfinite.com/post/how-the-kernel-manages-your-memory/（懒了，80以上机翻。。）
+
+———————————————————禁止ZDDR白嫖结界———————————————————
+在讨论完进程在虚拟地址中的布局后之后，我们转向内核及其管理用户内存的机制。同样使用gonzo的程序举例：
+
+Linux进程在内核中是以一个task_struct实例来实现的，称为进程描述符。task_struct的mm字段指向了内存描述符，即mm_struct，它是一份可执行程序的内存结构概要。如上图所示，它存储了内存各个...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2020/04/24</span>
+            </div>
+            <!-- tags  -->
+            
+            <div class="abstract-tags">
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="系统原理">系统原理</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="翻译">翻译</a>
+    
+</div>
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
         <a class="abstract-title" href="/2020/Anatomy of a Program in Memory.html">
             
                 <span>Anatomy of a Program in Memory</span>
@@ -584,35 +621,6 @@
             <!-- date  -->
             <div class="abstract-date">
                 <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/10/01</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class="abstract-tags">
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags="vulnhub">vulnhub</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href="/2018/vulnhub-node1.html">
-            
-                <span>Vulnhub渗透笔记之Node:1</span>
-        </a>
-        <div class="abstract-content">
-            <p>在漫长的拖延和犹豫之后，终于打算向vulnhub“下手”了，很早就打算把vulnhub上的题刷一遍。Vulnhub确实是一个非常不错的网站，上面的靶机都是非常值得探索的。然后对于渗透测试来讲，个人感觉动手实践才是快速提高的最有效的方法，之前的阶段一直停留在理论学习，所以今后还是要多动手操作呀。接下来开始进入正题：本次记录的是对vulnhub上的node1虚拟机的渗透过程。
-        </p></div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/09/30</span>
             </div>
             <!-- tags  -->
             
@@ -1006,9 +1014,18 @@
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 22
+        Total : 23
         </div>
         <!-- search  -->
         
@@ -1021,6 +1038,11 @@
     
     <div class="archive-year"> 2020 </div>
     <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/24</span><a class="archive-post-title" href="/2020/Anatomy of a Program in Memory的副本.html">How The Kernel Manages Your Memory</a>
+        </li>
     
     
         <li class="archive-post-item">
@@ -1161,31 +1183,31 @@
     
         <span class="sidebar-tag-name" data-tags="中间人攻击"><span class="iconfont-archer">&#xe606;</span>中间人攻击</span>
     
-        <span class="sidebar-tag-name" data-tags="恶意代码"><span class="iconfont-archer">&#xe606;</span>恶意代码</span>
-    
-        <span class="sidebar-tag-name" data-tags="计算机病毒"><span class="iconfont-archer">&#xe606;</span>计算机病毒</span>
-    
         <span class="sidebar-tag-name" data-tags="系统原理"><span class="iconfont-archer">&#xe606;</span>系统原理</span>
     
         <span class="sidebar-tag-name" data-tags="翻译"><span class="iconfont-archer">&#xe606;</span>翻译</span>
     
-        <span class="sidebar-tag-name" data-tags="渗透测试"><span class="iconfont-archer">&#xe606;</span>渗透测试</span>
+        <span class="sidebar-tag-name" data-tags="恶意代码"><span class="iconfont-archer">&#xe606;</span>恶意代码</span>
+    
+        <span class="sidebar-tag-name" data-tags="计算机病毒"><span class="iconfont-archer">&#xe606;</span>计算机病毒</span>
     
         <span class="sidebar-tag-name" data-tags="密码学"><span class="iconfont-archer">&#xe606;</span>密码学</span>
+    
+        <span class="sidebar-tag-name" data-tags="渗透测试"><span class="iconfont-archer">&#xe606;</span>渗透测试</span>
+    
+        <span class="sidebar-tag-name" data-tags="powershell"><span class="iconfont-archer">&#xe606;</span>powershell</span>
     
         <span class="sidebar-tag-name" data-tags="linux"><span class="iconfont-archer">&#xe606;</span>linux</span>
     
         <span class="sidebar-tag-name" data-tags="rootkit"><span class="iconfont-archer">&#xe606;</span>rootkit</span>
     
+        <span class="sidebar-tag-name" data-tags="vulnhub"><span class="iconfont-archer">&#xe606;</span>vulnhub</span>
+    
         <span class="sidebar-tag-name" data-tags="开发"><span class="iconfont-archer">&#xe606;</span>开发</span>
     
         <span class="sidebar-tag-name" data-tags="正则表达式"><span class="iconfont-archer">&#xe606;</span>正则表达式</span>
     
-        <span class="sidebar-tag-name" data-tags="powershell"><span class="iconfont-archer">&#xe606;</span>powershell</span>
-    
         <span class="sidebar-tag-name" data-tags="资源，翻译"><span class="iconfont-archer">&#xe606;</span>资源，翻译</span>
-    
-        <span class="sidebar-tag-name" data-tags="vulnhub"><span class="iconfont-archer">&#xe606;</span>vulnhub</span>
     
         <span class="sidebar-tag-name" data-tags="社会工程学"><span class="iconfont-archer">&#xe606;</span>社会工程学</span>
     
@@ -1195,15 +1217,15 @@
     
         <span class="sidebar-tag-name" data-tags="webshell"><span class="iconfont-archer">&#xe606;</span>webshell</span>
     
+        <span class="sidebar-tag-name" data-tags="汇编"><span class="iconfont-archer">&#xe606;</span>汇编</span>
+    
         <span class="sidebar-tag-name" data-tags="缓冲区"><span class="iconfont-archer">&#xe606;</span>缓冲区</span>
+    
+        <span class="sidebar-tag-name" data-tags="资源"><span class="iconfont-archer">&#xe606;</span>资源</span>
     
         <span class="sidebar-tag-name" data-tags="隐写术"><span class="iconfont-archer">&#xe606;</span>隐写术</span>
     
         <span class="sidebar-tag-name" data-tags="lsb隐写"><span class="iconfont-archer">&#xe606;</span>lsb隐写</span>
-    
-        <span class="sidebar-tag-name" data-tags="资源"><span class="iconfont-archer">&#xe606;</span>资源</span>
-    
-        <span class="sidebar-tag-name" data-tags="汇编"><span class="iconfont-archer">&#xe606;</span>汇编</span>
     
     </div>
     <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
