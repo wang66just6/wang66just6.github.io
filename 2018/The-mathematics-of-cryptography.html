@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+<html>
+    <!-- title -->
+
+
+
+
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="author" content="王六六">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="王六六">
+    <meta name="keywords" content="王六六的博客 | 王六六">
+    <meta name="description" content="It's raining cats and dogs.">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>浅谈密码学中的数学基础 · wang66&#39;s blog</title>
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s 1;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+</style>
+
+    <link rel="preload" href="/css/style.css?v=20180824" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="stylesheet" href="/css/mobile.css?v=20180824" media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+(function( w ){
+	"use strict";
+	// rel=preload support test
+	if( !w.loadCSS ){
+		w.loadCSS = function(){};
+	}
+	// define on the loadCSS obj
+	var rp = loadCSS.relpreload = {};
+	// rel=preload feature support test
+	// runs once and returns a function for compat purposes
+	rp.support = (function(){
+		var ret;
+		try {
+			ret = w.document.createElement( "link" ).relList.supports( "preload" );
+		} catch (e) {
+			ret = false;
+		}
+		return function(){
+			return ret;
+		};
+	})();
+
+	// if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+	// then change that media back to its intended value on load
+	rp.bindMediaToggle = function( link ){
+		// remember existing media attr for ultimate state, or default to 'all'
+		var finalMedia = link.media || "all";
+
+		function enableStylesheet(){
+			link.media = finalMedia;
+		}
+
+		// bind load handlers to enable media
+		if( link.addEventListener ){
+			link.addEventListener( "load", enableStylesheet );
+		} else if( link.attachEvent ){
+			link.attachEvent( "onload", enableStylesheet );
+		}
+
+		// Set rel and non-applicable media type to start an async request
+		// note: timeout allows this to happen async to let rendering continue in IE
+		setTimeout(function(){
+			link.rel = "stylesheet";
+			link.media = "only x";
+		});
+		// also enable media after 3 seconds,
+		// which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+		setTimeout( enableStylesheet, 3000 );
+	};
+
+	// loop through link elements in DOM
+	rp.poly = function(){
+		// double check this to prevent external calls from running
+		if( rp.support() ){
+			return;
+		}
+		var links = w.document.getElementsByTagName( "link" );
+		for( var i = 0; i < links.length; i++ ){
+			var link = links[ i ];
+			// qualify links to those with rel=preload and as=style attrs
+			if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+				// prevent rerunning on link
+				link.setAttribute( "data-loadcss", true );
+				// bind listeners to toggle media back
+				rp.bindMediaToggle( link );
+			}
+		}
+	};
+
+	// if unsupported, run the polyfill
+	if( !rp.support() ){
+		// run once at least
+		rp.poly();
+
+		// rerun poly on an interval until onload
+		var run = w.setInterval( rp.poly, 500 );
+		if( w.addEventListener ){
+			w.addEventListener( "load", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		} else if( w.attachEvent ){
+			w.attachEvent( "onload", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		}
+	}
+
+
+	// commonjs
+	if( typeof exports !== "undefined" ){
+		exports.loadCSS = loadCSS;
+	}
+	else {
+		w.loadCSS = loadCSS;
+	}
+}( typeof global !== "undefined" ? global : this ) );
+</script>
+
+    <link rel="icon" href="/assets/favicon.ico">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script">
+    <link rel="preload" href="/scripts/main.js" as="script">
+    <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
+    <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
+    
+    <!-- fancybox -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/">Still Shines.</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">浅谈密码学中的数学基础</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href="/">Still Shines.</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro" style="height:50vh;">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            浅谈密码学中的数学基础
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class="post-intro-tags">
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="密码学">密码学</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>Word count: <span class="post-count">4.7k</span> / Reading time: <span class="post-count">18 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2018/09/24</span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+        <script>
+ 
+  // get user agent
+  var browser = {
+    versions: function () {
+      var u = window.navigator.userAgent;
+      return {
+        userAgent: u,
+        trident: u.indexOf('Trident') > -1, //IE内核
+        presto: u.indexOf('Presto') > -1, //opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+        iPad: u.indexOf('iPad') > -1, //是否为iPad
+        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+      };
+    }()
+  }
+  console.log("userAgent:" + browser.versions.userAgent);
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded');
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in');
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb(){
+    if (browser.versions.uc) {
+      console.log("UCBrowser");
+      fontLoaded();
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular']
+        },
+        loading: function () {  //所有字体开始加载
+          // console.log('loading');
+        },
+        active: function () {  //所有字体已渲染
+          fontLoaded();
+        },
+        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout');
+          fontLoaded();
+        },
+        timeout: 5000 // Set the timeout to two seconds
+      });
+    }
+  }
+
+  function asyncErr(){
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (cb) { o.addEventListener('load', function (e) { cb(null, e); }, false); }
+    if (err) { o.addEventListener('error', function (e) { err(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+
+  var asyncLoadWithFallBack = function(arr, success, reject) {
+      var currReject = function(){
+        reject()
+        arr.shift()
+        if(arr.length)
+          async(arr[0], success, currReject)
+        }
+
+      async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack([
+    "https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", 
+    "https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js",
+    "/lib/webfontloader.min.js"
+  ], asyncCb, asyncErr)
+</script>        
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <p>&emsp;&emsp;密码学研究的是一种将信息隐藏的方法。在双方信息交互中，如果不想自己信息中的内容被其他任何无关的人看到，那就必须使用密码进行加密。密码学是用来保证信息安全的一种必要的手段，可以这样说，没有密码学的存在，信息安全也就成了空谈。<a id="more"></a></p>
+<p><img src="http://www.bbvdd.com/d/201809242150180x9.jpeg" alt></p>
+<p>&emsp;&emsp;加密的方式从古典的凯撒密码开始发展至今，现在的加密法配合了数学、电子科技及工程学等，涉及更加广泛，应用在了包括信用卡、电脑密码、电子商务等多种领域。密码学协议使用了密码学的数学工具，后者是基于数学证明和可计算性的难度猜想之上。如现在普遍使用于各大银行的RSA公钥加密算法，就是基于一个十分简单的素数事实：将两个大素数相乘十分容易，但是想要对其乘积进行因式分解却是极其困难，因此可以将乘积公开作为公钥。</p>
+<p>&emsp;&emsp;如果密码学协议没有漏洞的话，那么黑客就只能从代码实现和其他方面进行攻击了。所以说密码学是网络安全的基石，而数学理论又是现如今密码学的基石，如果基石出现问题，那么黑客们就掌握了一种极其强大的工具。就如这几天一个爆炸的新闻引起了各学界的极大关注：菲尔兹奖和阿贝尔奖双料得主、英国皇家学会前主席迈克尔•阿蒂亚爵士宣称自己证明了黎曼猜想，他将在2018年9月24日的海德堡获奖者论坛上进行宣讲，届时或将给出黎曼猜想的全部证明过程。（黎曼猜想这里不详细描述了，感兴趣的朋友可以查下<a href="https://baike.baidu.com/item/%E9%BB%8E%E6%9B%BC%E5%81%87%E8%AE%BE/6891118?fromtitle=%E9%BB%8E%E6%9B%BC%E7%8C%9C%E6%83%B3&amp;fromid=1490284&amp;fr=aladdin" target="_blank" rel="noopener">百科</a></p>
+<p><img src="http://www.bbvdd.com/d/20180924215116k3g.jpeg" alt="黎曼函数"></p>
+<p>先不考虑这位数学家所说的可信度有多少（此时我们还不知道结果）。但让我们思考下，如果黎曼猜想得到完全证明，不光是数学界，如今的互联网也可能引发一场大震动——就如有篇文章中所说：“一旦黎曼猜想得证，基于大素数分解的非对称加密算法可能就走到了尽头，私钥加密、签名也就失去了意义。黑客更有可能派生出攻击RSA加密算法的规律。使现在几乎所有互联网的加密方式将不再安全，互联网将变成一个“裸奔”的世界。”</p>
+<p>当然以上也可能是个夸张的说法，对于黎曼猜想得到证明所造成的后果，我们这里不再继续讨论，旧事物总要被新事物所替代，一种加密算法的淘汰也只是时间问题，历史上也有曾加密算法被破解公开，而迫使人们研究新的加密方式。但数学工具也依旧会是密码学家们的强大的武器。</p>
+<p>这里我们简要地讲讲密码学的数学基础——一些基本的定理和算法，看看密码学家们是如何使用它们，构造出如今这宏伟的大厦的。</p>
+<h2 id="基础概念"><a href="#基础概念" class="headerlink" title="基础概念"></a>基础概念</h2><p>在具体讲算法之前，我们先要复习一下有关密码学的基础数学概念——整除、素数、最大公约数等。虽然其中有些知识是我们在小学就学到过的，但是不可否认它们的重要性，也是数论中的重要概念。</p>
+<h3 id="数的整除"><a href="#数的整除" class="headerlink" title="数的整除"></a>数的整除</h3><p>数的整除对于我们来说一定是再熟悉不过了，这里就不再赘述，直接给出定义。</p>
+<p>定义：设整数a和b，且a≠0，如果存在整数k使得b=ak，那么就说b能被a整除。记做a|b,或者说b是a的倍数。</p>
+<p>举个例子：3│15表示15能被3整除，或者3整除15；也可以说15是3的倍数，3是15的约数。</p>
+<p><strong>整除的一些性质：</strong><br><strong>性质一：</strong>对所有整数a（a≠0），a|0和a|a成立；同理，对任意整数b，1|b成立。<br><strong>性质二：</strong>如果a|b且b|c，则a|c成立。<br>证明：设存在k和l使得b=ak，c=bl成立，因此c=（kl）a，所有a|c。<br><strong>性质三：</strong> 如果a|b且a|c，则对所有的整数m和n，a|（mb+nc）成立。<br>证明：设b=ak1，c=ak2，那么mb+nc=a(mk1+nk2)，所以a|c。</p>
+<h3 id="素数（质数）"><a href="#素数（质数）" class="headerlink" title="素数（质数）"></a>素数（质数）</h3><p>素数简单的概括就是指比1大，且只能被1和它本身整除的数，下面是给出定义。</p>
+<p><strong>定义：</strong>如果整数p（p&gt;1）只能被1或者是它本身整除，而不能够被其它整数整除，则称整数p为素数。</p>
+<p>在密码学中，特别是公开密钥常用大的素数（512位甚至更长）。就是借用了素数的特性，而且它还存在因素分解唯一性定理：任何一个正整数都可以分解为几个素数的乘积，且该因素分解是唯一的，除非颠倒因子的顺序。所谓的因素分解就是指每一个整数都是由一个或几个素数的不同次幂相乘得来的，比如91=7×13；504=23×32×7。</p>
+<h3 id="互素（互质）关系"><a href="#互素（互质）关系" class="headerlink" title="互素（互质）关系"></a>互素（互质）关系</h3><p>如果两个正整数，除了1以外没有其他公因子，我们就称这两个数是互质关系（coprime）。比如6和21他们的公因子有：3和1，所以6和21就不是互质；而10和21只有一个公因子1，所以它们是互质关系。这说明，不是质数也可以构成互质关系。用公式表示就是gcd（a，b）=1，就称a和b互素。</p>
+<blockquote>
+<p>有以下几点可构成互质关系：<br>• 任意两个质数构成互质关系，比如13和61<br>• 1和任意一个自然数是都是互质关系，比如1和99<br>• p是大于1的整数，则p和p-1构成互质关系，比如57和56<br>• p是大于1的奇数，则p和p-2构成互质关系，比如17和15<br>• 如果两个数之中，较大的那个数是质数，则两者构成互质关系，比如97和10<br>• 一个数是质数，另一个数只要不是前者的倍数，两者就构成互质关系，比如3和10</p>
+</blockquote>
+<h3 id="最大公约数"><a href="#最大公约数" class="headerlink" title="最大公约数"></a>最大公约数</h3><p>接下来我们就要知道最大公约数的概念是什么。当然这也在我们小学学到过。</p>
+<p>最大公约数的定义<br>a和b的最大公约数（Greatest Common Divisor）是能够同时整除a和b的最大正整数，记为：</p>
+<blockquote>
+<p>gcd（a,b）</p>
+</blockquote>
+<p>例如：gcd（6,4）=2，gcd（5,7）=1。</p>
+<h3 id="模运算和同余"><a href="#模运算和同余" class="headerlink" title="模运算和同余"></a>模运算和同余</h3><p>模运算可以说是密码学中很重要的一个概念，其用处是无处不在，从奇偶数的判别到素数的判别，从模幂运算到最大公约数的求法，从费马定理到欧拉定理，从孙子问题到凯撒密码问题，从RSA密钥到椭圆曲线。无不充斥着模运算的身影。</p>
+<p><strong>模运算可以理解为求余数</strong>，“模”是“Mod”的音译。如 11 mod 2，余数值为1；数学上给出的定义是：任意给定一个正整数n和任意一个整数a，如果用a除以n，得到的商q和余数r将一定满足如下关系：</p>
+<blockquote>
+<p>a=q⋅n+r           0≤r&lt;n       q=⌊a/n⌋</p>
+</blockquote>
+<p>其中⌊x⌋表示小于或等于x的最大整数。用 a mod n 表示a除以n的余数，则任一整数a可表示为：</p>
+<blockquote>
+<p>a=⌊a/n⌋×n+(a mod n)</p>
+</blockquote>
+<p><strong>取模运算：</strong>a % b（或a mod b），表示a除以b的余数。</p>
+<blockquote>
+<p>科普：取模运算与取余运算还是有区别。取余的商是靠近0的，而取模的商是靠近负无穷的，看下面的例子：<br>7 mod 4 = 3（商 = 1 或 2，1&lt;2，取商=1，与取余相同）<br>-7 mod 4 = 1（商 = -1 或 -2，-2&lt;-1，取商=-2）<br>7 mod -4 = -1（商 = -1或-2，-2&lt;-1，取商=-2）<br>-7 mod -4 = -3（商 = 1或2，1&lt;2，取商=1，与取余相同）</p>
+</blockquote>
+<p><strong>同余的概念</strong><br>如果（a mod n）=（b mod n），则称整数a和b模n同余（余数相等），可以书写为</p>
+<blockquote>
+<p>a≡b mod n</p>
+</blockquote>
+<p>同余还有另一种定义：设a,b,n(n≠0)，如果a-b是n的整数倍（正的或负的），我们就说“a与b模n同余”，记做a≡b mod n。有时，b被叫做a模n的余数。<br>例如：73 ≡ 4 mod 23； 21 ≡ -9 mod 10。<br>注意的是：如果a≡0 mod n 则n|a。</p>
+<p><strong>模运算和同余的性质：</strong><br>·如果n |(a-b)则a≡b mod n。<br>·（a mod n）=（b mod n）等价于a≡b mod n。<br>·a≡b mod n等价于b≡ a mod n。<br>·如果a≡b mod n 而且b≡c mod n，则有a≡c mod n。<br><strong>模运算规则：</strong><br>1、[(a mod n)+(b mod n)]mod n = (a+b)mod n<br>2、[(a mod n)-(b mod n)]mod n = (a-b) mod n<br>3、[(a mod n)×(b mod n)]mod n = (a×b)mod n</p>
+<p><strong>举例：</strong>为了计算117mod 13可以按照如下方式进行：<br>这里可以利用模运算性质(a×b) mod n= [(a mod n) × (b mod n)]mod n，将指数模运算可以看做是多次重复乘法，并且在计算中间结果时就取模。<br>11^2=121≡4 mod 13<br>11^4=121^2≡4^2  mod 13≡3 mod 13<br>11^7=11×11^2×11^4≡11×4×3 mod 13≡132 mod 13 ≡2 mod 13</p>
+<p>因此，通常加法、乘法、减法的规则都适用于模运算，值得注意的是：除法运算在某些情况下也适用，例如当模数n为素数的时候，模n除法比较复杂，这里我们只要掌握以上的概念就足够了。</p>
+<h3 id="模反元素"><a href="#模反元素" class="headerlink" title="模反元素"></a>模反元素</h3><p>如果两个正整数a和n互素，那么一定可以找到整数b，使得 ab-1 被n整除，或者说ab被n除的余数是1，则</p>
+<blockquote>
+<p>ab≡1 mod n</p>
+</blockquote>
+<p>这时，b就叫做a的“模反元素”。</p>
+<p>比如，3和11互质，那么3的模反元素就是4，因为 (3 × 4)-1 可以被11整除。显然，模反元素不止一个， 4加减11的整数倍都是3的模反元素 {…,-18,-7,4,15,26,…}，即如果b是a的模反元素，则 b+kn 都是a的模反元素。</p>
+<p>欧拉定理可以用来证明模反元素必然存在。关于什么是欧拉定理，再下面将会详细的讲解。到时候可以再回来看看这个证明。</p>
+<blockquote>
+<p>a^Φ(n)=a×a^(Φ(n)-1)≡1 mod n</p>
+</blockquote>
+<p>可以看到，a的φ(n)-1 次方，就是a的模反元素。</p>
+<p>到现在我们已经复习了一遍基本的概念，那大家还记得我们是如何求最大公约数的呢？下面介绍我们要讲的第一算法——欧几里得算法。</p>
+<h2 id="欧几里德定理及算法"><a href="#欧几里德定理及算法" class="headerlink" title="欧几里德定理及算法"></a>欧几里德定理及算法</h2><p>欧几里德算法就是用来求两个正整数最大公约数的算法。是由古希腊数学家欧几里德在其著作《The Elements》中最早描述了这种算法,所以被命名为欧几里德算法。</p>
+<p><img src="http://www.bbvdd.com/d/2018092422145643z.jpeg" alt></p>
+<h3 id="算法原理"><a href="#算法原理" class="headerlink" title="算法原理"></a>算法原理</h3><p>欧几里德算法又称辗转相除法，是求最大公约数方法之一。像其他的方法还有质因数分解法，短除法，更相减损术等，这里就不再一一详述了，因为欧几里德算法是计算两个最大公约数最容易的方法，理由在于它不需要因式分解，而且速度快。欧几里德算法的具体做法是：用较小数除较大数，再用出现的余数(第一余数)去除除数，再用出现的余数（第二余数）去除第一余数，如此反复，直到最后余数是0为止。如果是求两个数的最大公约数，那么最后的除数就是这两个数的最大公约数。</p>
+<blockquote>
+<p>其计算原理依赖于下面的定理：<br>1.设三个不全为0的整数a、b、r，若a=qb+r,其中q是整数,则gcd(a,b)=gcd(b,r).<br>证明:设d1=gcd(a,b),d2=gcd(b,r)<br>    因为d1|a,d1|b,从而d1|(a-qb)=r,又因为gcd(b,r)=d2,所以:d1|d2.<br>    因为d2|b,d2|r,从而d2|r+qb=a,又因为gcd(a,b)=d1,所以:d2|d1.<br>    所以: d1=d2,即gcd(a,b)=gcd(b,r). </p>
+<p>2.设a=qb+r, 0≤r＜b那么gcd(a,b)=gcd(b,r),<br>那么b=q1b1+r1,     0≤r1＜b1<br>    b1= q2b2+r2,       0≤r1＜b1<br>    …..<br>    bn-1= qn-1bn-1+rn-1,        0≤rn-1＜bn-1<br>    bn= qnbn+rn,        0≤rn＜bn<br>    所以gcd(a,b)=gdc(b,r)=gcd(b1, r1)=…=gcd(bn,rn).<br>    因为0≤rn＜rn-1＜…. ＜r1＜r＜b,所以一定存在rn=0.从而gcd(bn,rn)= bn.<br>    所以gcd(a,b)= bn. </p>
+</blockquote>
+<p><strong>举例：</strong>计算gcd（482,1180）<br>取较大数1180为被除数，较小数482为除数，做除法：<br>1180=2×482+216<br>原来的除数482作为被除数，余数216作为除数，继续：<br>482=2×216+50<br>216=4×50+16<br>50=3×16+2 <strong>←最后一个非零的余数既为所求最大公约数。</strong><br>16=8×2+0</p>
+<p>下面我们根据欧几里德算法的原理，编写一个求最大公约数的程序。</p>
+<h3 id="算法流程"><a href="#算法流程" class="headerlink" title="算法流程"></a>算法流程</h3><p>网上也有许多用各种编程语言编写的算法，这里的例子仅做参考。废话不多说，先给流程图：</p>
+<p><img src="http://www.bbvdd.com/d/20180924221602da6.png" alt="算法流程图"></p>
+<p>欧几里德算法运行结果及核心算法<br>1、运行程序，结果如下。如图1所示</p>
+<p><img src="http://www.bbvdd.com/d/20180924221640ihz.png" alt></p>
+<p>2 、算法源代码main.cpp的部分源码如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">ISD_BigNum ISD_BigNum::ISD_euclid(ISD_BigNum a,ISD_BigNum b)</span><br><span class="line">&#123;</span><br><span class="line">	ISD_BigNum r,I;</span><br><span class="line">	I=<span class="number">0</span>;</span><br><span class="line">	r=<span class="number">1</span>;</span><br><span class="line">	<span class="keyword">while</span>(r!=I)</span><br><span class="line">	&#123;		</span><br><span class="line">		r=a%b;</span><br><span class="line">		a=b;</span><br><span class="line">		b=r;		</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> a;	</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="欧拉定理"><a href="#欧拉定理" class="headerlink" title="欧拉定理"></a>欧拉定理</h2><h3 id="欧拉函数"><a href="#欧拉函数" class="headerlink" title="欧拉函数"></a>欧拉函数</h3><p>首先我们思考一个问题：10以内的正整数有哪几个与10互质呢？</p>
+<p>答案是：{1，3，7，9}，10以内可能用手指就可以算过来，那100呢？1000呢？那是不是有什么公式可以计算？再把这个问题扩展一下：任意给定正整数n，请问在小于等于n的正整数之中，有多少个与n构成互质关系？</p>
+<p>计算这个值的方法就叫做欧拉函数，以φ(n)表示。比如在1到10之中，与10形成互质关系的是1、3、7、9，所以 φ(10) = 4。</p>
+<p>φ(n) 的计算方法并不复杂，但是为了得到最后那个公式，需要一步步讨论。对于下面的公式大家稍微记住就行，没必要理解通透。</p>
+<p><strong>第一种情况</strong><br>如果n=1，则 φ(1) = 1 。因为1与任何数（包括自身）都构成互质关系<br><strong>第二种情况</strong><br>如果n是质数，则 φ(n)=n-1 。因为质数与小于它的每一个数，都构成互质关系。比如5与1、2、3、4都构成互质关系。<br><strong>第三种情况</strong><br>如果n是质数的某一个次方，即 n = p^k (p为质数，k为大于等于1的整数)，则</p>
+<blockquote>
+<p>φ(p^k)=p^k-p^(k-1)</p>
+</blockquote>
+<p>比如 φ(8) = φ(23) =23–22 = 8 -4 = 4。<br>这是因为只有当一个数不包含质数p，才可能与n互质。而包含质数p的数一共有p^(k-1)个，即1×p、2×p、3×p、…、p^(k-1)×p，把它们去除，剩下的就是与n互质的数。<br>上面的式子还可以写成下面的形式：</p>
+<blockquote>
+<p>φ(p^k )=p^k-p^(k-1)=p^k (1-1/p)</p>
+</blockquote>
+<p>可以看出，上面的第二种情况是 k=1 时的特例。</p>
+<p><strong>第四种情况</strong><br>如果n可以分解成两个互质的整数之积，n = p1 × p2则</p>
+<blockquote>
+<p>φ(n) = φ(p1p2) = φ(p1)φ(p2)</p>
+</blockquote>
+<p>即积的欧拉函数等于各个因子的欧拉函数之积。比如，φ(56)=φ(8×7)=φ(8)×φ(7)=4×6=24<br><strong>第五种情况</strong><br>因为任意一个大于1的正整数，都可以写成一系列质数的积。</p>
+<blockquote>
+<p>n=p_1^k1 p_2^k2…p_r^kr</p>
+</blockquote>
+<p>根据第4条的结论，得到</p>
+<blockquote>
+<p>φ(n)=φ(p_1^k1 )φ(p_2^k2 )…φ(p_r^kr)</p>
+</blockquote>
+<p>再根据第3条的结论，得到</p>
+<blockquote>
+<p>φ(n)=p_1^k1 p_2^k2…p_r^kr (1-1/p_1 )(1-1/p_2 )…(1-1/p_r )</p>
+</blockquote>
+<p>也就等于</p>
+<blockquote>
+<p>φ(n)=n(1-1/p_1 )(1-1/p_2 )…(1-1/p_r )</p>
+</blockquote>
+<p>这就是欧拉函数的通用计算公式。比如，1323的欧拉函数，计算过程如下：</p>
+<blockquote>
+<p>φ(1323)=φ(3^3×7^2 )=1323（1-1/3）（1-1/7）=756</p>
+</blockquote>
+<h3 id="欧拉定理-1"><a href="#欧拉定理-1" class="headerlink" title="欧拉定理"></a>欧拉定理</h3><p>欧拉函数的用处，在于欧拉定理。欧拉定理指的是：如果两个正整数a和n互质，则n的欧拉函数 φ(n) 可以让下面的等式成立：</p>
+<blockquote>
+<p>a^(φ(n))≡1 mod n</p>
+</blockquote>
+<p>也就是说，a的φ(n)次方被n除的余数为1。或者说，a的φ(n)次方减去1，可以被n整除。比如，3和7互质，而7的欧拉函数φ(7)等于6，所以3的6次方（729）减去1，可以被7整除（728/7=104）。</p>
+<p>欧拉定理的证明比较复杂，这里就省略了。我们只要记住它的结论就行了。</p>
+<p>欧拉定理是RSA算法的核心。理解了这个定理，就可以理解RSA。多看几遍欧拉定理的定义，知道公式表达的意思就够了。</p>
+<h2 id="大数分解"><a href="#大数分解" class="headerlink" title="大数分解"></a>大数分解</h2><p>在本文最开始也讲到过素数在公钥密码体制中的重要性。大数分解是与素性判别紧密相关的课题。对于给定的一个自然数，先对它作素性判别。若它是素数则罢，若它是合数，我们还想知道它的因子分解式。</p>
+<h3 id="算法原理-1"><a href="#算法原理-1" class="headerlink" title="算法原理"></a>算法原理</h3><p>Pollard在1974年提出了p-1方法。<br>输入n和B<br>（1）a=2<br>（2）对j=2到B做a=ajmodn<br>（3）d=gcd(a-1,n)<br>（4）如果1&lt;d&lt;n，d便是n的因子，否则，没有找到n的因子。<br>算法参数<br>待分解的整数n，“上界”B。 </p>
+<h3 id="算法流程-1"><a href="#算法流程-1" class="headerlink" title="算法流程"></a>算法流程</h3><p>算法流程。如图所示:<br><img src="http://www.bbvdd.com/d/20180924221746vu7.jpeg" alt></p>
+<p><strong>一、大数分解运行结果并学习相关核心代码</strong><br>1、我们运行编写好的程序先输入要进行测试的大整数，再输入进行测试的上界，即可得到存在的一个因子。如图所示</p>
+<p><img src="http://www.bbvdd.com/d/20180924221812wgt.jpeg" alt> </p>
+<p>2、相关核心源码如下所示。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">big n,a,B,j,b,I,c;</span><br><span class="line">c=mirvar(<span class="number">0</span>);</span><br><span class="line">n=mirvar(<span class="number">0</span>);</span><br><span class="line">a=mirvar(<span class="number">0</span>);</span><br><span class="line">B=mirvar(<span class="number">0</span>);</span><br><span class="line">j=mirvar(<span class="number">0</span>);</span><br><span class="line">b=mirvar(<span class="number">0</span>);</span><br><span class="line">I=mirvar(<span class="number">0</span>);</span><br><span class="line">convert(<span class="number">1</span>,I);</span><br><span class="line">convert(<span class="number">2</span>,j);</span><br><span class="line">convert(<span class="number">2</span>,a);</span><br><span class="line">convert(<span class="number">1</span>,b);</span><br><span class="line">cinnum(n,<span class="built_in">stdin</span>);</span><br><span class="line">cinnum(B,<span class="built_in">stdin</span>);</span><br><span class="line"><span class="keyword">while</span>((compare(I,b)==<span class="number">0</span>)&amp;&amp;(compare(j,B)==<span class="number">-1</span>))</span><br><span class="line">&#123;</span><br><span class="line">	powmod(a,j,n,c);</span><br><span class="line">	incr(j,<span class="number">1</span>,j);</span><br><span class="line">	decr(c,<span class="number">1</span>,c);</span><br><span class="line">	egcd(c,n,b);</span><br><span class="line">&#125;</span><br><span class="line">cotnum(b,<span class="built_in">stdout</span>);</span><br></pre></td></tr></table></figure>
+<p>参考文章：<br><a href="http://tech.qq.com/a/20180921/013407.htm" target="_blank" rel="noopener">http://tech.qq.com/a/20180921/013407.htm</a><br><a href="http://ishare.iask.sina.com.cn/f/1C5Ds7ssz.html" target="_blank" rel="noopener">http://ishare.iask.sina.com.cn/f/1C5Ds7ssz.html</a><br><a href="https://blog.csdn.net/lijunping123/article/details/77411201" target="_blank" rel="noopener">https://blog.csdn.net/lijunping123/article/details/77411201</a></p>
+
+    </article>
+    <!-- license  -->
+    
+        <div class="license-wrapper">
+            <p>原文作者: <a href="http://wang66.top">王六六</a>
+            </p><p>原文链接: <a href="http://wang66.top/2018/The-mathematics-of-cryptography.html">http://wang66.top/2018/The-mathematics-of-cryptography.html</a>
+            </p><p>发表日期: <a href="http://wang66.top/2018/The-mathematics-of-cryptography.html">September 24th 2018, 9:44:53 pm</a>
+            </p><p>版权声明: 本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
+        </div>
+    
+    <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+                <div class="nextSlogan">Next Post</div>
+                <a href="/2018/vulnhub-node1.html" title="Vulnhub渗透笔记之Node:1">
+                    <div class="nextTitle">Vulnhub渗透笔记之Node:1</div>
+                </a>
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href="/2018/linux-rookit.html" title="Linux后门检测与系统恢复">
+                    <div class="prevTitle">Linux后门检测与系统恢复</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!--PC和WAP自适应版-->
+
+    <!--PC版-->
+
+
+    
+    
+    <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+    <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+    <div id="comment"></div>
+    <script>
+    new Valine({
+        el: '#comment' ,
+        notify: "true", 
+        verify: false, 
+        appId: "kBws43cqYyOkzvJkwd7PwiQ3-gzGzoHsz",
+        appKey: "IEbfjsLgEhcgfFfWicWSYdhf",
+        placeholder: "来评论一下吧~",
+        path:window.location.pathname, 
+		avatar: 'robohash' // (''/mp/identicon/monsterid/wavatar/robohash/retro/hide)
+    });
+    </script>
+
+
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:wangji19971013@qq.com" class="iconfont-archer email" title="email"></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/wang66just6" class="iconfont-archer github" target="_blank" title="github"></a>
+            
+        
+    
+        
+            
+                <span class="iconfont-archer wechat" title="wechat">
+                  
+                  <img class="profile-qr" src="/assets/wechat.png">
+                </span>
+            
+        
+    
+        
+            
+                <span class="iconfont-archer qq" title="qq">
+                  
+                  <img class="profile-qr" src="/assets/qq.jpg">
+                </span>
+            
+        
+    
+        
+            
+                <a href="//weibo.com/wang66just6" class="iconfont-archer weibo" target="_blank" title="weibo"></a>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a href="//twitter.com/wang66just6" class="iconfont-archer twitter" target="_blank" title="twitter"></a>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span><br>
+		<p>Hosted by <a href="https://pages.coding.me" style="font-weight: bold">Coding Pages</a></p>
+		<span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+	<script>
+		var now = new Date(); 
+		function createtime() { 
+			var grt= new Date("08/01/2018 12:00:00");//此处修改你的建站时间或者网站上线时间 
+			now.setTime(now.getTime()+250); 
+			days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); 
+			hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); 
+			if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); 
+			mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} 
+			seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); 
+			snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} 
+			document.getElementById("timeDate").innerHTML = "本站已安全运行 "+dnum+" 天 "; 
+			document.getElementById("times").innerHTML = hnum + " 小时 " + mnum + " 分 " + snum + " 秒"; 
+		} 
+	setInterval("createtime()",250);
+	</script>
+    </div>
+    <!-- 不蒜子  -->
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#基础概念"><span class="toc-number">1.</span> <span class="toc-text">基础概念</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#数的整除"><span class="toc-number">1.1.</span> <span class="toc-text">数的整除</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#素数（质数）"><span class="toc-number">1.2.</span> <span class="toc-text">素数（质数）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#互素（互质）关系"><span class="toc-number">1.3.</span> <span class="toc-text">互素（互质）关系</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#最大公约数"><span class="toc-number">1.4.</span> <span class="toc-text">最大公约数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#模运算和同余"><span class="toc-number">1.5.</span> <span class="toc-text">模运算和同余</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#模反元素"><span class="toc-number">1.6.</span> <span class="toc-text">模反元素</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#欧几里德定理及算法"><span class="toc-number">2.</span> <span class="toc-text">欧几里德定理及算法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#算法原理"><span class="toc-number">2.1.</span> <span class="toc-text">算法原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#算法流程"><span class="toc-number">2.2.</span> <span class="toc-text">算法流程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#欧拉定理"><span class="toc-number">3.</span> <span class="toc-text">欧拉定理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#欧拉函数"><span class="toc-number">3.1.</span> <span class="toc-text">欧拉函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#欧拉定理-1"><span class="toc-number">3.2.</span> <span class="toc-text">欧拉定理</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#大数分解"><span class="toc-number">4.</span> <span class="toc-text">大数分解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#算法原理-1"><span class="toc-number">4.1.</span> <span class="toc-text">算法原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#算法流程-1"><span class="toc-number">4.2.</span> <span class="toc-text">算法流程</span></a></li></ol></li></ol>
+    </div>
+    
+    <div class="back-top iconfont-archer">&#xe639;</div>
+    <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-panel-archives">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 19
+        </div>
+        <!-- search  -->
+        
+    </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2020 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/25</span><a class="archive-post-title" href="/2020/ELF-formt.html">ELF文件格式</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/24</span><a class="archive-post-title" href="/2020/How-The-Kernel-Manages-Your-Memory.html">How The Kernel Manages Your Memory</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/14</span><a class="archive-post-title" href="/2020/Anatomy-of-a-Program-in-Memory.html">Anatomy of a Program in Memory</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2019 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/08</span><a class="archive-post-title" href="/2019/port-knocking.html">端口敲门</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/19</span><a class="archive-post-title" href="/2019/Information-collection.html">信息收集总结</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/02</span><a class="archive-post-title" href="/2019/powershell-attack.html">PowerShell攻击技术</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2018 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/05</span><a class="archive-post-title" href="/2018/vulnhub-ch4inrulz1-0-1.html">Vulnhub渗透笔记之ch4inrulz:1.0.1</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/02</span><a class="archive-post-title" href="/2018/vulnhub-lampiao1.html">VulnHub渗透笔记之Lampio1</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/01</span><a class="archive-post-title" href="/2018/vulnhub-wankada1.html">Vulnhub渗透笔记之wankanda1</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/30</span><a class="archive-post-title" href="/2018/vulnhub-node1.html">Vulnhub渗透笔记之Node:1</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/24</span><a class="archive-post-title" href="/2018/The-mathematics-of-cryptography.html">浅谈密码学中的数学基础</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/16</span><a class="archive-post-title" href="/2018/linux-rookit.html">Linux后门检测与系统恢复</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/10</span><a class="archive-post-title" href="/2018/HistoryofMCD.html">恶意代码发展简史</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/02</span><a class="archive-post-title" href="/2018/soyouwantobeahacker.html">所以你想成为黑客？</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/01</span><a class="archive-post-title" href="/2018/website-attack.html">社会工程学攻击之网站钓鱼</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/27</span><a class="archive-post-title" href="/2018/隐写术之LSB隐写.html">隐写术之LSB隐写</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/27</span><a class="archive-post-title" href="/2018/一次恶意PHP脚本初探.html">一次恶意PHP脚本初探</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/25</span><a class="archive-post-title" href="/2018/ARP毒化.html">来自身边的安全威胁—ARP欺骗攻击</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/18</span><a class="archive-post-title" href="/2018/浅析缓冲区溢出.html">浅析缓冲区溢出</a>
+        </li>
+    
+    </ul></div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="局域网"><span class="iconfont-archer">&#xe606;</span>局域网</span>
+    
+        <span class="sidebar-tag-name" data-tags="arp"><span class="iconfont-archer">&#xe606;</span>arp</span>
+    
+        <span class="sidebar-tag-name" data-tags="中间人攻击"><span class="iconfont-archer">&#xe606;</span>中间人攻击</span>
+    
+        <span class="sidebar-tag-name" data-tags="系统原理"><span class="iconfont-archer">&#xe606;</span>系统原理</span>
+    
+        <span class="sidebar-tag-name" data-tags="翻译"><span class="iconfont-archer">&#xe606;</span>翻译</span>
+    
+        <span class="sidebar-tag-name" data-tags="恶意代码"><span class="iconfont-archer">&#xe606;</span>恶意代码</span>
+    
+        <span class="sidebar-tag-name" data-tags="计算机病毒"><span class="iconfont-archer">&#xe606;</span>计算机病毒</span>
+    
+        <span class="sidebar-tag-name" data-tags="渗透测试"><span class="iconfont-archer">&#xe606;</span>渗透测试</span>
+    
+        <span class="sidebar-tag-name" data-tags="vulnhub"><span class="iconfont-archer">&#xe606;</span>vulnhub</span>
+    
+        <span class="sidebar-tag-name" data-tags="密码学"><span class="iconfont-archer">&#xe606;</span>密码学</span>
+    
+        <span class="sidebar-tag-name" data-tags="linux"><span class="iconfont-archer">&#xe606;</span>linux</span>
+    
+        <span class="sidebar-tag-name" data-tags="rootkit"><span class="iconfont-archer">&#xe606;</span>rootkit</span>
+    
+        <span class="sidebar-tag-name" data-tags="powershell"><span class="iconfont-archer">&#xe606;</span>powershell</span>
+    
+        <span class="sidebar-tag-name" data-tags="资源，翻译"><span class="iconfont-archer">&#xe606;</span>资源，翻译</span>
+    
+        <span class="sidebar-tag-name" data-tags="php"><span class="iconfont-archer">&#xe606;</span>php</span>
+    
+        <span class="sidebar-tag-name" data-tags="webshell"><span class="iconfont-archer">&#xe606;</span>webshell</span>
+    
+        <span class="sidebar-tag-name" data-tags="社会工程学"><span class="iconfont-archer">&#xe606;</span>社会工程学</span>
+    
+        <span class="sidebar-tag-name" data-tags="隐写术"><span class="iconfont-archer">&#xe606;</span>隐写术</span>
+    
+        <span class="sidebar-tag-name" data-tags="lsb隐写"><span class="iconfont-archer">&#xe606;</span>lsb隐写</span>
+    
+        <span class="sidebar-tag-name" data-tags="缓冲区"><span class="iconfont-archer">&#xe606;</span>缓冲区</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br>
+    1、请确保node版本大于6.2<br>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+        <span class="sidebar-category-name" data-categories="资源"><span class="iconfont-archer">&#xe60a;</span>资源</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: "/",
+        author: "王六六"
+    }
+</script>
+    <!-- CDN failover -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ === 'undefined')
+        {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
+        }
+    </script>
+    <script src="/scripts/main.js"></script>
+    <!-- algolia -->
+    
+    <!-- busuanzi  -->
+    
+    <!-- CNZZ  -->
+    
+    </div>
+    <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
+     
+    </body>
+</html>
+
+

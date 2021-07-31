@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html>
+    <!-- title -->
+
+
+
+
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="author" content="王六六">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="王六六">
+    <meta name="keywords" content="王六六的博客 | 王六六">
+    <meta name="description" content="It's raining cats and dogs.">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>隐写术之LSB隐写 · wang66&#39;s blog</title>
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s 1;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+</style>
+
+    <link rel="preload" href="/css/style.css?v=20180824" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="stylesheet" href="/css/mobile.css?v=20180824" media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+(function( w ){
+	"use strict";
+	// rel=preload support test
+	if( !w.loadCSS ){
+		w.loadCSS = function(){};
+	}
+	// define on the loadCSS obj
+	var rp = loadCSS.relpreload = {};
+	// rel=preload feature support test
+	// runs once and returns a function for compat purposes
+	rp.support = (function(){
+		var ret;
+		try {
+			ret = w.document.createElement( "link" ).relList.supports( "preload" );
+		} catch (e) {
+			ret = false;
+		}
+		return function(){
+			return ret;
+		};
+	})();
+
+	// if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+	// then change that media back to its intended value on load
+	rp.bindMediaToggle = function( link ){
+		// remember existing media attr for ultimate state, or default to 'all'
+		var finalMedia = link.media || "all";
+
+		function enableStylesheet(){
+			link.media = finalMedia;
+		}
+
+		// bind load handlers to enable media
+		if( link.addEventListener ){
+			link.addEventListener( "load", enableStylesheet );
+		} else if( link.attachEvent ){
+			link.attachEvent( "onload", enableStylesheet );
+		}
+
+		// Set rel and non-applicable media type to start an async request
+		// note: timeout allows this to happen async to let rendering continue in IE
+		setTimeout(function(){
+			link.rel = "stylesheet";
+			link.media = "only x";
+		});
+		// also enable media after 3 seconds,
+		// which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+		setTimeout( enableStylesheet, 3000 );
+	};
+
+	// loop through link elements in DOM
+	rp.poly = function(){
+		// double check this to prevent external calls from running
+		if( rp.support() ){
+			return;
+		}
+		var links = w.document.getElementsByTagName( "link" );
+		for( var i = 0; i < links.length; i++ ){
+			var link = links[ i ];
+			// qualify links to those with rel=preload and as=style attrs
+			if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+				// prevent rerunning on link
+				link.setAttribute( "data-loadcss", true );
+				// bind listeners to toggle media back
+				rp.bindMediaToggle( link );
+			}
+		}
+	};
+
+	// if unsupported, run the polyfill
+	if( !rp.support() ){
+		// run once at least
+		rp.poly();
+
+		// rerun poly on an interval until onload
+		var run = w.setInterval( rp.poly, 500 );
+		if( w.addEventListener ){
+			w.addEventListener( "load", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		} else if( w.attachEvent ){
+			w.attachEvent( "onload", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		}
+	}
+
+
+	// commonjs
+	if( typeof exports !== "undefined" ){
+		exports.loadCSS = loadCSS;
+	}
+	else {
+		w.loadCSS = loadCSS;
+	}
+}( typeof global !== "undefined" ? global : this ) );
+</script>
+
+    <link rel="icon" href="/assets/favicon.ico">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script">
+    <link rel="preload" href="/scripts/main.js" as="script">
+    <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
+    <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
+    
+    <!-- fancybox -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/">Still Shines.</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">隐写术之LSB隐写</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href="/">Still Shines.</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro" style="height:50vh;">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            隐写术之LSB隐写
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class="post-intro-tags">
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="隐写术">隐写术</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="lsb隐写">lsb隐写</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>Word count: <span class="post-count">2.8k</span> / Reading time: <span class="post-count">10 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2018/08/27</span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+        <script>
+ 
+  // get user agent
+  var browser = {
+    versions: function () {
+      var u = window.navigator.userAgent;
+      return {
+        userAgent: u,
+        trident: u.indexOf('Trident') > -1, //IE内核
+        presto: u.indexOf('Presto') > -1, //opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+        iPad: u.indexOf('iPad') > -1, //是否为iPad
+        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+      };
+    }()
+  }
+  console.log("userAgent:" + browser.versions.userAgent);
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded');
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in');
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb(){
+    if (browser.versions.uc) {
+      console.log("UCBrowser");
+      fontLoaded();
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular']
+        },
+        loading: function () {  //所有字体开始加载
+          // console.log('loading');
+        },
+        active: function () {  //所有字体已渲染
+          fontLoaded();
+        },
+        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout');
+          fontLoaded();
+        },
+        timeout: 5000 // Set the timeout to two seconds
+      });
+    }
+  }
+
+  function asyncErr(){
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (cb) { o.addEventListener('load', function (e) { cb(null, e); }, false); }
+    if (err) { o.addEventListener('error', function (e) { err(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+
+  var asyncLoadWithFallBack = function(arr, success, reject) {
+      var currReject = function(){
+        reject()
+        arr.shift()
+        if(arr.length)
+          async(arr[0], success, currReject)
+        }
+
+      async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack([
+    "https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", 
+    "https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js",
+    "/lib/webfontloader.min.js"
+  ], asyncCb, asyncErr)
+</script>        
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <p>在刚刚过去的网鼎杯第一场比赛中，做到了一道杂项题是关于lsb隐写的。LSB全称为 least significant bit，是最低有效位的意思。Lsb图片隐写是基于lsb算法的一种图片隐写术，以下统称为lsb隐写，这是一种常见的信息隐藏方法。当然关于图像的隐写的方法有很多，统称为隐写术，以后会写一篇总结这类隐写的文章。这里只把lsb隐写单独拿出来分析，因为lsb隐写很实用，算法简单，能存储的信息量也大，更何况是CTF比赛中的常客。还有一个原因是最近本人做的不少杂项题的坑都踩在了lsb隐写上（是我太菜了，大神莫笑。），所以发誓一定要把这类题搞清楚。<a id="more"></a></p>
+<p><img src="/images/lsb/1.png" alt></p>
+<hr>
+<!-- TOC -->
+<ul>
+<li><a href="#隐写术简介">隐写术简介</a></li>
+<li><a href="#lsb隐写">lsb隐写</a></li>
+<li><a href="#lsb隐写题">lsb隐写题</a></li>
+<li><a href="#后话">后话</a></li>
+</ul>
+<!-- /TOC -->
+<hr>
+<h2 id="隐写术简介"><a href="#隐写术简介" class="headerlink" title="隐写术简介"></a>隐写术简介</h2><p>&emsp;&emsp;先简单的讲讲什么是隐写。由于我们识别声音或图片的能力有限，因此稍微改动信息的某一位是不会影响我们识别声音或图片的。隐写和加密之间的相同点就是，都是需要经过特殊的处理才能获得特定的信息。它们之间的不同点简单的说就是，加密的话会是一些奇怪的字符，或数据。隐写的话，就是信息明明就在眼前，但是你却视而不见。古人的藏头诗也是隐写的一种啦。<br><img src="/images/lsb/2.png" alt></p>
+<hr>
+<h2 id="lsb隐写"><a href="#lsb隐写" class="headerlink" title="lsb隐写"></a>lsb隐写</h2><p>&emsp;&emsp;其实吧一开始我是想把一大堆算法理论和公式摆上来讲讲lsb隐写是什么，但是想想，这种做法是真的可恶啊，摆明不想让人看嘛。所以我想先从一道例题出发，原理什么的将在这个过程中，细细地讲来。<br>&emsp;&emsp;先来看下面一张图，这道题来自实验吧(原题链接:<a href="http://www.shiyanbar.com/ctf/1897)，" target="_blank" rel="noopener">http://www.shiyanbar.com/ctf/1897)，</a><br>题目名字叫—-最低位的轻吻。<br><img src="http://ctf5.shiyanbar.com/stega/01.bmp" alt><br>&emsp;&emsp;打开看是一张很著名的图片—–胜利之吻。图片是bmp格式。看到题目中有最低位几个字，如果是对隐写类的题目熟悉的话就能一下子想到是lsb隐写。因为lsb隐写就是利用的图像中的最低有效位。最低有效位这个词在前文中出现很多次了，但是到底是什么意思呢？<br>&emsp;&emsp;首先来讲png图片，png图片是一种无损压缩的位图片形格式，也只有在无损压缩或者无压缩的图片（BMP）上实现lsb隐写。如果图像是jpg图片的话，就没法使用lsb隐写了，原因是jpg图片对像数进行了有损压缩，我们修改的信息就可能会在压缩的过程中被破坏。而png图片虽然也有压缩，但却是无损压缩，这样我们修改的信息也就能得到正确的表达，不至于丢失。BMP的图片也是一样的，是没有经过压缩的。BMP图片一般是特别的大的，因为BMP把所有的像数都按原样储存，没有进行压缩。<br>&emsp;&emsp;png图片中的图像像数一般是由RGB三原色（红绿蓝）组成，每一种颜色占用8位，取值范围为0x00~0xFF，即有256种颜色，一共包含了256的3次方的颜色，即16777216种颜色。而人类的眼睛可以区分约1000万种不同的颜色，这就意味着人类的眼睛无法区分余下的颜色大约有6777216种。<br><img src="/images/lsb/4.png" alt><br>&emsp;&emsp;LSB隐写就是修改RGB颜色分量的最低二进制位也就是最低有效位（LSB），而人类的眼睛不会注意到这前后的变化，每个像数可以携带3比特的信息。<br><img src="/images/lsb/5.png" alt><br>&emsp;&emsp;上图我们可以看到，十进制的235表示的是绿色，我们修改了在二进制中的最低位，但是颜色看起来依旧没有变化。我们就可以修改最低位中的信息，实现信息的隐写。我修改最低有效位的信息的算法就叫做lsb加密算法，提取最低有效位信息的算法叫做lsb解密算法。<br>&emsp;&emsp;再放两张图加深下理解：<br><img src="/images/lsb/6.png" alt><br><img src="/images/lsb/7.png" alt><br>&emsp;&emsp;回到题目上来，这里我们使用一款功能很强大的lsb隐写分析工具—StegSolve图片通道查看器（下载地址：<a href="http://www.caesum.com/handbook/Stegsolve.jar)。" target="_blank" rel="noopener">http://www.caesum.com/handbook/Stegsolve.jar)。</a><br>&emsp;&emsp;使用过photoshop的朋友应该对图片通道有些概念，一幅完整的图像，红色绿色蓝色三个通道缺一不可。一幅图像，如果关闭了红色通道，那么图像就偏青色。如果关闭了绿色通道，那么图像就偏洋红色。如果关闭了蓝色通道，那么图像就偏黄色。当然还有个Alpha通道，是一个8位的灰度通道，也可以理解为透明度（粗糙的理解）。关于图像通道详细的讲解可以自行百度，这里不再详细说明。<br>&emsp;&emsp;使用stegsolve打开图片，按右方向键查看各通道显示的图像。一般有些题目会在某一个图像通道中直接显示出flag，但是显然这题不行，看来还需要绕些弯，要获取最低位的图片信息。<br>&emsp;&emsp;所以这道题的思路就是将图片转换成0,1 像素点（图像处理问题），这里可以直接使用MATLAB（MATLAB特别适合图像处理，而且语法特别特别简单）：<br>在命令行窗口输入以下命令：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt; filename=&apos;01.bmp&apos;;</span><br><span class="line">&gt;&gt; imfinfo(filename);</span><br><span class="line">&gt;&gt; A = imread(filename);</span><br><span class="line">&gt;&gt; B = logical(bitget(A,1));</span><br><span class="line">&gt;&gt; imshow(B);</span><br></pre></td></tr></table></figure></p>
+<p>指令详解：<br><img src="/images/lsb/8.png" alt><br>&emsp;&emsp;运行得结果如下。扫描这个二维码，就能直接得到flag，有兴趣的朋友可以自己动手扫一下。<br><img src="/images/lsb/9.png" alt><br>&emsp;&emsp;这里还可以使用其他的编程算法来解，原理都是一样的，但如果不会matlab语法，该怎么办呢。其实这题还有一种解法，因为只是简单的获取最后一位然后画图，但是为啥stegsolve获取不到呢。<br>&emsp;&emsp;我们先来看下图像信息：<br><img src="/images/lsb/10.png" alt><br>&emsp;&emsp;发现是bmp的8位灰度图。猜测是StegSolve解析8位的BMP存在问题？<br>&emsp;&emsp;常见的8位通道RGB图像，3个通道共24位，即一张24位RGB图像里可表现大约1670万种颜色；而16位通道RGB图像，3个通道共48位，2的48次方是多少种颜色。32位深度CMYK（8位×4通道）。<br>&emsp;&emsp;这里的8位、16位、32位指颜色深度（Color Depth）用来度量图像中有多少颜色信息可用于显示或打印像素，其单位是“位（Bit）”，所以颜色深度有时也称为位深度。<br>&emsp;&emsp;常用的颜色深度是1位、8位、24位和32位。1位有两个可能的数值：<strong>0或1。较大的颜色深度（每像素信息的位数更多）意味着数字图像具有较多的可用颜色和较精确的颜色表示。</strong><br>&emsp;&emsp;试试转换成png格式呢再看看呢？用画图另存为png格式（不能直接改后缀）。此时发现文件变大，图像信息如下图：<br><img src="/images/lsb/11.png" alt><br>&emsp;&emsp;用StegSolve打开后，在RGB的最后一位看到二维码。（原图在保存的时候显示的类型是256色位图，就是位深度为8，如果保存为24位位图的bmp格式，不转换为png格式，也能用StegSolve找到如上图的二维码。）<br><img src="/images/lsb/12.png" alt><br>&emsp;&emsp;所以我们改变图片位深度，就能得到其中的二维码信息。</p>
+<h2 id="lsb隐写题"><a href="#lsb隐写题" class="headerlink" title="lsb隐写题"></a>lsb隐写题</h2><p>&emsp;&emsp;经过上面的例子，我们基本上了解了什么是lsb隐写。一般的lsb隐写我们都能使用工具或者编写程序提取到图片的最低有效位信息，从而得到其中的内容。但是出题人的脑洞不局限于此，lsb隐写还有各种扩展的使用方法。下面是网鼎杯第一场中的一道杂项题，也是一道lsb隐写题。不同的是，光提取最低有效位是不能进行解答的。<br>首先给我们的是一张花花的图是png格式。题目名字是minify，使变小的意思，那应该就是指lsb隐写。<br><img src="/images/lsb/13.png" alt><br>&emsp;&emsp;光凭肉眼是真的什么也看不出，我们借助于工具StegSolve进行分析。<br>一路翻下去，除了花花的还是花花的，唯一值得怀疑的地方就在red plane 0 这里是纯黑，<br><img src="/images/lsb/14.png" alt><br><img src="/images/lsb/15.png" alt><br>&emsp;&emsp;说明这里什么也没有，正常的图片都不会是这样子的，其它通道也都显示正常。所以这个异常给我们什么启示呢？从这里可以真正确定是lsb隐写了。<br>&emsp;&emsp;那我们要从其他的通道比如：blue、alpha、green中找些到信息。整张图片看起来是毫无规则的像素点，那一定想把真正的信息隐藏起来，再用一些毫无规则的像素点干扰我们。我们如果想得到其中的信息，就要去掉这些干扰点。但是到底去掉哪些呢。经过前面的步骤我们知道了信息可能隐藏在plane 0中，所以我们要先把各个通道的plane  0提取出来。Red plane 0因为是空信息，可以不用提取了。我们提取出（File-&gt;Save as）Green plane 0、Alpha plane 0、Blue plane 0，把他们各另存为一张图。然后各个图进行比对（Analyse-&gt;image Combiner），最后发现Alpha plane 0 和Green plane 0 异或运算下的图出现了flag<br><img src="/images/lsb/16.png" alt><br>&emsp;&emsp;异或对比常常是为了检查两张图片之间的差异，能发现我们肉眼看不到的及细微的差异。<br><img src="/images/lsb/17.png" alt><br>&emsp;&emsp;上图是异或（XOR）对比出一张图片中的区别，所以用这个方法，也能把我们的信息隐藏在其中，但我觉得这并不是一种实用的方法。</p>
+<h2 id="后话"><a href="#后话" class="headerlink" title="后话"></a>后话</h2><p>&emsp;&emsp;CTF中有关隐写术的这类题目真的是考验脑洞了，扩展开讲，还有能有很多很多可以举例的。Lsb隐写还能结合其他的隐写术，不只是能隐藏一些图片，还能把文件写入其中。这类题目这就需要用其他的工具进行文件提取分离，比如binwalk和foremost。当然，万变不离其宗，这里我们只要把原理搞清楚就足够了，剩下的就是解题思路，这就需要开开脑洞了。网上也存在着很多优秀的lsb隐写算法，能够实现更多复杂的操作，有兴趣的朋友可以进一步的去了解。</p>
+<p>参考文章：<a href="https://www.tuicool.com/articles/qINzyum" target="_blank" rel="noopener">https://www.tuicool.com/articles/qINzyum</a></p>
+
+    </article>
+    <!-- license  -->
+    
+        <div class="license-wrapper">
+            <p>原文作者: <a href="http://wang66.top">王六六</a>
+            </p><p>原文链接: <a href="http://wang66.top/2018/隐写术之LSB隐写.html">http://wang66.top/2018/隐写术之LSB隐写.html</a>
+            </p><p>发表日期: <a href="http://wang66.top/2018/隐写术之LSB隐写.html">August 27th 2018, 9:34:23 pm</a>
+            </p><p>版权声明: 本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
+        </div>
+    
+    <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+                <div class="nextSlogan">Next Post</div>
+                <a href="/2018/website-attack.html" title="社会工程学攻击之网站钓鱼">
+                    <div class="nextTitle">社会工程学攻击之网站钓鱼</div>
+                </a>
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href="/2018/一次恶意PHP脚本初探.html" title="一次恶意PHP脚本初探">
+                    <div class="prevTitle">一次恶意PHP脚本初探</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!--PC和WAP自适应版-->
+
+    <!--PC版-->
+
+
+    
+    
+    <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+    <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+    <div id="comment"></div>
+    <script>
+    new Valine({
+        el: '#comment' ,
+        notify: "true", 
+        verify: false, 
+        appId: "kBws43cqYyOkzvJkwd7PwiQ3-gzGzoHsz",
+        appKey: "IEbfjsLgEhcgfFfWicWSYdhf",
+        placeholder: "来评论一下吧~",
+        path:window.location.pathname, 
+		avatar: 'robohash' // (''/mp/identicon/monsterid/wavatar/robohash/retro/hide)
+    });
+    </script>
+
+
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:wangji19971013@qq.com" class="iconfont-archer email" title="email"></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/wang66just6" class="iconfont-archer github" target="_blank" title="github"></a>
+            
+        
+    
+        
+            
+                <span class="iconfont-archer wechat" title="wechat">
+                  
+                  <img class="profile-qr" src="/assets/wechat.png">
+                </span>
+            
+        
+    
+        
+            
+                <span class="iconfont-archer qq" title="qq">
+                  
+                  <img class="profile-qr" src="/assets/qq.jpg">
+                </span>
+            
+        
+    
+        
+            
+                <a href="//weibo.com/wang66just6" class="iconfont-archer weibo" target="_blank" title="weibo"></a>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a href="//twitter.com/wang66just6" class="iconfont-archer twitter" target="_blank" title="twitter"></a>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span><br>
+		<p>Hosted by <a href="https://pages.coding.me" style="font-weight: bold">Coding Pages</a></p>
+		<span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+	<script>
+		var now = new Date(); 
+		function createtime() { 
+			var grt= new Date("08/01/2018 12:00:00");//此处修改你的建站时间或者网站上线时间 
+			now.setTime(now.getTime()+250); 
+			days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); 
+			hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); 
+			if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); 
+			mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} 
+			seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); 
+			snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} 
+			document.getElementById("timeDate").innerHTML = "本站已安全运行 "+dnum+" 天 "; 
+			document.getElementById("times").innerHTML = hnum + " 小时 " + mnum + " 分 " + snum + " 秒"; 
+		} 
+	setInterval("createtime()",250);
+	</script>
+    </div>
+    <!-- 不蒜子  -->
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#隐写术简介"><span class="toc-number">1.</span> <span class="toc-text">隐写术简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#lsb隐写"><span class="toc-number">2.</span> <span class="toc-text">lsb隐写</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#lsb隐写题"><span class="toc-number">3.</span> <span class="toc-text">lsb隐写题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#后话"><span class="toc-number">4.</span> <span class="toc-text">后话</span></a></li></ol>
+    </div>
+    
+    <div class="back-top iconfont-archer">&#xe639;</div>
+    <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-panel-archives">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 19
+        </div>
+        <!-- search  -->
+        
+    </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2020 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/25</span><a class="archive-post-title" href="/2020/ELF-formt.html">ELF文件格式</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/24</span><a class="archive-post-title" href="/2020/How-The-Kernel-Manages-Your-Memory.html">How The Kernel Manages Your Memory</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/14</span><a class="archive-post-title" href="/2020/Anatomy-of-a-Program-in-Memory.html">Anatomy of a Program in Memory</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2019 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/08</span><a class="archive-post-title" href="/2019/port-knocking.html">端口敲门</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/19</span><a class="archive-post-title" href="/2019/Information-collection.html">信息收集总结</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/02</span><a class="archive-post-title" href="/2019/powershell-attack.html">PowerShell攻击技术</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2018 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/05</span><a class="archive-post-title" href="/2018/vulnhub-ch4inrulz1-0-1.html">Vulnhub渗透笔记之ch4inrulz:1.0.1</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/02</span><a class="archive-post-title" href="/2018/vulnhub-lampiao1.html">VulnHub渗透笔记之Lampio1</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/01</span><a class="archive-post-title" href="/2018/vulnhub-wankada1.html">Vulnhub渗透笔记之wankanda1</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/30</span><a class="archive-post-title" href="/2018/vulnhub-node1.html">Vulnhub渗透笔记之Node:1</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/24</span><a class="archive-post-title" href="/2018/The-mathematics-of-cryptography.html">浅谈密码学中的数学基础</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/16</span><a class="archive-post-title" href="/2018/linux-rookit.html">Linux后门检测与系统恢复</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/10</span><a class="archive-post-title" href="/2018/HistoryofMCD.html">恶意代码发展简史</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/02</span><a class="archive-post-title" href="/2018/soyouwantobeahacker.html">所以你想成为黑客？</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/01</span><a class="archive-post-title" href="/2018/website-attack.html">社会工程学攻击之网站钓鱼</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/27</span><a class="archive-post-title" href="/2018/隐写术之LSB隐写.html">隐写术之LSB隐写</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/27</span><a class="archive-post-title" href="/2018/一次恶意PHP脚本初探.html">一次恶意PHP脚本初探</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/25</span><a class="archive-post-title" href="/2018/ARP毒化.html">来自身边的安全威胁—ARP欺骗攻击</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/18</span><a class="archive-post-title" href="/2018/浅析缓冲区溢出.html">浅析缓冲区溢出</a>
+        </li>
+    
+    </ul></div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="局域网"><span class="iconfont-archer">&#xe606;</span>局域网</span>
+    
+        <span class="sidebar-tag-name" data-tags="arp"><span class="iconfont-archer">&#xe606;</span>arp</span>
+    
+        <span class="sidebar-tag-name" data-tags="中间人攻击"><span class="iconfont-archer">&#xe606;</span>中间人攻击</span>
+    
+        <span class="sidebar-tag-name" data-tags="系统原理"><span class="iconfont-archer">&#xe606;</span>系统原理</span>
+    
+        <span class="sidebar-tag-name" data-tags="翻译"><span class="iconfont-archer">&#xe606;</span>翻译</span>
+    
+        <span class="sidebar-tag-name" data-tags="恶意代码"><span class="iconfont-archer">&#xe606;</span>恶意代码</span>
+    
+        <span class="sidebar-tag-name" data-tags="计算机病毒"><span class="iconfont-archer">&#xe606;</span>计算机病毒</span>
+    
+        <span class="sidebar-tag-name" data-tags="渗透测试"><span class="iconfont-archer">&#xe606;</span>渗透测试</span>
+    
+        <span class="sidebar-tag-name" data-tags="vulnhub"><span class="iconfont-archer">&#xe606;</span>vulnhub</span>
+    
+        <span class="sidebar-tag-name" data-tags="密码学"><span class="iconfont-archer">&#xe606;</span>密码学</span>
+    
+        <span class="sidebar-tag-name" data-tags="linux"><span class="iconfont-archer">&#xe606;</span>linux</span>
+    
+        <span class="sidebar-tag-name" data-tags="rootkit"><span class="iconfont-archer">&#xe606;</span>rootkit</span>
+    
+        <span class="sidebar-tag-name" data-tags="powershell"><span class="iconfont-archer">&#xe606;</span>powershell</span>
+    
+        <span class="sidebar-tag-name" data-tags="资源，翻译"><span class="iconfont-archer">&#xe606;</span>资源，翻译</span>
+    
+        <span class="sidebar-tag-name" data-tags="php"><span class="iconfont-archer">&#xe606;</span>php</span>
+    
+        <span class="sidebar-tag-name" data-tags="webshell"><span class="iconfont-archer">&#xe606;</span>webshell</span>
+    
+        <span class="sidebar-tag-name" data-tags="社会工程学"><span class="iconfont-archer">&#xe606;</span>社会工程学</span>
+    
+        <span class="sidebar-tag-name" data-tags="隐写术"><span class="iconfont-archer">&#xe606;</span>隐写术</span>
+    
+        <span class="sidebar-tag-name" data-tags="lsb隐写"><span class="iconfont-archer">&#xe606;</span>lsb隐写</span>
+    
+        <span class="sidebar-tag-name" data-tags="缓冲区"><span class="iconfont-archer">&#xe606;</span>缓冲区</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br>
+    1、请确保node版本大于6.2<br>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+        <span class="sidebar-category-name" data-categories="资源"><span class="iconfont-archer">&#xe60a;</span>资源</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: "/",
+        author: "王六六"
+    }
+</script>
+    <!-- CDN failover -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ === 'undefined')
+        {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
+        }
+    </script>
+    <script src="/scripts/main.js"></script>
+    <!-- algolia -->
+    
+    <!-- busuanzi  -->
+    
+    <!-- CNZZ  -->
+    
+    </div>
+    <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
+     
+    </body>
+</html>
+
+

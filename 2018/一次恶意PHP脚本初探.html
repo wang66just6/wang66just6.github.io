@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html>
+    <!-- title -->
+
+
+
+
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="author" content="王六六">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="王六六">
+    <meta name="keywords" content="王六六的博客 | 王六六">
+    <meta name="description" content="It's raining cats and dogs.">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>一次恶意PHP脚本初探 · wang66&#39;s blog</title>
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s 1;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+</style>
+
+    <link rel="preload" href="/css/style.css?v=20180824" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="stylesheet" href="/css/mobile.css?v=20180824" media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+(function( w ){
+	"use strict";
+	// rel=preload support test
+	if( !w.loadCSS ){
+		w.loadCSS = function(){};
+	}
+	// define on the loadCSS obj
+	var rp = loadCSS.relpreload = {};
+	// rel=preload feature support test
+	// runs once and returns a function for compat purposes
+	rp.support = (function(){
+		var ret;
+		try {
+			ret = w.document.createElement( "link" ).relList.supports( "preload" );
+		} catch (e) {
+			ret = false;
+		}
+		return function(){
+			return ret;
+		};
+	})();
+
+	// if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+	// then change that media back to its intended value on load
+	rp.bindMediaToggle = function( link ){
+		// remember existing media attr for ultimate state, or default to 'all'
+		var finalMedia = link.media || "all";
+
+		function enableStylesheet(){
+			link.media = finalMedia;
+		}
+
+		// bind load handlers to enable media
+		if( link.addEventListener ){
+			link.addEventListener( "load", enableStylesheet );
+		} else if( link.attachEvent ){
+			link.attachEvent( "onload", enableStylesheet );
+		}
+
+		// Set rel and non-applicable media type to start an async request
+		// note: timeout allows this to happen async to let rendering continue in IE
+		setTimeout(function(){
+			link.rel = "stylesheet";
+			link.media = "only x";
+		});
+		// also enable media after 3 seconds,
+		// which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+		setTimeout( enableStylesheet, 3000 );
+	};
+
+	// loop through link elements in DOM
+	rp.poly = function(){
+		// double check this to prevent external calls from running
+		if( rp.support() ){
+			return;
+		}
+		var links = w.document.getElementsByTagName( "link" );
+		for( var i = 0; i < links.length; i++ ){
+			var link = links[ i ];
+			// qualify links to those with rel=preload and as=style attrs
+			if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+				// prevent rerunning on link
+				link.setAttribute( "data-loadcss", true );
+				// bind listeners to toggle media back
+				rp.bindMediaToggle( link );
+			}
+		}
+	};
+
+	// if unsupported, run the polyfill
+	if( !rp.support() ){
+		// run once at least
+		rp.poly();
+
+		// rerun poly on an interval until onload
+		var run = w.setInterval( rp.poly, 500 );
+		if( w.addEventListener ){
+			w.addEventListener( "load", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		} else if( w.attachEvent ){
+			w.attachEvent( "onload", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		}
+	}
+
+
+	// commonjs
+	if( typeof exports !== "undefined" ){
+		exports.loadCSS = loadCSS;
+	}
+	else {
+		w.loadCSS = loadCSS;
+	}
+}( typeof global !== "undefined" ? global : this ) );
+</script>
+
+    <link rel="icon" href="/assets/favicon.ico">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script">
+    <link rel="preload" href="/scripts/main.js" as="script">
+    <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
+    <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
+    
+    <!-- fancybox -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/">Still Shines.</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">一次恶意PHP脚本初探</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href="/">Still Shines.</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro" style="height:50vh;">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            一次恶意PHP脚本初探
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class="post-intro-tags">
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="php">php</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="webshell">webshell</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>Word count: <span class="post-count">2.6k</span> / Reading time: <span class="post-count">9 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2018/08/27</span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+        <script>
+ 
+  // get user agent
+  var browser = {
+    versions: function () {
+      var u = window.navigator.userAgent;
+      return {
+        userAgent: u,
+        trident: u.indexOf('Trident') > -1, //IE内核
+        presto: u.indexOf('Presto') > -1, //opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+        iPad: u.indexOf('iPad') > -1, //是否为iPad
+        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+      };
+    }()
+  }
+  console.log("userAgent:" + browser.versions.userAgent);
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded');
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in');
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb(){
+    if (browser.versions.uc) {
+      console.log("UCBrowser");
+      fontLoaded();
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular']
+        },
+        loading: function () {  //所有字体开始加载
+          // console.log('loading');
+        },
+        active: function () {  //所有字体已渲染
+          fontLoaded();
+        },
+        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout');
+          fontLoaded();
+        },
+        timeout: 5000 // Set the timeout to two seconds
+      });
+    }
+  }
+
+  function asyncErr(){
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (cb) { o.addEventListener('load', function (e) { cb(null, e); }, false); }
+    if (err) { o.addEventListener('error', function (e) { err(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+
+  var asyncLoadWithFallBack = function(arr, success, reject) {
+      var currReject = function(){
+        reject()
+        arr.shift()
+        if(arr.length)
+          async(arr[0], success, currReject)
+        }
+
+      async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack([
+    "https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", 
+    "https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js",
+    "/lib/webfontloader.min.js"
+  ], asyncCb, asyncErr)
+</script>        
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <p>这是一篇前段时间写的文章，现在归整到这个博客中，那个时候刚学网络安全不久。当时遇到这个木马也是极其偶然，就当做兴趣进行分析，搞了差不多有一天半的时间，期间收获颇多，果然实践中才是出真知啊。<a id="more"></a></p>
+<!-- TOC -->
+<ul>
+<li><a href="#木马来源">木马来源</a></li>
+<li><a href="#初始信息分析">初始信息分析</a><ul>
+<li><a href="#1在php环境下浏览器打开">1、在php环境下浏览器打开</a></li>
+<li><a href="#2用notepad打开查看源码">2、用Notepad++打开查看源码</a></li>
+</ul>
+</li>
+<li><a href="#开始破解">开始破解</a></li>
+<li><a href="#主体内容破解">主体内容破解</a><ul>
+<li><a href="#1先从加密函数开始">1、先从加密函数开始</a></li>
+<li><a href="#2了解两个函数">2、了解两个函数</a></li>
+<li><a href="#3继续echo大法">3、继续echo大法：</a></li>
+<li><a href="#4查看源码">4、查看源码</a></li>
+</ul>
+</li>
+</ul>
+<!-- /TOC -->
+<hr>
+<h3 id="木马来源"><a href="#木马来源" class="headerlink" title="木马来源"></a>木马来源</h3><p>&emsp;&emsp;有天早去上课的时候收到学妹的消息说她的服务器被人上传了木马，我当时心里一愣，因为前一天还在和她讨论关于在她网站上存在的安全性问题，结果第二天就被人黑了，不禁感叹现在黑客的效率是真的高啊。<br><img src="/images/php脚本分析/1.png" alt><br>为了证明我这不是马后炮，贴出以下聊天记录：<br>前一天:<br><img src="/images/php脚本分析/2.png" alt="前一天"><br>后一天：<br><img src="/images/php脚本分析/3.png" alt="后一天"><br>&emsp;&emsp;她用的是WordPress这个博客系统，wordpress本身的安全性还可以，使用也很方便。但是各种第三方插件的安全性就不敢保证了。她正是因为装了有安全漏洞的第三方插件，所以就被黑客利用了，估计还是大规模攻击的受害者。通过腾讯云的路径提示找到了恶意脚本文件（木马，webshell等在本文中是同一个意思）。再通过查看访问流量看到入侵者的IP地址，查明后发现来源是俄罗斯。俄罗斯黑客在我印象中都是挺厉害的，就打算分析一下源码，下面就把这个过程分享出来。</p>
+<h3 id="初始信息分析"><a href="#初始信息分析" class="headerlink" title="初始信息分析"></a>初始信息分析</h3><p>脚本名：<strong>404.php</strong>（伪装成404文件，起隐藏作用。）</p>
+<h4 id="1、在php环境下浏览器打开"><a href="#1、在php环境下浏览器打开" class="headerlink" title="1、在php环境下浏览器打开"></a>1、在php环境下浏览器打开</h4><p>显示如下：<br><img src="/images/php脚本分析/4.png" alt><br>恶意脚本的登录界面，需要输入密码进入，尝试多次弱口令登录没有通过。</p>
+<h4 id="2、用Notepad-打开查看源码"><a href="#2、用Notepad-打开查看源码" class="headerlink" title="2、用Notepad++打开查看源码"></a>2、用Notepad++打开查看源码</h4><p>显示如下：<br><img src="/images/php脚本分析/5.png" alt><br>发现是一个经过编码加密后的内容，从这里看不到源码，所以只能先进行破解。</p>
+<hr>
+<h3 id="开始破解"><a href="#开始破解" class="headerlink" title="开始破解"></a>开始破解</h3><p><strong>第一步</strong><br>观察变量，把中间一大串密文字符忽略（这里用X代替），整体框架显示如下：<br><img src="/images/php脚本分析/6.png" alt><br>这里解码较为容易，第一行是一串无规则的字符，存放到一个变量中。再从这个变量中取第几位，和其他字符组成一个完整的单词。比如$MZz9092[9]就是最开头的第0位数到第九位的字符，也就是p。<br><strong>第二步</strong><br>我们加一个echo($AI2908);让浏览器运行的值显示出来，保险起见可以先把其他代码先注释掉。<br>操作如下：<br><img src="/images/php脚本分析/7.png" alt><br>显示结果如下：<br><img src="/images/php脚本分析/7-1.png" alt><br>这是一个PHP的替换函数。<br><strong>第三步</strong><br>解码下一个变量的值：<strong>$vVzI785</strong><br><img src="/images/php脚本分析/8.png" alt><br>&emsp;&emsp;这串代码中有chr（）函数，查ascll码表得知chr（101）是e，通过ascll码表的对应关系，可以解除chr（）的字符，在这其中还存在着十六进制（hex）编码，整个就像是混合编码，机器是能够直接识别，人眼就不容易发现规律了。</p>
+<blockquote>
+<p>编码原理：chr（101）意思就是ascll码表上101个字符 是e<br>         \x61    对应的解码是 a</p>
+</blockquote>
+<p>之后在变量前加个echo让机器自动解码，<strong>$vVzI785</strong>变量和<strong>$ePpo5652</strong>编码原理相同，就一起显示出来：<br><img src="/images/php脚本分析/9.png" alt><br>浏览器显示如下：<br><img src="/images/php脚本分析/10.png" alt><br>&emsp;&emsp;因为中间没有加换行符，所以显示的结果连在一起，主要加密的内容（X代替的部分）就放在这个括号中。</p>
+<p>最后整理下得到如下：<br><img src="/images/php脚本分析/11.png" alt><br>最后一行加密部分解码出来是一个正则表达式：/.*/e 此处没实际作用就先不管它。<br>接下来看主体的编码方式。<br><strong>第四步</strong><br>&emsp;&emsp;存放主体的变量$kJVTr8520是base64加密后再压缩编码。所以解码的顺序就反着来，先解压缩然后base64解码。这里我们继续使用echo（echo大法好！）<br>&emsp;&emsp;把之前x替换的主体放进括号，然后用echo大法构造这行echo($kJVTr8520);这里要把原来的eval删去改成echo。文件尾部图片中已改。</p>
+<p>文件头部：<br><img src="/images/php脚本分析/12.png" alt><br>文件尾部：<br><img src="/images/php脚本分析/13.png" alt><br>利用echo查看传给这个变量的值。<br>浏览器查看直接得到解码后的“原文”：<br><img src="/images/php脚本分析/14.png" alt><br><strong>第五步</strong><br>放到编辑器上整理一下：<br>代码头部：<br><img src="/images/php脚本分析/15.png" alt><br>代码尾部：<br><img src="/images/php脚本分析/16.png" alt><br>又是一层加密，而且感觉是多重加密，这个脚本的作者应该不是<strong>人</strong>！(估计是程序生成)<br>这段代码可以看成两个部分：<strong>密码验证部分</strong>和<strong>主体</strong>.<br>主体也分成了两个部分：<strong>代码尾部</strong>的base64加密的部分是一段多重base64加密，<strong>主体部分</strong>又是一大串加密编码后的字符传值给一个变量。<br><strong>第六步</strong><br>&emsp;&emsp;这里先从密码验证部分入手，作者之所以把这部分独立出来估计他也是怕忘记密码后没法改吧。所以我们正好可以利用这一点，既然猜不出你的密码，那就自己改咯。<br>先看到第一行代码：<br><img src="/images/php脚本分析/17.png" alt><br>密码是md5加密后的，我试过解这串md5但是现有的解码网站都解不出。<br>那就换一个思路，自己改密码值。<br>先查了下已知明文admin经过md5加密后的值是多少：<br><img src="/images/php脚本分析/18.png" alt><br>这里就用第一行的密文，替换掉原来的md5：<br><img src="/images/php脚本分析/19.png" alt><br>Ps：这里如果直接输$auth_pass=”admin”是不行的。<br><strong>第七步</strong><br>之后再回到之前最开始访问的登录界面，密码处敲入admin。<br><img src="/images/php脚本分析/20.png" alt><br>进去了！现在就可以使用这个木马做想做的事情咯~而且功能还挺全的，是个大马。<br><img src="/images/php脚本分析/21.png" alt><br>字符编码是：<strong>窗口1251</strong>，属于斯拉夫语系，俄语正是斯拉夫语系的，看来是俄罗斯的木马没跑了。<br>现在到这一步就可以把这个木马收归己有了~<br><strong>第八步</strong><br>再从这里查看源码：<br><img src="/images/php脚本分析/22.png" alt><br>诶？发现只是一个静态的界面，执行这段代码没有任何功能，所以从这里我们获得的不是真正的源码。</p>
+<hr>
+<h3 id="主体内容破解"><a href="#主体内容破解" class="headerlink" title="主体内容破解"></a>主体内容破解</h3><p>&emsp;&emsp;精彩的内容来了！接下还是要分析主体部分。规律掌握了，就不再慌张。上面说了主体也是可以看成两个部分，代码部分和加密函数部分。加密函数就是解密代码部分的内容。</p>
+<h4 id="1、先从加密函数开始"><a href="#1、先从加密函数开始" class="headerlink" title="1、先从加密函数开始"></a>1、先从加密函数开始</h4><p><img src="/images/php脚本分析/23.png" alt><br>这串密文果然是经过多次base64加密的（真的很麻烦呐），利用多次echo大法解出整理后得到如下：<br><img src="/images/php脚本分析/24.png" alt><br>脚本的作者还把变量名起的很复杂难以理解，看来是使用程序生成的，手工破解的我就用简单的字符替换了：<br><img src="/images/php脚本分析/25.png" alt><br>现在就比较清晰了。<br>这里主要关注for循环的内容，就能理解加密规则。<br>php中的strlen函数可以获取代码的字符串长度。for循环中i从0开始，也就是第一个字符开始，每循环一次，i自加1跳到下一个字符，直到最后一个字符为止。<br>从第一个字符开始，然后让它和后面的2129405204进行异或（^）的位运算。</p>
+<blockquote>
+<p>（1）拿n这个字符举例：<br><img src="/images/php脚本分析/26.png" alt><br>得到的是110（ord就是求n再ascll码中对应的数值）。<br>（2）再让n进行位运算：<br><img src="/images/php脚本分析/27.png" alt><br>得到的是:<br><img src="/images/php脚本分析/28.png" alt><br>（3）再通过chr函数得到最后的结果为： z<br>这样n就替换成了z。<br>这样整篇大段的字符都被相同的方式替换。最后传值给$a。</p>
+</blockquote>
+<p>知道这个原理后我们就继续用echo显示出传给$a的值：<br><img src="/images/php脚本分析/29.png" alt><br>得到以如下代码：<br><img src="/images/php脚本分析/30.png" alt><br>又双叒是一层加密。<br>让我想到了杨宗纬的《洋葱》一层一层拨开你的心~<br>稍微欣慰点的是这个变量名不那么奇怪了。</p>
+<h4 id="2、了解两个函数"><a href="#2、了解两个函数" class="headerlink" title="2、了解两个函数"></a>2、了解两个函数</h4><p>先来了解substr和hexdec这两个函数的功能（毕竟对php不熟，磨刀不误砍柴工嘛。）<br><strong>Substr：</strong><br><img src="/images/php脚本分析/31.png" alt><br><strong>Hexdec：</strong><br><img src="/images/php脚本分析/32.png" alt><br>接下来继续看加密函数，现在这个脚本整体编码的思想就是替换，密码学算法知识尚未涉及，不过花样确实够多，只有这样既能绕过防火墙检测还能被电脑继续执行。<br><img src="/images/php脚本分析/33.png" alt><br>这个替换函数的规则是用substr提取字符，并把取出的字符当做是十六进制再转换为十进制，最后再用chr转换为字符进行替换，而且是一次性提取两个。<br>比如“0123456789abcde中”（因为是作为十六进制的，上面一大串代码中就不会出现其它字符了）<br>取到了cd，把cd当成一个十六进制的值转为十进制就是205：<br><img src="/images/php脚本分析/34.png" alt><br>如此进行替换。<br>这一部分函数的功能明白后开始继续用echo大法。<br><img src="/images/php脚本分析/35.png" alt><br>得到下一串代码：<br><img src="/images/php脚本分析/36.png" alt><br>又是一层加密！！不过能预感到这是最后一层了，底部出现了似曾相识的正则替换，<br><img src="/images/php脚本分析/37.png" alt><br>但在这里意义同样不大。</p>
+<h4 id="3、继续echo大法："><a href="#3、继续echo大法：" class="headerlink" title="3、继续echo大法："></a>3、继续echo大法：</h4><p><img src="/images/php脚本分析/38.png" alt><br>Duang~浏览器运行直接出现网页了，不过这个报错的弹窗是什么鬼？<br><img src="/images/php脚本分析/39.png" alt><br>但经历过这么多的我看到这里，内心没有丝毫波动，甚至还有点想笑，一眼看出这是运行JavaScript的结果，真相就在这里了！<br><img src="/images/php脚本分析/40.jpg" alt></p>
+<h4 id="4、查看源码"><a href="#4、查看源码" class="headerlink" title="4、查看源码"></a>4、查看源码</h4><p>源码就在这里，但是怎么才能查看呢？<br>我们可以写一个解码用的脚本，让它把让echo显示的值直接写到文件上：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">$Code = <span class="string">''</span>; <span class="comment">//base64</span></span><br><span class="line">$File = <span class="string">'test.php'</span>;<span class="comment">//解码后保存的文件</span></span><br><span class="line">$Temp = base64_decode($Code);</span><br><span class="line">$temp = gzinflate($Temp);</span><br><span class="line">$FP = fopen($File,<span class="string">'w'</span>);</span><br><span class="line">fwrite($FP,$temp);</span><br><span class="line">fclose($FP);</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"success!"</span>;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>把之前要解码的字符放上去，最后在同一个目录下生成了一个test.php的文件。文本编辑器打开就是心心念念的源码了，不再是之前得到的静态”源码”!<br><img src="/images/php脚本分析/42.png" alt><br>然后找到了刚刚弹窗报错的那段代码。呵，小把戏。一切都一目了然了~<br>剥完这个洋葱后，留下了“欣喜”的泪水。<br><img src="/images/php脚本分析/43.jpg" alt></p>
+
+    </article>
+    <!-- license  -->
+    
+        <div class="license-wrapper">
+            <p>原文作者: <a href="http://wang66.top">王六六</a>
+            </p><p>原文链接: <a href="http://wang66.top/2018/一次恶意PHP脚本初探.html">http://wang66.top/2018/一次恶意PHP脚本初探.html</a>
+            </p><p>发表日期: <a href="http://wang66.top/2018/一次恶意PHP脚本初探.html">August 27th 2018, 5:13:10 pm</a>
+            </p><p>版权声明: 本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
+        </div>
+    
+    <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+                <div class="nextSlogan">Next Post</div>
+                <a href="/2018/隐写术之LSB隐写.html" title="隐写术之LSB隐写">
+                    <div class="nextTitle">隐写术之LSB隐写</div>
+                </a>
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href="/2018/ARP毒化.html" title="来自身边的安全威胁—ARP欺骗攻击">
+                    <div class="prevTitle">来自身边的安全威胁—ARP欺骗攻击</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!--PC和WAP自适应版-->
+
+    <!--PC版-->
+
+
+    
+    
+    <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+    <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+    <div id="comment"></div>
+    <script>
+    new Valine({
+        el: '#comment' ,
+        notify: "true", 
+        verify: false, 
+        appId: "kBws43cqYyOkzvJkwd7PwiQ3-gzGzoHsz",
+        appKey: "IEbfjsLgEhcgfFfWicWSYdhf",
+        placeholder: "来评论一下吧~",
+        path:window.location.pathname, 
+		avatar: 'robohash' // (''/mp/identicon/monsterid/wavatar/robohash/retro/hide)
+    });
+    </script>
+
+
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:wangji19971013@qq.com" class="iconfont-archer email" title="email"></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/wang66just6" class="iconfont-archer github" target="_blank" title="github"></a>
+            
+        
+    
+        
+            
+                <span class="iconfont-archer wechat" title="wechat">
+                  
+                  <img class="profile-qr" src="/assets/wechat.png">
+                </span>
+            
+        
+    
+        
+            
+                <span class="iconfont-archer qq" title="qq">
+                  
+                  <img class="profile-qr" src="/assets/qq.jpg">
+                </span>
+            
+        
+    
+        
+            
+                <a href="//weibo.com/wang66just6" class="iconfont-archer weibo" target="_blank" title="weibo"></a>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a href="//twitter.com/wang66just6" class="iconfont-archer twitter" target="_blank" title="twitter"></a>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span><br>
+		<p>Hosted by <a href="https://pages.coding.me" style="font-weight: bold">Coding Pages</a></p>
+		<span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+	<script>
+		var now = new Date(); 
+		function createtime() { 
+			var grt= new Date("08/01/2018 12:00:00");//此处修改你的建站时间或者网站上线时间 
+			now.setTime(now.getTime()+250); 
+			days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); 
+			hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); 
+			if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); 
+			mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} 
+			seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); 
+			snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} 
+			document.getElementById("timeDate").innerHTML = "本站已安全运行 "+dnum+" 天 "; 
+			document.getElementById("times").innerHTML = hnum + " 小时 " + mnum + " 分 " + snum + " 秒"; 
+		} 
+	setInterval("createtime()",250);
+	</script>
+    </div>
+    <!-- 不蒜子  -->
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#木马来源"><span class="toc-number">1.</span> <span class="toc-text">木马来源</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#初始信息分析"><span class="toc-number">2.</span> <span class="toc-text">初始信息分析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1、在php环境下浏览器打开"><span class="toc-number">2.1.</span> <span class="toc-text">1、在php环境下浏览器打开</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2、用Notepad-打开查看源码"><span class="toc-number">2.2.</span> <span class="toc-text">2、用Notepad++打开查看源码</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#开始破解"><span class="toc-number">3.</span> <span class="toc-text">开始破解</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#主体内容破解"><span class="toc-number">4.</span> <span class="toc-text">主体内容破解</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1、先从加密函数开始"><span class="toc-number">4.1.</span> <span class="toc-text">1、先从加密函数开始</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2、了解两个函数"><span class="toc-number">4.2.</span> <span class="toc-text">2、了解两个函数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3、继续echo大法："><span class="toc-number">4.3.</span> <span class="toc-text">3、继续echo大法：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4、查看源码"><span class="toc-number">4.4.</span> <span class="toc-text">4、查看源码</span></a></li></ol></li></ol>
+    </div>
+    
+    <div class="back-top iconfont-archer">&#xe639;</div>
+    <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-panel-archives">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 19
+        </div>
+        <!-- search  -->
+        
+    </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2020 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/25</span><a class="archive-post-title" href="/2020/ELF-formt.html">ELF文件格式</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/24</span><a class="archive-post-title" href="/2020/How-The-Kernel-Manages-Your-Memory.html">How The Kernel Manages Your Memory</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/14</span><a class="archive-post-title" href="/2020/Anatomy-of-a-Program-in-Memory.html">Anatomy of a Program in Memory</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2019 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/08</span><a class="archive-post-title" href="/2019/port-knocking.html">端口敲门</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/19</span><a class="archive-post-title" href="/2019/Information-collection.html">信息收集总结</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/02</span><a class="archive-post-title" href="/2019/powershell-attack.html">PowerShell攻击技术</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2018 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/05</span><a class="archive-post-title" href="/2018/vulnhub-ch4inrulz1-0-1.html">Vulnhub渗透笔记之ch4inrulz:1.0.1</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/02</span><a class="archive-post-title" href="/2018/vulnhub-lampiao1.html">VulnHub渗透笔记之Lampio1</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/01</span><a class="archive-post-title" href="/2018/vulnhub-wankada1.html">Vulnhub渗透笔记之wankanda1</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/30</span><a class="archive-post-title" href="/2018/vulnhub-node1.html">Vulnhub渗透笔记之Node:1</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/24</span><a class="archive-post-title" href="/2018/The-mathematics-of-cryptography.html">浅谈密码学中的数学基础</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/16</span><a class="archive-post-title" href="/2018/linux-rookit.html">Linux后门检测与系统恢复</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/10</span><a class="archive-post-title" href="/2018/HistoryofMCD.html">恶意代码发展简史</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/02</span><a class="archive-post-title" href="/2018/soyouwantobeahacker.html">所以你想成为黑客？</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/01</span><a class="archive-post-title" href="/2018/website-attack.html">社会工程学攻击之网站钓鱼</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/27</span><a class="archive-post-title" href="/2018/隐写术之LSB隐写.html">隐写术之LSB隐写</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/27</span><a class="archive-post-title" href="/2018/一次恶意PHP脚本初探.html">一次恶意PHP脚本初探</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/25</span><a class="archive-post-title" href="/2018/ARP毒化.html">来自身边的安全威胁—ARP欺骗攻击</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/18</span><a class="archive-post-title" href="/2018/浅析缓冲区溢出.html">浅析缓冲区溢出</a>
+        </li>
+    
+    </ul></div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="局域网"><span class="iconfont-archer">&#xe606;</span>局域网</span>
+    
+        <span class="sidebar-tag-name" data-tags="arp"><span class="iconfont-archer">&#xe606;</span>arp</span>
+    
+        <span class="sidebar-tag-name" data-tags="中间人攻击"><span class="iconfont-archer">&#xe606;</span>中间人攻击</span>
+    
+        <span class="sidebar-tag-name" data-tags="系统原理"><span class="iconfont-archer">&#xe606;</span>系统原理</span>
+    
+        <span class="sidebar-tag-name" data-tags="翻译"><span class="iconfont-archer">&#xe606;</span>翻译</span>
+    
+        <span class="sidebar-tag-name" data-tags="恶意代码"><span class="iconfont-archer">&#xe606;</span>恶意代码</span>
+    
+        <span class="sidebar-tag-name" data-tags="计算机病毒"><span class="iconfont-archer">&#xe606;</span>计算机病毒</span>
+    
+        <span class="sidebar-tag-name" data-tags="渗透测试"><span class="iconfont-archer">&#xe606;</span>渗透测试</span>
+    
+        <span class="sidebar-tag-name" data-tags="vulnhub"><span class="iconfont-archer">&#xe606;</span>vulnhub</span>
+    
+        <span class="sidebar-tag-name" data-tags="密码学"><span class="iconfont-archer">&#xe606;</span>密码学</span>
+    
+        <span class="sidebar-tag-name" data-tags="linux"><span class="iconfont-archer">&#xe606;</span>linux</span>
+    
+        <span class="sidebar-tag-name" data-tags="rootkit"><span class="iconfont-archer">&#xe606;</span>rootkit</span>
+    
+        <span class="sidebar-tag-name" data-tags="powershell"><span class="iconfont-archer">&#xe606;</span>powershell</span>
+    
+        <span class="sidebar-tag-name" data-tags="资源，翻译"><span class="iconfont-archer">&#xe606;</span>资源，翻译</span>
+    
+        <span class="sidebar-tag-name" data-tags="php"><span class="iconfont-archer">&#xe606;</span>php</span>
+    
+        <span class="sidebar-tag-name" data-tags="webshell"><span class="iconfont-archer">&#xe606;</span>webshell</span>
+    
+        <span class="sidebar-tag-name" data-tags="社会工程学"><span class="iconfont-archer">&#xe606;</span>社会工程学</span>
+    
+        <span class="sidebar-tag-name" data-tags="隐写术"><span class="iconfont-archer">&#xe606;</span>隐写术</span>
+    
+        <span class="sidebar-tag-name" data-tags="lsb隐写"><span class="iconfont-archer">&#xe606;</span>lsb隐写</span>
+    
+        <span class="sidebar-tag-name" data-tags="缓冲区"><span class="iconfont-archer">&#xe606;</span>缓冲区</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br>
+    1、请确保node版本大于6.2<br>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+        <span class="sidebar-category-name" data-categories="资源"><span class="iconfont-archer">&#xe60a;</span>资源</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: "/",
+        author: "王六六"
+    }
+</script>
+    <!-- CDN failover -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ === 'undefined')
+        {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
+        }
+    </script>
+    <script src="/scripts/main.js"></script>
+    <!-- algolia -->
+    
+    <!-- busuanzi  -->
+    
+    <!-- CNZZ  -->
+    
+    </div>
+    <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
+     
+    </body>
+</html>
+
+

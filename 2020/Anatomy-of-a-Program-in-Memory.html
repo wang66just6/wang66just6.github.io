@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html>
+    <!-- title -->
+
+
+
+
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="author" content="王六六">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="王六六">
+    <meta name="keywords" content="王六六的博客 | 王六六">
+    <meta name="description" content="It's raining cats and dogs.">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Anatomy of a Program in Memory · wang66&#39;s blog</title>
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s 1;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+</style>
+
+    <link rel="preload" href="/css/style.css?v=20180824" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="stylesheet" href="/css/mobile.css?v=20180824" media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+(function( w ){
+	"use strict";
+	// rel=preload support test
+	if( !w.loadCSS ){
+		w.loadCSS = function(){};
+	}
+	// define on the loadCSS obj
+	var rp = loadCSS.relpreload = {};
+	// rel=preload feature support test
+	// runs once and returns a function for compat purposes
+	rp.support = (function(){
+		var ret;
+		try {
+			ret = w.document.createElement( "link" ).relList.supports( "preload" );
+		} catch (e) {
+			ret = false;
+		}
+		return function(){
+			return ret;
+		};
+	})();
+
+	// if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+	// then change that media back to its intended value on load
+	rp.bindMediaToggle = function( link ){
+		// remember existing media attr for ultimate state, or default to 'all'
+		var finalMedia = link.media || "all";
+
+		function enableStylesheet(){
+			link.media = finalMedia;
+		}
+
+		// bind load handlers to enable media
+		if( link.addEventListener ){
+			link.addEventListener( "load", enableStylesheet );
+		} else if( link.attachEvent ){
+			link.attachEvent( "onload", enableStylesheet );
+		}
+
+		// Set rel and non-applicable media type to start an async request
+		// note: timeout allows this to happen async to let rendering continue in IE
+		setTimeout(function(){
+			link.rel = "stylesheet";
+			link.media = "only x";
+		});
+		// also enable media after 3 seconds,
+		// which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+		setTimeout( enableStylesheet, 3000 );
+	};
+
+	// loop through link elements in DOM
+	rp.poly = function(){
+		// double check this to prevent external calls from running
+		if( rp.support() ){
+			return;
+		}
+		var links = w.document.getElementsByTagName( "link" );
+		for( var i = 0; i < links.length; i++ ){
+			var link = links[ i ];
+			// qualify links to those with rel=preload and as=style attrs
+			if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+				// prevent rerunning on link
+				link.setAttribute( "data-loadcss", true );
+				// bind listeners to toggle media back
+				rp.bindMediaToggle( link );
+			}
+		}
+	};
+
+	// if unsupported, run the polyfill
+	if( !rp.support() ){
+		// run once at least
+		rp.poly();
+
+		// rerun poly on an interval until onload
+		var run = w.setInterval( rp.poly, 500 );
+		if( w.addEventListener ){
+			w.addEventListener( "load", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		} else if( w.attachEvent ){
+			w.attachEvent( "onload", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		}
+	}
+
+
+	// commonjs
+	if( typeof exports !== "undefined" ){
+		exports.loadCSS = loadCSS;
+	}
+	else {
+		w.loadCSS = loadCSS;
+	}
+}( typeof global !== "undefined" ? global : this ) );
+</script>
+
+    <link rel="icon" href="/assets/favicon.ico">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script">
+    <link rel="preload" href="/scripts/main.js" as="script">
+    <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
+    <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
+    
+    <!-- fancybox -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/">Still Shines.</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">Anatomy of a Program in Memory</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href="/">Still Shines.</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro" style="height:50vh;">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            Anatomy of a Program in Memory
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class="post-intro-tags">
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="系统原理">系统原理</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="翻译">翻译</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>Word count: <span class="post-count">2.6k</span> / Reading time: <span class="post-count">9 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2020/04/14</span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+        <script>
+ 
+  // get user agent
+  var browser = {
+    versions: function () {
+      var u = window.navigator.userAgent;
+      return {
+        userAgent: u,
+        trident: u.indexOf('Trident') > -1, //IE内核
+        presto: u.indexOf('Presto') > -1, //opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+        iPad: u.indexOf('iPad') > -1, //是否为iPad
+        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+      };
+    }()
+  }
+  console.log("userAgent:" + browser.versions.userAgent);
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded');
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in');
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb(){
+    if (browser.versions.uc) {
+      console.log("UCBrowser");
+      fontLoaded();
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular']
+        },
+        loading: function () {  //所有字体开始加载
+          // console.log('loading');
+        },
+        active: function () {  //所有字体已渲染
+          fontLoaded();
+        },
+        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout');
+          fontLoaded();
+        },
+        timeout: 5000 // Set the timeout to two seconds
+      });
+    }
+  }
+
+  function asyncErr(){
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (cb) { o.addEventListener('load', function (e) { cb(null, e); }, false); }
+    if (err) { o.addEventListener('error', function (e) { err(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+
+  var asyncLoadWithFallBack = function(arr, success, reject) {
+      var currReject = function(){
+        reject()
+        arr.shift()
+        if(arr.length)
+          async(arr[0], success, currReject)
+        }
+
+      async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack([
+    "https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", 
+    "https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js",
+    "/lib/webfontloader.min.js"
+  ], asyncCb, asyncErr)
+</script>        
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <blockquote>
+<p>翻译自：<a href="https://manybutfinite.com/post/anatomy-of-a-program-in-memory/" target="_blank" rel="noopener">https://manybutfinite.com/post/anatomy-of-a-program-in-memory/</a></p>
+</blockquote>
+<p>内存管理是系统的核心，它对于编程和系统管理都至关重要。在接下来的几篇文章中，我将关注内存的实际方面，但不会回避内存的内部特性。虽然这些概念是通用的，但示例大多来自32位x86上的Linux和Windows。第一篇文章描述了程序在内存中的布局方式。<br><a id="more"></a></p>
+<p>每个进程都在多任务系统中拥有自己的内存沙箱。这个沙箱是<strong>虚拟地址空间</strong>，在32位模式下总是一个<strong>4GB</strong>大小的内存地址块。这些虚拟地址由页表映射到物理内存，页表由<strong>操作系统内核</strong>维护并由处理器查询。每个进程都有自己的一组页表，但这里有个玄机。一旦启用了虚拟地址，它们将应用于计算机中运行的所有软件，包括内核本身。因此，虚拟地址空间的一部分必须保留给内核:</p>
+<p><img src="http://static.duartes.org/img/blogPosts/kernelUserMemorySplit.png" alt="Kernel/User Memory Split"></p>
+<p>这并不意味着内核使用了更多的物理内存，只是它有那部分地址空间可用来映射它希望映射的任何物理内存。在页表中，内核空间被标记为独占特权代码(第2环或更低)，因此，如果用户模式程序试图触及它，就会触发页错误。在Linux中，内核空间一直存在，并在所有进程中映射相同的物理内存。内核代码和数据总是可寻址的，随时可以处理中断或系统调用。相反，每当进程切换发生时，地址空间的用户模式部分的映射就会改变:</p>
+<p><img src="http://static.duartes.org/img/blogPosts/virtualMemoryInProcessSwitch.png" alt="Process Switch Effects on Virtual Memory"></p>
+<p>蓝色区域表示映射到物理内存的虚拟地址，而白色区域未映射。在上面的例子中，Firefox程序使用了更多的虚拟地址空间，这是由于它对内存的巨大需求。地址空间中不同的频带对应于<strong>内存段</strong>，如堆、堆栈等。请记住，这些段只是内存地址的一个范围，与<a href="http://duartes.org/gustavo/blog/post/memory-transly-segmentation" target="_blank" rel="noopener">intel风格的段</a>无关。总之，Linux进程中的标准段布局如下:</p>
+<p><img src="http://static.duartes.org/img/blogPosts/linuxFlexibleAddressSpaceLayout.png" alt="Flexible Process Address Space Layout In Linux"></p>
+<p>当计算机是准确无误的运行程序时，那么上图显示的段的起始虚拟地址对于机器上的每一个进程都是<strong>完全相同的</strong>。这会使得远程代码执行漏洞利用变得很容易。漏洞常常需要利用绝对内存位置:如堆栈上的地址、库函数的地址等等。远程攻击者只要尝试选择这些固定地址，因为如果地址空间都是相同的（没有地址随机化），就能pwned了。因此，地址空间随机化这种保护机制现在已经变得很流行。Linux将<a href="http://lxr.linux.no/linux+v2.6.28.1/fs/binfmt_elf.c#L542" target="_blank" rel="noopener">stack</a>、<a href="http://lxr.linux.no/linux+v2.6.28.1/arch/x86/mm/mmap.c#L84" target="_blank" rel="noopener">memory mapping segment</a>和<a href="http://lxr.linux.no/linux+v2.6.28.1/arch/x86/kernel/process_32.c#L729" target="_blank" rel="noopener">heap</a>随机化，简单的讲就是向它们的起始地址添加偏移量。不幸的是，32位地址空间非常紧张，几乎没有随机化的空间，而且<a href="http://www.stanford.edu/~blp/papers/asrandom.pdf" target="_blank" rel="noopener">妨碍了它的有效性</a>。（32位的地址可被轻易爆破😁）</p>
+<p>进程地址空间中最上面的部分是用户栈，它在大多数编程语言中存储本地变量和函数参数。调用一个方法或函数将一个新的<strong>堆栈帧</strong>推入堆栈。当函数返回时，堆栈帧被销毁。这种简单的设计是可能的，因为数据遵循严格的<a href="http://en.wikipedia.org/wiki/Lifo" target="_blank" rel="noopener">LIFO</a>（后进先出）顺序，这意味着不需要复杂的数据结构来跟踪堆栈内容——一个指向堆栈顶部的简单指针就可以做到。压栈(Pushing)和出栈(Popping)两个操作是非常方便和准备的。此外，堆栈区域的不断重复使用往往会在<a href="http://duartes.org/gustavo/blog/post/intel-cpu-caches" target="_blank" rel="noopener">cpu缓存</a>中保持，从而加快访问速度。进程中的每个线程都有自己的堆栈。</p>
+<p>如果向栈中压入超过其自身所能容纳的数据时，就有可能耗尽映射的栈区内存。这将触发一个由 Linux 函数 <a href="http://lxr.linux.no/linux+v2.6.28/mm/mmap.c#L1716" target="_blank" rel="noopener">expand_stack( )</a>处理的页错误，该函数接着调用<a href="http://lxr.linux.no/linux+v2.6.28/mm/mmap.c#L1544" target="_blank" rel="noopener">acct_stack_growth()</a>来检查是否适合增大堆栈内存。如果被填满的栈大小低于“<code>RLIMIT_STACK</code> ”（通常为8MB），那么通常栈会增大且程序继续运行，不会察觉到刚才发生了什么。这个是根据需要调整堆栈大小的一般机制。但如果达到了最大栈大小，就会有产生<strong>栈溢出</strong>，并且程序接收到一个<strong>段错误</strong>信息（ Segmentation Fault）。栈可以通过扩展大小来满足需求，但不会根据实际需求减少栈大小，以释放多余空间。就想联邦政府预算，只会扩大～</p>
+<p>如上面白色所示，在程序访问到白色的未映射内存区域时，动态栈增长是唯一能使访问合法的情况，任何其它访问未映射内存的方式都会触发页错误，继而导致段错误。某些映射区域是只读的，因此尝试向这些区域写入数据也将导致段错误。</p>
+<p>在栈下方是共享内存映射区。内核将文件的内容直接映射到这里。任何应用程序都可以通过Linux的<a href="http://www.kernel.org/doc/man-pages/online/pages/man2/mmap.2.html" target="_blank" rel="noopener">mmap ( )</a>系统调用(<a href="http://lxr.linux.no/linux + v2.6.28.1 / arch / x86 /内核/ sys_i386_32.c # L27" target="_blank" rel="noopener">执行</a>)或着windows的<a href="http://msdn.microsoft.com/en-us/library/aa366537 (VS.85" target="_blank" rel="noopener">CreateFileMapping ( )</a> . aspx) / <a href="http://msdn.microsoft.com/en-us/library/aa366761 (VS.85" target="_blank" rel="noopener">MapViewOfFile ( )</a> . aspx)来申请。内存映射是执行文件I/O的一种方便且高性能的方法，因此它被用于加载动态链接库。也可以创建一个不对应于任何文件的<strong>匿名内存映射</strong>，用于程序数据。在Linux中，如果您通过<a href="http://www.kernel.org/doc/pages/online/pages/man3/malloc.3.html" target="_blank" rel="noopener">malloc( )</a>请求大内存块，C库将创建这样的匿名映射，而不是使用堆内存。“一大块”意味着大于“MMAP_THRESHOLD”字节，默认为128 kB，可通过<a href="http://www.kernel.org/doc/manpages/online/pages/man3/undocumen.3.html" target="_blank" rel="noopener">mallopt( )</a>进行调整。</p>
+<p>接下来是地址空间的堆。与栈类似，堆也提供运行时的动态内存分配，但与栈不同的是，对于分配的数据，可以比进行分配的函数的生命周期存活的时间更长（即函数返回，分配的内存并不是自动销毁）。大多数编程语言都为程序提供堆管理功能。因此，满足内存请求是编程语言运行时和内核之间的共同事务。在C语言中，堆分配的接口是<a href="http://www.kernel.org/doc/pages/online/pages/man3/malloc.3.html" target="_blank" rel="noopener">malloc()</a>及其友元函数，而在c#这样的有垃圾回收机制的编程语言中，接口是‘new’关键字。</p>
+<p>如果堆中有足够的空间来满足内存请求，那么语言运行时可以在不涉及内核的情况下处理它。否则，通过<a href="http://www.kernel.org/doc/manpages/online/pages/man2/brk.2.html" target="_blank" rel="noopener">brk()</a>系统调用(<a href="http://lxr.linux.no/linux.no/linux +v2.6.28.1/mm/mmap.c#L248" target="_blank" rel="noopener">实现</a>来扩大堆，以便为请求的块腾出空间。堆管理是<a href="http://g.oswego.edu/dl/html/malloc.html" target="_blank" rel="noopener">复杂的</a>，在面对我们的程序的混乱分配模式时，需要复杂的算法来争取速度和有效的内存使用。为堆请求提供服务所需的时间可能有很大差异。实时系统有<a href="http://rtportal.upv.es/rtmalloc/" target="_blank" rel="noopener">专用分配器</a>来处理这个问题。堆也变得“支离破碎”，如下图所示:</p>
+<p><img src="http://static.duartes.org/img/blogPosts/fragmentedHeap.png" alt="Fragmented Heap"></p>
+<p>最后我们讨论内存的最低段:BSS、data和text段。在C语言中，BSS和data段都存储了静态(全局)变量的内容。不同的是，BSS存储了<em>未初始化</em>的静态变量的内容，这些变量的值在源代码中没有被程序员设置（在链接时，链接器会为bss节分配固定的大小，并且用字节0x00填充；加载时创建对应内容的段）。BSS内存区域是匿名的:它不映射任何文件。就如你定义一个如下的变量：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">int</span> cntActiveUsers;</span><br></pre></td></tr></table></figure>
+<p>则该变量的内容位于BSS中。</p>
+<p>另一方面，data段保存源代码中已经初始化的静态变量的内容。这个内存区域<strong>不是匿名的</strong>。它映射程序的二进制映像部分，包含了源代码中给定的初始静态值的部分。因此，如果你定义</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">int</span> cntWorkerBees = <span class="number">10</span></span><br></pre></td></tr></table></figure>
+<p>变量的内容就在data段中，初始值为10。即使data段映射一个文件，它也是一个<strong>私有内存映射</strong>，这意味着对内存的更新不会反映在底层文件中。这是理所当然的，否则对全局变量的赋值将改变磁盘上的二进制映像，这将无法想象!</p>
+<p>下图中的数据示例比较复杂，因为它使用了一个指针。此时，指针’ gonzo ‘的内容是在数据段中的一个4字节的内存地址。然而，它所指向的实际字符串却不是。该字符串位于<strong>text</strong>段中，该段是只读的，除了字符串常量，它还存储所有代码。text段也映射你的二进制文件在内存中，但如果在这个区域写入会导致程序段错误。这有助于防止指针错误，尽管没有让C程序员有安全编码意识那么有效。这是一个图表显示这些部分和我们的例子变量:</p>
+<p><img src="http://static.duartes.org/img/blogPosts/mappingBinaryImage.png" alt="ELF Binary Image Mapped Into Memory"></p>
+<p>在 Linux 中，你可以通过读取文件 /proc/pid_of_process/maps 来查看特定进程的虚拟地址空间布局。需要注意的是，一个虚拟段可能包含多个区域，例如，每个映射进 mmap 共享内存段中的。文件内容通常各划分了各自的区域，并且动态链接库在该段中拥有类似BSS和data段的额外布局。下一篇文章将会阐明“区域”的确切含义。以及谈谈有时人们说的“数据段”= data段+bss段+堆段，这种说法的正确性。</p>
+<p>您可以使用<a href="http://manpages.ubuntu.com/manpages/intrepid/en/man1/nm.1.html" target="_blank" rel="noopener">nm</a>和<a href="http://manpages.ubuntu.com/manpages/intrepid/en/man1/objdump.1.html" target="_blank" rel="noopener">objdump</a>命令查看二进制文件来显示符号及其地址，预定映射到的内存段等等信息。最后，在 Linux 中，前文描述的虚拟地址空间布局很灵活，作为默认已经沿用数年之久。这种机制假设 RLIMIT_STACK 的值是确定的，否则，Linux 将恢复“经典的”布局方案，如下图所示：</p>
+<p><img src="http://static.duartes.org/img/blogPosts/linuxClassicAddressSpaceLayout.png" alt="Classic Process Address Space Layout In Linux"></p>
+<p>最后这个图就是经典的虚拟地址空间布局。下一篇文章将探讨内核是怎样跟踪这些内存区域的；内存映射的原理，如何与文件读写联系起来；以及内存使用图表的含义。</p>
+
+    </article>
+    <!-- license  -->
+    
+        <div class="license-wrapper">
+            <p>原文作者: <a href="http://wang66.top">王六六</a>
+            </p><p>原文链接: <a href="http://wang66.top/2020/Anatomy-of-a-Program-in-Memory.html">http://wang66.top/2020/Anatomy-of-a-Program-in-Memory.html</a>
+            </p><p>发表日期: <a href="http://wang66.top/2020/Anatomy-of-a-Program-in-Memory.html">April 14th 2020, 4:15:33 pm</a>
+            </p><p>版权声明: 本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
+        </div>
+    
+    <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+                <div class="nextSlogan">Next Post</div>
+                <a href="/2020/How-The-Kernel-Manages-Your-Memory.html" title="How" the kernel manages your memory>
+                    <div class="nextTitle">How The Kernel Manages Your Memory</div>
+                </a>
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href="/2019/port-knocking.html" title="端口敲门">
+                    <div class="prevTitle">端口敲门</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!--PC和WAP自适应版-->
+
+    <!--PC版-->
+
+
+    
+    
+    <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+    <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+    <div id="comment"></div>
+    <script>
+    new Valine({
+        el: '#comment' ,
+        notify: "true", 
+        verify: false, 
+        appId: "kBws43cqYyOkzvJkwd7PwiQ3-gzGzoHsz",
+        appKey: "IEbfjsLgEhcgfFfWicWSYdhf",
+        placeholder: "来评论一下吧~",
+        path:window.location.pathname, 
+		avatar: 'robohash' // (''/mp/identicon/monsterid/wavatar/robohash/retro/hide)
+    });
+    </script>
+
+
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:wangji19971013@qq.com" class="iconfont-archer email" title="email"></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/wang66just6" class="iconfont-archer github" target="_blank" title="github"></a>
+            
+        
+    
+        
+            
+                <span class="iconfont-archer wechat" title="wechat">
+                  
+                  <img class="profile-qr" src="/assets/wechat.png">
+                </span>
+            
+        
+    
+        
+            
+                <span class="iconfont-archer qq" title="qq">
+                  
+                  <img class="profile-qr" src="/assets/qq.jpg">
+                </span>
+            
+        
+    
+        
+            
+                <a href="//weibo.com/wang66just6" class="iconfont-archer weibo" target="_blank" title="weibo"></a>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a href="//twitter.com/wang66just6" class="iconfont-archer twitter" target="_blank" title="twitter"></a>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span><br>
+		<p>Hosted by <a href="https://pages.coding.me" style="font-weight: bold">Coding Pages</a></p>
+		<span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+	<script>
+		var now = new Date(); 
+		function createtime() { 
+			var grt= new Date("08/01/2018 12:00:00");//此处修改你的建站时间或者网站上线时间 
+			now.setTime(now.getTime()+250); 
+			days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); 
+			hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); 
+			if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); 
+			mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} 
+			seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); 
+			snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} 
+			document.getElementById("timeDate").innerHTML = "本站已安全运行 "+dnum+" 天 "; 
+			document.getElementById("times").innerHTML = hnum + " 小时 " + mnum + " 分 " + snum + " 秒"; 
+		} 
+	setInterval("createtime()",250);
+	</script>
+    </div>
+    <!-- 不蒜子  -->
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        
+    </div>
+    
+    <div class="back-top iconfont-archer">&#xe639;</div>
+    <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-panel-archives">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 19
+        </div>
+        <!-- search  -->
+        
+    </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2020 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/25</span><a class="archive-post-title" href="/2020/ELF-formt.html">ELF文件格式</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/24</span><a class="archive-post-title" href="/2020/How-The-Kernel-Manages-Your-Memory.html">How The Kernel Manages Your Memory</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/14</span><a class="archive-post-title" href="/2020/Anatomy-of-a-Program-in-Memory.html">Anatomy of a Program in Memory</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2019 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/08</span><a class="archive-post-title" href="/2019/port-knocking.html">端口敲门</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/19</span><a class="archive-post-title" href="/2019/Information-collection.html">信息收集总结</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/02</span><a class="archive-post-title" href="/2019/powershell-attack.html">PowerShell攻击技术</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2018 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/05</span><a class="archive-post-title" href="/2018/vulnhub-ch4inrulz1-0-1.html">Vulnhub渗透笔记之ch4inrulz:1.0.1</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/02</span><a class="archive-post-title" href="/2018/vulnhub-lampiao1.html">VulnHub渗透笔记之Lampio1</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/01</span><a class="archive-post-title" href="/2018/vulnhub-wankada1.html">Vulnhub渗透笔记之wankanda1</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/30</span><a class="archive-post-title" href="/2018/vulnhub-node1.html">Vulnhub渗透笔记之Node:1</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/24</span><a class="archive-post-title" href="/2018/The-mathematics-of-cryptography.html">浅谈密码学中的数学基础</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/16</span><a class="archive-post-title" href="/2018/linux-rookit.html">Linux后门检测与系统恢复</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/10</span><a class="archive-post-title" href="/2018/HistoryofMCD.html">恶意代码发展简史</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/02</span><a class="archive-post-title" href="/2018/soyouwantobeahacker.html">所以你想成为黑客？</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/01</span><a class="archive-post-title" href="/2018/website-attack.html">社会工程学攻击之网站钓鱼</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/27</span><a class="archive-post-title" href="/2018/隐写术之LSB隐写.html">隐写术之LSB隐写</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/27</span><a class="archive-post-title" href="/2018/一次恶意PHP脚本初探.html">一次恶意PHP脚本初探</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/25</span><a class="archive-post-title" href="/2018/ARP毒化.html">来自身边的安全威胁—ARP欺骗攻击</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/18</span><a class="archive-post-title" href="/2018/浅析缓冲区溢出.html">浅析缓冲区溢出</a>
+        </li>
+    
+    </ul></div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="局域网"><span class="iconfont-archer">&#xe606;</span>局域网</span>
+    
+        <span class="sidebar-tag-name" data-tags="arp"><span class="iconfont-archer">&#xe606;</span>arp</span>
+    
+        <span class="sidebar-tag-name" data-tags="中间人攻击"><span class="iconfont-archer">&#xe606;</span>中间人攻击</span>
+    
+        <span class="sidebar-tag-name" data-tags="系统原理"><span class="iconfont-archer">&#xe606;</span>系统原理</span>
+    
+        <span class="sidebar-tag-name" data-tags="翻译"><span class="iconfont-archer">&#xe606;</span>翻译</span>
+    
+        <span class="sidebar-tag-name" data-tags="恶意代码"><span class="iconfont-archer">&#xe606;</span>恶意代码</span>
+    
+        <span class="sidebar-tag-name" data-tags="计算机病毒"><span class="iconfont-archer">&#xe606;</span>计算机病毒</span>
+    
+        <span class="sidebar-tag-name" data-tags="渗透测试"><span class="iconfont-archer">&#xe606;</span>渗透测试</span>
+    
+        <span class="sidebar-tag-name" data-tags="vulnhub"><span class="iconfont-archer">&#xe606;</span>vulnhub</span>
+    
+        <span class="sidebar-tag-name" data-tags="密码学"><span class="iconfont-archer">&#xe606;</span>密码学</span>
+    
+        <span class="sidebar-tag-name" data-tags="linux"><span class="iconfont-archer">&#xe606;</span>linux</span>
+    
+        <span class="sidebar-tag-name" data-tags="rootkit"><span class="iconfont-archer">&#xe606;</span>rootkit</span>
+    
+        <span class="sidebar-tag-name" data-tags="powershell"><span class="iconfont-archer">&#xe606;</span>powershell</span>
+    
+        <span class="sidebar-tag-name" data-tags="资源，翻译"><span class="iconfont-archer">&#xe606;</span>资源，翻译</span>
+    
+        <span class="sidebar-tag-name" data-tags="php"><span class="iconfont-archer">&#xe606;</span>php</span>
+    
+        <span class="sidebar-tag-name" data-tags="webshell"><span class="iconfont-archer">&#xe606;</span>webshell</span>
+    
+        <span class="sidebar-tag-name" data-tags="社会工程学"><span class="iconfont-archer">&#xe606;</span>社会工程学</span>
+    
+        <span class="sidebar-tag-name" data-tags="隐写术"><span class="iconfont-archer">&#xe606;</span>隐写术</span>
+    
+        <span class="sidebar-tag-name" data-tags="lsb隐写"><span class="iconfont-archer">&#xe606;</span>lsb隐写</span>
+    
+        <span class="sidebar-tag-name" data-tags="缓冲区"><span class="iconfont-archer">&#xe606;</span>缓冲区</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br>
+    1、请确保node版本大于6.2<br>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+        <span class="sidebar-category-name" data-categories="资源"><span class="iconfont-archer">&#xe60a;</span>资源</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: "/",
+        author: "王六六"
+    }
+</script>
+    <!-- CDN failover -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ === 'undefined')
+        {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
+        }
+    </script>
+    <script src="/scripts/main.js"></script>
+    <!-- algolia -->
+    
+    <!-- busuanzi  -->
+    
+    <!-- CNZZ  -->
+    
+    </div>
+    <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
+     
+    </body>
+</html>
+
+

@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html>
+    <!-- title -->
+
+
+
+
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="author" content="王六六">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="王六六">
+    <meta name="keywords" content="王六六的博客 | 王六六">
+    <meta name="description" content="It's raining cats and dogs.">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>信息收集总结 · wang66&#39;s blog</title>
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s 1;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+</style>
+
+    <link rel="preload" href="/css/style.css?v=20180824" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="stylesheet" href="/css/mobile.css?v=20180824" media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+(function( w ){
+	"use strict";
+	// rel=preload support test
+	if( !w.loadCSS ){
+		w.loadCSS = function(){};
+	}
+	// define on the loadCSS obj
+	var rp = loadCSS.relpreload = {};
+	// rel=preload feature support test
+	// runs once and returns a function for compat purposes
+	rp.support = (function(){
+		var ret;
+		try {
+			ret = w.document.createElement( "link" ).relList.supports( "preload" );
+		} catch (e) {
+			ret = false;
+		}
+		return function(){
+			return ret;
+		};
+	})();
+
+	// if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+	// then change that media back to its intended value on load
+	rp.bindMediaToggle = function( link ){
+		// remember existing media attr for ultimate state, or default to 'all'
+		var finalMedia = link.media || "all";
+
+		function enableStylesheet(){
+			link.media = finalMedia;
+		}
+
+		// bind load handlers to enable media
+		if( link.addEventListener ){
+			link.addEventListener( "load", enableStylesheet );
+		} else if( link.attachEvent ){
+			link.attachEvent( "onload", enableStylesheet );
+		}
+
+		// Set rel and non-applicable media type to start an async request
+		// note: timeout allows this to happen async to let rendering continue in IE
+		setTimeout(function(){
+			link.rel = "stylesheet";
+			link.media = "only x";
+		});
+		// also enable media after 3 seconds,
+		// which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+		setTimeout( enableStylesheet, 3000 );
+	};
+
+	// loop through link elements in DOM
+	rp.poly = function(){
+		// double check this to prevent external calls from running
+		if( rp.support() ){
+			return;
+		}
+		var links = w.document.getElementsByTagName( "link" );
+		for( var i = 0; i < links.length; i++ ){
+			var link = links[ i ];
+			// qualify links to those with rel=preload and as=style attrs
+			if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+				// prevent rerunning on link
+				link.setAttribute( "data-loadcss", true );
+				// bind listeners to toggle media back
+				rp.bindMediaToggle( link );
+			}
+		}
+	};
+
+	// if unsupported, run the polyfill
+	if( !rp.support() ){
+		// run once at least
+		rp.poly();
+
+		// rerun poly on an interval until onload
+		var run = w.setInterval( rp.poly, 500 );
+		if( w.addEventListener ){
+			w.addEventListener( "load", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		} else if( w.attachEvent ){
+			w.attachEvent( "onload", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		}
+	}
+
+
+	// commonjs
+	if( typeof exports !== "undefined" ){
+		exports.loadCSS = loadCSS;
+	}
+	else {
+		w.loadCSS = loadCSS;
+	}
+}( typeof global !== "undefined" ? global : this ) );
+</script>
+
+    <link rel="icon" href="/assets/favicon.ico">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script">
+    <link rel="preload" href="/scripts/main.js" as="script">
+    <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
+    <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
+    
+    <!-- fancybox -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/">Still Shines.</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">信息收集总结</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href="/">Still Shines.</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro" style="height:50vh;">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            信息收集总结
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class="post-intro-tags">
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="渗透测试">渗透测试</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>Word count: <span class="post-count">3k</span> / Reading time: <span class="post-count">11 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2019/07/19</span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+        <script>
+ 
+  // get user agent
+  var browser = {
+    versions: function () {
+      var u = window.navigator.userAgent;
+      return {
+        userAgent: u,
+        trident: u.indexOf('Trident') > -1, //IE内核
+        presto: u.indexOf('Presto') > -1, //opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+        iPad: u.indexOf('iPad') > -1, //是否为iPad
+        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+      };
+    }()
+  }
+  console.log("userAgent:" + browser.versions.userAgent);
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded');
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in');
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb(){
+    if (browser.versions.uc) {
+      console.log("UCBrowser");
+      fontLoaded();
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular']
+        },
+        loading: function () {  //所有字体开始加载
+          // console.log('loading');
+        },
+        active: function () {  //所有字体已渲染
+          fontLoaded();
+        },
+        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout');
+          fontLoaded();
+        },
+        timeout: 5000 // Set the timeout to two seconds
+      });
+    }
+  }
+
+  function asyncErr(){
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (cb) { o.addEventListener('load', function (e) { cb(null, e); }, false); }
+    if (err) { o.addEventListener('error', function (e) { err(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+
+  var asyncLoadWithFallBack = function(arr, success, reject) {
+      var currReject = function(){
+        reject()
+        arr.shift()
+        if(arr.length)
+          async(arr[0], success, currReject)
+        }
+
+      async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack([
+    "https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", 
+    "https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js",
+    "/lib/webfontloader.min.js"
+  ], asyncCb, asyncErr)
+</script>        
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>渗透测试过程中，信息收集是十分重要的环节。信息收集的目的是获取目标系统的准确信息，以了解组织运行的方式，确定最佳的进攻线路。信息收集可以是悄无生息的，不让对方察觉到自己的存在或分析出我们的意图。信息收集的工作需要充分的细致和耐心，不然极可能会与可利用的系统漏洞或可实施攻击的目标失之交臂。信息收集工作需要周密的计划、调研，最重要的是具备从攻击者的角度去思考问题的能力。但信息收集中最重要的是不能被条条框框限制住，而且要把收集到的每一点微小的信息记录下来。本文只列出信息收集的一些方法步骤，仅供参考。<br><a id="more"></a></p>
+<h1 id="信息收集目标"><a href="#信息收集目标" class="headerlink" title="信息收集目标"></a>信息收集目标</h1><p>信息收集并非盲目的，是为了能让我们对目标系统有更进一步的认识，主要需要收集到的信息有以下几类：</p>
+<blockquote>
+<p>1、Whois信息<br>2、网站架构<br>3、DNS信息（通过查询dns我们可以检测是否存在dns域传送漏洞）<br>4、子域名搜集<br>5、敏感目录及敏感信息、源码泄露（搜索引擎+工具）<br>6、脆弱系统（网络空间）<br>7、旁站查询<br>8、C端查询<br>9、指纹信息<br>10、端口服务<br>11、备案信息<br>12、真实ip<br>13、安全防护设备（WAF/IDS/FW/负载均衡）<br>14、社工信息（朋友圈、微博、qq空间、求职、交易等社交平台）<br>15、企业信息（天眼查、企业信用信息公示系统、工业和信息化部ICP/IP地址/域名信息备案管理系统）</p>
+</blockquote>
+<h1 id="信息收集流程"><a href="#信息收集流程" class="headerlink" title="信息收集流程"></a>信息收集流程</h1><p>信息收集流程从域名，服务器，网站三个方面考虑，基本上能涵盖整改业务系统信息。</p>
+<blockquote>
+<p><strong>域名</strong>：whois、子域名、备案信息；<br><strong>服务器</strong>：Dns信息、真实ip、端口服务；<br><strong>网站程序（web层)</strong>：网站架构、敏感目录及敏感信息、源码泄露（搜索引擎+工具）、脆弱系统（网络空间）、旁站查询、C端查询、指纹信息、探测waf；<br><strong>企业扩展</strong>：天眼查、企业信用信息公示系统；</p>
+</blockquote>
+<h1 id="信息收集方法"><a href="#信息收集方法" class="headerlink" title="信息收集方法"></a>信息收集方法</h1><h2 id="0x01-收集域名信息"><a href="#0x01-收集域名信息" class="headerlink" title="0x01 收集域名信息"></a>0x01 收集域名信息</h2><blockquote>
+<p>DNS、注册人、备案等有关域名的一切信息。</p>
+</blockquote>
+<h3 id="Whois信息："><a href="#Whois信息：" class="headerlink" title="Whois信息："></a>Whois信息：</h3><p>1、站长之家：<a href="http://whois.chinaz.com/" target="_blank" rel="noopener">http://whois.chinaz.com/</a></p>
+<p>2、微步：<a href="https://x.threatbook.cn/" target="_blank" rel="noopener">https://x.threatbook.cn/</a> </p>
+<p>3、国外who.is：<a href="https://who.is/" target="_blank" rel="noopener">https://who.is/</a></p>
+<p>4、爱站：<a href="https://whois.aizhan.com/" target="_blank" rel="noopener">https://whois.aizhan.com/</a> </p>
+<p>5、Linux whois命令</p>
+<h3 id="备案信息："><a href="#备案信息：" class="headerlink" title="备案信息："></a>备案信息：</h3><p>天眼查：<a href="https://www.tianyancha.com/" target="_blank" rel="noopener">https://www.tianyancha.com/</a> </p>
+<p>ICP备案查询网：<a href="http://www.beianbeian.com/" target="_blank" rel="noopener">http://www.beianbeian.com/</a> </p>
+<p>国家企业信用信息公示系统：<a href="http://www.gsxt.gov.cn/index.html" target="_blank" rel="noopener">http://www.gsxt.gov.cn/index.html</a> </p>
+<h3 id="敏感字收集："><a href="#敏感字收集：" class="headerlink" title="敏感字收集："></a>敏感字收集：</h3><h4 id="搜索引擎"><a href="#搜索引擎" class="headerlink" title="搜索引擎"></a>搜索引擎</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Google用法:</span><br><span class="line">Site ----------指定域名</span><br><span class="line">Inurl----------URL中的关键字</span><br><span class="line">Intext---------网页正文中的关键字</span><br><span class="line">Filetype-------指定的文件类型</span><br><span class="line">Intitle---------网页标题中的关键字</span><br><span class="line">link-----------link:baidu.com表示返回说有和baidu.com连接的URL</span><br><span class="line">Info ----------查找指定站点的基本信息</span><br><span class="line">Cache---------搜索Google里有关某些内容的缓存</span><br><span class="line"></span><br><span class="line">例：site: edu.cn intext: 后台管理</span><br></pre></td></tr></table></figure>
+<h3 id="子域名信息收集："><a href="#子域名信息收集：" class="headerlink" title="子域名信息收集："></a>子域名信息收集：</h3><h4 id="1、在线子域名"><a href="#1、在线子域名" class="headerlink" title="1、在线子域名"></a>1、在线子域名</h4><p><a href="http://tools.bugscaner.com/subdomain/" target="_blank" rel="noopener">http://tools.bugscaner.com/subdomain/</a><br><a href="https://phpinfo.me/domain/" target="_blank" rel="noopener">https://phpinfo.me/domain/</a></p>
+<h4 id="2、爆破枚举"><a href="#2、爆破枚举" class="headerlink" title="2、爆破枚举"></a>2、爆破枚举</h4><p>Layer子域名挖掘机:<a href="https://www.webshell.cc/6384.html" target="_blank" rel="noopener">https://www.webshell.cc/6384.html</a><br>subDomainsBrute: <a href="https://github.com/lijiejie/subDomainsBrute" target="_blank" rel="noopener">https://github.com/lijiejie/subDomainsBrute</a><br>K8<br>orangescan<br>DNSRecon</p>
+<p>ps: 在<a href="https://github.com/" target="_blank" rel="noopener">https://github.com/</a> 上也可以搜索子域名，运气好的话，会有意想不到的收获</p>
+<h4 id="3、检索给定域名的子域名"><a href="#3、检索给定域名的子域名" class="headerlink" title="3、检索给定域名的子域名"></a>3、检索给定域名的子域名</h4><p>VirusTotal：<a href="https://www.virustotal.com/#/home/search" target="_blank" rel="noopener">https://www.virustotal.com/#/home/search</a><br>DNSdumpster：<a href="https://dnsdumpster.com/" target="_blank" rel="noopener">https://dnsdumpster.com/</a> </p>
+<h4 id="4、基于SSL证书查询"><a href="#4、基于SSL证书查询" class="headerlink" title="4、基于SSL证书查询"></a>4、基于SSL证书查询</h4><p><a href="https://crt.sh/" target="_blank" rel="noopener">https://crt.sh/</a><br><a href="https://censys.io/" target="_blank" rel="noopener">https://censys.io/</a><br><a href="https://developers.facebook.com/tools/ct/" target="_blank" rel="noopener">https://developers.facebook.com/tools/ct/</a><br><a href="https://google.com/transparencyreport/https/ct/" target="_blank" rel="noopener">https://google.com/transparencyreport/https/ct/</a></p>
+<h4 id="5、搜索引擎"><a href="#5、搜索引擎" class="headerlink" title="5、搜索引擎"></a>5、搜索引擎</h4><p>Google搜索：搜索引擎语法(site:xxx.com)</p>
+<hr>
+<h2 id="0x02-收集服务器信息"><a href="#0x02-收集服务器信息" class="headerlink" title="0x02 收集服务器信息"></a>0x02 收集服务器信息</h2><h3 id="DNS信息收集："><a href="#DNS信息收集：" class="headerlink" title="DNS信息收集："></a>DNS信息收集：</h3><p>1、Kali（host、big命令）<br>2、windows（nslookup命令）<br>3、在线工具<br><a href="http://tool.chinaz.com/dns/" target="_blank" rel="noopener">http://tool.chinaz.com/dns/</a><br><a href="https://tool.lu/dns/" target="_blank" rel="noopener">https://tool.lu/dns/</a></p>
+<h3 id="查找真实的IP"><a href="#查找真实的IP" class="headerlink" title="查找真实的IP"></a>查找真实的IP</h3><p>在渗透过程中，目标服务可能只有一个域名。那么如何听过这个域名来确定目标服务器的真是IP对渗透测试来说就很重要。如果目标服务器不存在CDN，可<br>直接通过（<a href="http://www.ip138.com）" target="_blank" rel="noopener">www.ip138.com）</a> 获取目标的一些IP及域名信息。但现在大多数的网站都开启了CDN加速，导致我们获取到的IP地址不一定是真实的IP地址。</p>
+<h4 id="判断是否为使用了CDN"><a href="#判断是否为使用了CDN" class="headerlink" title="判断是否为使用了CDN"></a>判断是否为使用了CDN</h4><p>可以通过ping目标主域，观察域名解析的情况来判单还可以利用在线网址17CE（<a href="https://www.17ce.com）" target="_blank" rel="noopener">https://www.17ce.com）</a> 进行全国多地区的ping服务器操作，然后对比各个地区ping出的IP结果判断，查看这些IP是否一致，如果一样的，极有可能不存在CDN，如果不太一样或者规律很强，可以尝试查找这些IP的归属地，判断是否存在CDN。</p>
+<h4 id="寻找真实IP方法思路如下："><a href="#寻找真实IP方法思路如下：" class="headerlink" title="寻找真实IP方法思路如下："></a>寻找真实IP方法思路如下：</h4><blockquote>
+<p>1、二级域名法 一般网站不会所有的二级域名放CDN，因此我们可以利用这点来获取网站的真实ip<br>2、多地ping法 由CDN的原理，不同的地方去Ping服务器，如果IP不一样，则目标网站肯定使用了CDN<br>3、nslookup法 找国外的比较偏僻的DNS解析服务器进行DNS查询，因为大部分CDN提供商只针对国内市场，而对国外市场几乎是不做CDN，所以有很大的几率会直接解析到真实IP，因此，通过国外在线代理网址App Svnthetic Monitor(<a href="https://asm.ca.com/en/ping.php" target="_blank" rel="noopener">https://asm.ca.com/en/ping.php</a>) 访问，可能会得到真实的IP。<br>4、查看邮件法 通过查看邮件原文来确定ip地址（但要自己的邮箱服务器），因为CDN不会发送邮件。<br>5、RSS订阅法 RSS原理于邮件法差不多<br>6、查看历史解析记录法 查找域名历史解析记录，域名在上CDN之前用的IP，很有可能就是CDN的真实源IP地址（<a href="https://www.netcraft.com）" target="_blank" rel="noopener">https://www.netcraft.com）</a><br>7、利用网站漏洞（XSS、命令执行、SSRF、php探针、phpinfo页面等） 可以通过一些页面和漏洞获取到服务器ip地址也是可能的。</p>
+</blockquote>
+<h4 id="验证获取的ip"><a href="#验证获取的ip" class="headerlink" title="验证获取的ip"></a>验证获取的ip</h4><p>直接用IP访问或者在目标段比较打的情况下，借助类似Masscan的工具批量扫描对应IP段中所有开了80.443.8080端口的IP。然后珠峰尝试IP访问观察相应结果是否为主站点</p>
+<h3 id="端口服务信息："><a href="#端口服务信息：" class="headerlink" title="端口服务信息："></a>端口服务信息：</h3><p>Nmap，无状态端口扫描工具Masscan，御剑高速TCP端口扫描工具等</p>
+<p>常见的端口信息：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line">	端 口                 端口说明                    攻击方向</span><br><span class="line"></span><br><span class="line">文件共享服务端口：：：</span><br><span class="line">21/22/69-----------Ftp/Tftp文件传输协议-------允许匿名上传、下载、爆破和嗅探操作</span><br><span class="line">2049---------------Nfs服务-------------------配置不当</span><br><span class="line">139----------------Samba服务----------------爆破、未经授权访问、远程代码执行</span><br><span class="line">389----------------Ldap目录访问协议----------注入、允许匿名访问、弱口令</span><br><span class="line"></span><br><span class="line">远程链接服务端口：：：</span><br><span class="line">22  ---------------SSH远程链接--------------爆破、SSH隧道及内网代理转发、文件传输</span><br><span class="line">23  ---------------Telnet远程连接- -----------爆破、嗅探、弱口令</span><br><span class="line">3398---------------Rdp远程桌面连接--------Shift后门(Windows Server 2003以下的系统)、爆破</span><br><span class="line">5900---------------VNC       ---------------弱口令、爆破</span><br><span class="line">5632---------------PyAnywhere服务-----------抓密码、代码执行</span><br><span class="line"></span><br><span class="line">Web应用服务端口：：：</span><br><span class="line">80/443/8080--------常见的Web服务端口-------\Web攻击、爆破对应服务版本的漏洞</span><br><span class="line">7001/7002----------WebLogic控制台-----------Java反序列化、弱口令</span><br><span class="line">8080/8089-----------Jboss/Resin/Jetty/Jenkins---反序列化控制台弱口令</span><br><span class="line">9090----------------WebSphere控制台--------Java反序列化、弱口令</span><br><span class="line">4848----------------GlassFish控制台 ---------/弱口令</span><br><span class="line">1352----------------Lotus domino邮电服务----弱口令、信息泄露、爆破</span><br><span class="line">10000---------------Webmin-Web控制面板----/弱口令</span><br><span class="line"></span><br><span class="line">数据库服务端口：：：</span><br><span class="line">3306----------------MySQL-------------------注入、提权、爆破</span><br><span class="line">1433----------------MSSQL数据库------------/注入、提权、SA弱口令、爆破</span><br><span class="line">1521----------------Oracle数据库-------------/TNS爆破、注入、反弹Shell</span><br><span class="line">5432----------------PostgreSQL数据库---------爆破、注入、弱口令</span><br><span class="line">27017/27018---------MongoDB数据库----------爆破、未授权访问</span><br><span class="line">6379----------------Redis数据库--------------/可尝试未授权访问、弱口令</span><br><span class="line">5000----------------SysBase/DB2数据库--------/爆破、注入</span><br><span class="line"></span><br><span class="line">邮件服务端口：：：</span><br><span class="line">25------------------SMTP邮件服务------------邮件伪造</span><br><span class="line">110-----------------POP3协议----------------爆破、嗅探</span><br><span class="line">143-----------------IMAP协议----------------爆破</span><br><span class="line"></span><br><span class="line">网络常见协议端口：：：</span><br><span class="line">53------------------DNS域名系统-------------允许区域传送、DNS劫持、缓存投毒、欺骗</span><br><span class="line">67/68---------------DHCP服务----------------劫持、欺骗</span><br><span class="line">161-----------------SNMP协议---------------/爆破、搜索目标内网信息</span><br><span class="line"></span><br><span class="line">特殊服务端口：：：</span><br><span class="line">2181----------------Zookeeper服务------------未经授权访问</span><br><span class="line">8069----------------zabbix服务---------------/远程执行、SQL注入</span><br><span class="line">9200/9300-----------Elasticsearch服务----------/远程执行</span><br><span class="line">11211---------------Memcache服务------------未经授权</span><br><span class="line">512/513/514---------Linux Rexec服务-------------爆破、Rlogin登陆</span><br><span class="line">873-----------------Rsync服务------------------匿名访问、文件上传</span><br><span class="line">3690----------------Svn服务--------------------Svn泄露、未经授权访问</span><br><span class="line">50000---------------SAP Management Console-----远程执行</span><br></pre></td></tr></table></figure></p>
+<p>端口服务对应图：<br><img src="http://chuantu.xyz/t6/702/1563519464x2073530527.jpg" alt></p>
+<h3 id="c段查询"><a href="#c段查询" class="headerlink" title="c段查询"></a>c段查询</h3><h4 id="Nmap扫描"><a href="#Nmap扫描" class="headerlink" title="Nmap扫描"></a>Nmap扫描</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap -sP 192.168.1.0/24</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="0x03-网站信息收集"><a href="#0x03-网站信息收集" class="headerlink" title="0x03 网站信息收集"></a>0x03 网站信息收集</h2><h3 id="操作系统"><a href="#操作系统" class="headerlink" title="操作系统"></a>操作系统</h3><p>1、Nmap<br>2、查看数据包响应头<br>3、wappalyzer插件<br>4、云悉</p>
+<h3 id="指纹识别"><a href="#指纹识别" class="headerlink" title="指纹识别"></a>指纹识别</h3><blockquote>
+<p>是指自动识别网址所用的CMS，常见的CMS有Dedecms(织梦)、Discuz、PHPWEB、PHPWind、PHPCMS、ECShop、Dvbbs、SiteWeaver、ASPCMS、帝国、Z-Blog、WordPress</p>
+</blockquote>
+<h4 id="指纹有哪些"><a href="#指纹有哪些" class="headerlink" title="指纹有哪些"></a>指纹有哪些</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">指定路径下指定名称的js文件或代码。</span><br><span class="line"></span><br><span class="line">指定路径下指定名称的css文件或代码。</span><br><span class="line"></span><br><span class="line">中的内容，有些程序标题中会带有程序标识&lt;/p&gt;</span><br><span class="line"></span><br><span class="line">meta标记中带程序标识中带程序标识。</span><br><span class="line"></span><br><span class="line">display:none中的版权信息。</span><br><span class="line"></span><br><span class="line">页面底部版权信息，关键字© Powered by等。</span><br><span class="line"></span><br><span class="line">readme.txt、License.txt、help.txt等文件。</span><br><span class="line"></span><br><span class="line">指定路径下指定图片文件，如一些小的图标文件，后台登录页面中的图标文件等，一般管理员不会修改它们。</span><br><span class="line"></span><br><span class="line">注释掉的html代码中</span><br><span class="line"></span><br><span class="line">http头的X-Powered-By中的值，有的应用程序框架会在此值输出。</span><br><span class="line"></span><br><span class="line">cookie中的关键字</span><br><span class="line"></span><br><span class="line">robots.txt文件中的关键字</span><br><span class="line"></span><br><span class="line">404页面</span><br><span class="line"></span><br><span class="line">302返回时的旗标</span><br></pre></td></tr></table></figure>
+<h4 id="常见的指纹识别工具"><a href="#常见的指纹识别工具" class="headerlink" title="常见的指纹识别工具"></a>常见的指纹识别工具</h4><p>御剑Web指纹识别、WhatWeb、WebRobo、椰树、轻量级WEB指纹识别等</p>
+<h4 id="在线指纹识别网址"><a href="#在线指纹识别网址" class="headerlink" title="在线指纹识别网址"></a>在线指纹识别网址</h4><p>BugScaner：<a href="http://whatweb.bugscaner.com/look/" target="_blank" rel="noopener">http://whatweb.bugscaner.com/look/</a><br>云悉指纹：<a href="http://www.yunsee.cn/finger.html" target="_blank" rel="noopener">http://www.yunsee.cn/finger.html</a><br>WhatWeb：<a href="http://whatweb.net/" target="_blank" rel="noopener">http://whatweb.net/</a><br>在线指纹识别：<a href="http://whatweb.bugscaner.com/look/" target="_blank" rel="noopener">http://whatweb.bugscaner.com/look/</a></p>
+<h3 id="敏感目录及敏感信息、源码泄露（搜索引擎-工具）"><a href="#敏感目录及敏感信息、源码泄露（搜索引擎-工具）" class="headerlink" title="敏感目录及敏感信息、源码泄露（搜索引擎+工具）"></a>敏感目录及敏感信息、源码泄露（搜索引擎+工具）</h3><p>1、御剑</p>
+<p>2、搜索引擎<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">基本语法：</span><br><span class="line"></span><br><span class="line">&quot;&quot;//双引号表示强制搜索</span><br><span class="line">- //表示搜索不包含关键词的网页</span><br><span class="line">| //或者的意思</span><br><span class="line">site //返回所有于这个域名有关的网页</span><br><span class="line">intext //搜索到的网页正文部分包含关键词</span><br><span class="line">intitle //搜索到的网页标题包含关键词</span><br><span class="line">cache//搜索关于某些内容的缓存</span><br><span class="line">definne //搜索某个词语的定义</span><br><span class="line">filetype //搜索指定的文件类型</span><br><span class="line">info //查找指定站点的一些基本信息</span><br><span class="line">inurl //搜索包含关键词的</span><br><span class="line">URLlink//可以返回所有和baidu.com做了链接的URL</span><br></pre></td></tr></table></figure></p>
+<p>3、BBscan<br>BBscan是一款信息泄漏批量扫描脚本。它是依旧还是由lijiejie大佬用python写的安全工具。<br><a href="https://github.com/lijiejie/BBScan" target="_blank" rel="noopener">https://github.com/lijiejie/BBScan</a></p>
+<p>4、GSIL<br>GSIL是一款由python3写的从github上寻找敏感文件的安全工具。<br><a href="https://github.com/FeeiCN/GSIL" target="_blank" rel="noopener">https://github.com/FeeiCN/GSIL</a></p>
+<p>5、社交平台（QQ群、文库、求职网）</p>
+<p>6、特定文件<br>robots.txt、crossdomin.xml、sitemap.xml、源码泄漏文件、/WEB-INF/</p>
+<h3 id="空间搜索引擎"><a href="#空间搜索引擎" class="headerlink" title="空间搜索引擎"></a>空间搜索引擎</h3><blockquote>
+<p>网络空间搜索引擎的作用就是将互联网上公开的网络资产收集和整理，以此方便人们进行查阅和利用。我在网络空间可发现了不少企业的脆弱系统，未授权访问、SQL注入、弱口令等等都是存在的。</p>
+</blockquote>
+<p>1、Shodan</p>
+<p>2、FOFA</p>
+<p>3、Zoomeye</p>
+<h3 id="旁站查询"><a href="#旁站查询" class="headerlink" title="旁站查询"></a>旁站查询</h3><p>1、在线工具<br>2、k8旁站查询</p>
+<h3 id="waf探测"><a href="#waf探测" class="headerlink" title="waf探测"></a>waf探测</h3><p>1、手工（提交恶意数据）<br>2、工具（WAFW00F、Nmap）<br>Nmap探测WAF有两种脚本，一种是http-waf-detect，一种是http-waf-fingerprint</p>
+
+    </article>
+    <!-- license  -->
+    
+        <div class="license-wrapper">
+            <p>原文作者: <a href="http://wang66.top">王六六</a>
+            </p><p>原文链接: <a href="http://wang66.top/2019/Information-collection.html">http://wang66.top/2019/Information-collection.html</a>
+            </p><p>发表日期: <a href="http://wang66.top/2019/Information-collection.html">July 19th 2019, 10:55:01 am</a>
+            </p><p>版权声明: 本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
+        </div>
+    
+    <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+                <div class="nextSlogan">Next Post</div>
+                <a href="/2019/port-knocking.html" title="端口敲门">
+                    <div class="nextTitle">端口敲门</div>
+                </a>
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href="/2019/powershell-attack.html" title="PowerShell攻击技术">
+                    <div class="prevTitle">PowerShell攻击技术</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!--PC和WAP自适应版-->
+
+    <!--PC版-->
+
+
+    
+    
+    <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+    <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+    <div id="comment"></div>
+    <script>
+    new Valine({
+        el: '#comment' ,
+        notify: "true", 
+        verify: false, 
+        appId: "kBws43cqYyOkzvJkwd7PwiQ3-gzGzoHsz",
+        appKey: "IEbfjsLgEhcgfFfWicWSYdhf",
+        placeholder: "来评论一下吧~",
+        path:window.location.pathname, 
+		avatar: 'robohash' // (''/mp/identicon/monsterid/wavatar/robohash/retro/hide)
+    });
+    </script>
+
+
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:wangji19971013@qq.com" class="iconfont-archer email" title="email"></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/wang66just6" class="iconfont-archer github" target="_blank" title="github"></a>
+            
+        
+    
+        
+            
+                <span class="iconfont-archer wechat" title="wechat">
+                  
+                  <img class="profile-qr" src="/assets/wechat.png">
+                </span>
+            
+        
+    
+        
+            
+                <span class="iconfont-archer qq" title="qq">
+                  
+                  <img class="profile-qr" src="/assets/qq.jpg">
+                </span>
+            
+        
+    
+        
+            
+                <a href="//weibo.com/wang66just6" class="iconfont-archer weibo" target="_blank" title="weibo"></a>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a href="//twitter.com/wang66just6" class="iconfont-archer twitter" target="_blank" title="twitter"></a>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span><br>
+		<p>Hosted by <a href="https://pages.coding.me" style="font-weight: bold">Coding Pages</a></p>
+		<span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+	<script>
+		var now = new Date(); 
+		function createtime() { 
+			var grt= new Date("08/01/2018 12:00:00");//此处修改你的建站时间或者网站上线时间 
+			now.setTime(now.getTime()+250); 
+			days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); 
+			hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); 
+			if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); 
+			mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} 
+			seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); 
+			snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} 
+			document.getElementById("timeDate").innerHTML = "本站已安全运行 "+dnum+" 天 "; 
+			document.getElementById("times").innerHTML = hnum + " 小时 " + mnum + " 分 " + snum + " 秒"; 
+		} 
+	setInterval("createtime()",250);
+	</script>
+    </div>
+    <!-- 不蒜子  -->
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#信息收集目标"><span class="toc-number">2.</span> <span class="toc-text">信息收集目标</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#信息收集流程"><span class="toc-number">3.</span> <span class="toc-text">信息收集流程</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#信息收集方法"><span class="toc-number">4.</span> <span class="toc-text">信息收集方法</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-收集域名信息"><span class="toc-number">4.1.</span> <span class="toc-text">0x01 收集域名信息</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Whois信息："><span class="toc-number">4.1.1.</span> <span class="toc-text">Whois信息：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#备案信息："><span class="toc-number">4.1.2.</span> <span class="toc-text">备案信息：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#敏感字收集："><span class="toc-number">4.1.3.</span> <span class="toc-text">敏感字收集：</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#搜索引擎"><span class="toc-number">4.1.3.1.</span> <span class="toc-text">搜索引擎</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#子域名信息收集："><span class="toc-number">4.1.4.</span> <span class="toc-text">子域名信息收集：</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1、在线子域名"><span class="toc-number">4.1.4.1.</span> <span class="toc-text">1、在线子域名</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2、爆破枚举"><span class="toc-number">4.1.4.2.</span> <span class="toc-text">2、爆破枚举</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3、检索给定域名的子域名"><span class="toc-number">4.1.4.3.</span> <span class="toc-text">3、检索给定域名的子域名</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4、基于SSL证书查询"><span class="toc-number">4.1.4.4.</span> <span class="toc-text">4、基于SSL证书查询</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5、搜索引擎"><span class="toc-number">4.1.4.5.</span> <span class="toc-text">5、搜索引擎</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-收集服务器信息"><span class="toc-number">4.2.</span> <span class="toc-text">0x02 收集服务器信息</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#DNS信息收集："><span class="toc-number">4.2.1.</span> <span class="toc-text">DNS信息收集：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#查找真实的IP"><span class="toc-number">4.2.2.</span> <span class="toc-text">查找真实的IP</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#判断是否为使用了CDN"><span class="toc-number">4.2.2.1.</span> <span class="toc-text">判断是否为使用了CDN</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#寻找真实IP方法思路如下："><span class="toc-number">4.2.2.2.</span> <span class="toc-text">寻找真实IP方法思路如下：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#验证获取的ip"><span class="toc-number">4.2.2.3.</span> <span class="toc-text">验证获取的ip</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#端口服务信息："><span class="toc-number">4.2.3.</span> <span class="toc-text">端口服务信息：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#c段查询"><span class="toc-number">4.2.4.</span> <span class="toc-text">c段查询</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Nmap扫描"><span class="toc-number">4.2.4.1.</span> <span class="toc-text">Nmap扫描</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-网站信息收集"><span class="toc-number">4.3.</span> <span class="toc-text">0x03 网站信息收集</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#操作系统"><span class="toc-number">4.3.1.</span> <span class="toc-text">操作系统</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#指纹识别"><span class="toc-number">4.3.2.</span> <span class="toc-text">指纹识别</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#指纹有哪些"><span class="toc-number">4.3.2.1.</span> <span class="toc-text">指纹有哪些</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#常见的指纹识别工具"><span class="toc-number">4.3.2.2.</span> <span class="toc-text">常见的指纹识别工具</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#在线指纹识别网址"><span class="toc-number">4.3.2.3.</span> <span class="toc-text">在线指纹识别网址</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#敏感目录及敏感信息、源码泄露（搜索引擎-工具）"><span class="toc-number">4.3.3.</span> <span class="toc-text">敏感目录及敏感信息、源码泄露（搜索引擎+工具）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#空间搜索引擎"><span class="toc-number">4.3.4.</span> <span class="toc-text">空间搜索引擎</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#旁站查询"><span class="toc-number">4.3.5.</span> <span class="toc-text">旁站查询</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#waf探测"><span class="toc-number">4.3.6.</span> <span class="toc-text">waf探测</span></a></li></ol></li></ol></li></ol>
+    </div>
+    
+    <div class="back-top iconfont-archer">&#xe639;</div>
+    <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-panel-archives">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 19
+        </div>
+        <!-- search  -->
+        
+    </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2020 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/25</span><a class="archive-post-title" href="/2020/ELF-formt.html">ELF文件格式</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/24</span><a class="archive-post-title" href="/2020/How-The-Kernel-Manages-Your-Memory.html">How The Kernel Manages Your Memory</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/14</span><a class="archive-post-title" href="/2020/Anatomy-of-a-Program-in-Memory.html">Anatomy of a Program in Memory</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2019 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/08</span><a class="archive-post-title" href="/2019/port-knocking.html">端口敲门</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/19</span><a class="archive-post-title" href="/2019/Information-collection.html">信息收集总结</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/02</span><a class="archive-post-title" href="/2019/powershell-attack.html">PowerShell攻击技术</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2018 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/05</span><a class="archive-post-title" href="/2018/vulnhub-ch4inrulz1-0-1.html">Vulnhub渗透笔记之ch4inrulz:1.0.1</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/02</span><a class="archive-post-title" href="/2018/vulnhub-lampiao1.html">VulnHub渗透笔记之Lampio1</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/01</span><a class="archive-post-title" href="/2018/vulnhub-wankada1.html">Vulnhub渗透笔记之wankanda1</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/30</span><a class="archive-post-title" href="/2018/vulnhub-node1.html">Vulnhub渗透笔记之Node:1</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/24</span><a class="archive-post-title" href="/2018/The-mathematics-of-cryptography.html">浅谈密码学中的数学基础</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/16</span><a class="archive-post-title" href="/2018/linux-rookit.html">Linux后门检测与系统恢复</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/10</span><a class="archive-post-title" href="/2018/HistoryofMCD.html">恶意代码发展简史</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/02</span><a class="archive-post-title" href="/2018/soyouwantobeahacker.html">所以你想成为黑客？</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/01</span><a class="archive-post-title" href="/2018/website-attack.html">社会工程学攻击之网站钓鱼</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/27</span><a class="archive-post-title" href="/2018/隐写术之LSB隐写.html">隐写术之LSB隐写</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/27</span><a class="archive-post-title" href="/2018/一次恶意PHP脚本初探.html">一次恶意PHP脚本初探</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/25</span><a class="archive-post-title" href="/2018/ARP毒化.html">来自身边的安全威胁—ARP欺骗攻击</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/18</span><a class="archive-post-title" href="/2018/浅析缓冲区溢出.html">浅析缓冲区溢出</a>
+        </li>
+    
+    </ul></div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="局域网"><span class="iconfont-archer">&#xe606;</span>局域网</span>
+    
+        <span class="sidebar-tag-name" data-tags="arp"><span class="iconfont-archer">&#xe606;</span>arp</span>
+    
+        <span class="sidebar-tag-name" data-tags="中间人攻击"><span class="iconfont-archer">&#xe606;</span>中间人攻击</span>
+    
+        <span class="sidebar-tag-name" data-tags="系统原理"><span class="iconfont-archer">&#xe606;</span>系统原理</span>
+    
+        <span class="sidebar-tag-name" data-tags="翻译"><span class="iconfont-archer">&#xe606;</span>翻译</span>
+    
+        <span class="sidebar-tag-name" data-tags="恶意代码"><span class="iconfont-archer">&#xe606;</span>恶意代码</span>
+    
+        <span class="sidebar-tag-name" data-tags="计算机病毒"><span class="iconfont-archer">&#xe606;</span>计算机病毒</span>
+    
+        <span class="sidebar-tag-name" data-tags="渗透测试"><span class="iconfont-archer">&#xe606;</span>渗透测试</span>
+    
+        <span class="sidebar-tag-name" data-tags="vulnhub"><span class="iconfont-archer">&#xe606;</span>vulnhub</span>
+    
+        <span class="sidebar-tag-name" data-tags="密码学"><span class="iconfont-archer">&#xe606;</span>密码学</span>
+    
+        <span class="sidebar-tag-name" data-tags="linux"><span class="iconfont-archer">&#xe606;</span>linux</span>
+    
+        <span class="sidebar-tag-name" data-tags="rootkit"><span class="iconfont-archer">&#xe606;</span>rootkit</span>
+    
+        <span class="sidebar-tag-name" data-tags="powershell"><span class="iconfont-archer">&#xe606;</span>powershell</span>
+    
+        <span class="sidebar-tag-name" data-tags="资源，翻译"><span class="iconfont-archer">&#xe606;</span>资源，翻译</span>
+    
+        <span class="sidebar-tag-name" data-tags="php"><span class="iconfont-archer">&#xe606;</span>php</span>
+    
+        <span class="sidebar-tag-name" data-tags="webshell"><span class="iconfont-archer">&#xe606;</span>webshell</span>
+    
+        <span class="sidebar-tag-name" data-tags="社会工程学"><span class="iconfont-archer">&#xe606;</span>社会工程学</span>
+    
+        <span class="sidebar-tag-name" data-tags="隐写术"><span class="iconfont-archer">&#xe606;</span>隐写术</span>
+    
+        <span class="sidebar-tag-name" data-tags="lsb隐写"><span class="iconfont-archer">&#xe606;</span>lsb隐写</span>
+    
+        <span class="sidebar-tag-name" data-tags="缓冲区"><span class="iconfont-archer">&#xe606;</span>缓冲区</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br>
+    1、请确保node版本大于6.2<br>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+        <span class="sidebar-category-name" data-categories="资源"><span class="iconfont-archer">&#xe60a;</span>资源</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: "/",
+        author: "王六六"
+    }
+</script>
+    <!-- CDN failover -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ === 'undefined')
+        {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
+        }
+    </script>
+    <script src="/scripts/main.js"></script>
+    <!-- algolia -->
+    
+    <!-- busuanzi  -->
+    
+    <!-- CNZZ  -->
+    
+    </div>
+    <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
+     
+    </body>
+</html>
+
+

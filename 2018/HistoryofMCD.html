@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html>
+    <!-- title -->
+
+
+
+
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="author" content="王六六">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="王六六">
+    <meta name="keywords" content="王六六的博客 | 王六六">
+    <meta name="description" content="It's raining cats and dogs.">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>恶意代码发展简史 · wang66&#39;s blog</title>
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s 1;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+</style>
+
+    <link rel="preload" href="/css/style.css?v=20180824" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="stylesheet" href="/css/mobile.css?v=20180824" media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+(function( w ){
+	"use strict";
+	// rel=preload support test
+	if( !w.loadCSS ){
+		w.loadCSS = function(){};
+	}
+	// define on the loadCSS obj
+	var rp = loadCSS.relpreload = {};
+	// rel=preload feature support test
+	// runs once and returns a function for compat purposes
+	rp.support = (function(){
+		var ret;
+		try {
+			ret = w.document.createElement( "link" ).relList.supports( "preload" );
+		} catch (e) {
+			ret = false;
+		}
+		return function(){
+			return ret;
+		};
+	})();
+
+	// if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+	// then change that media back to its intended value on load
+	rp.bindMediaToggle = function( link ){
+		// remember existing media attr for ultimate state, or default to 'all'
+		var finalMedia = link.media || "all";
+
+		function enableStylesheet(){
+			link.media = finalMedia;
+		}
+
+		// bind load handlers to enable media
+		if( link.addEventListener ){
+			link.addEventListener( "load", enableStylesheet );
+		} else if( link.attachEvent ){
+			link.attachEvent( "onload", enableStylesheet );
+		}
+
+		// Set rel and non-applicable media type to start an async request
+		// note: timeout allows this to happen async to let rendering continue in IE
+		setTimeout(function(){
+			link.rel = "stylesheet";
+			link.media = "only x";
+		});
+		// also enable media after 3 seconds,
+		// which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+		setTimeout( enableStylesheet, 3000 );
+	};
+
+	// loop through link elements in DOM
+	rp.poly = function(){
+		// double check this to prevent external calls from running
+		if( rp.support() ){
+			return;
+		}
+		var links = w.document.getElementsByTagName( "link" );
+		for( var i = 0; i < links.length; i++ ){
+			var link = links[ i ];
+			// qualify links to those with rel=preload and as=style attrs
+			if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+				// prevent rerunning on link
+				link.setAttribute( "data-loadcss", true );
+				// bind listeners to toggle media back
+				rp.bindMediaToggle( link );
+			}
+		}
+	};
+
+	// if unsupported, run the polyfill
+	if( !rp.support() ){
+		// run once at least
+		rp.poly();
+
+		// rerun poly on an interval until onload
+		var run = w.setInterval( rp.poly, 500 );
+		if( w.addEventListener ){
+			w.addEventListener( "load", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		} else if( w.attachEvent ){
+			w.attachEvent( "onload", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		}
+	}
+
+
+	// commonjs
+	if( typeof exports !== "undefined" ){
+		exports.loadCSS = loadCSS;
+	}
+	else {
+		w.loadCSS = loadCSS;
+	}
+}( typeof global !== "undefined" ? global : this ) );
+</script>
+
+    <link rel="icon" href="/assets/favicon.ico">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script">
+    <link rel="preload" href="/scripts/main.js" as="script">
+    <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
+    <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
+    
+    <!-- fancybox -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/">Still Shines.</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">恶意代码发展简史</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href="/">Still Shines.</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro" style="height:50vh;">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            恶意代码发展简史
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class="post-intro-tags">
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="恶意代码">恶意代码</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="计算机病毒">计算机病毒</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>Word count: <span class="post-count">4.6k</span> / Reading time: <span class="post-count">16 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2018/09/10</span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+        <script>
+ 
+  // get user agent
+  var browser = {
+    versions: function () {
+      var u = window.navigator.userAgent;
+      return {
+        userAgent: u,
+        trident: u.indexOf('Trident') > -1, //IE内核
+        presto: u.indexOf('Presto') > -1, //opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+        iPad: u.indexOf('iPad') > -1, //是否为iPad
+        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+      };
+    }()
+  }
+  console.log("userAgent:" + browser.versions.userAgent);
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded');
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in');
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb(){
+    if (browser.versions.uc) {
+      console.log("UCBrowser");
+      fontLoaded();
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular']
+        },
+        loading: function () {  //所有字体开始加载
+          // console.log('loading');
+        },
+        active: function () {  //所有字体已渲染
+          fontLoaded();
+        },
+        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout');
+          fontLoaded();
+        },
+        timeout: 5000 // Set the timeout to two seconds
+      });
+    }
+  }
+
+  function asyncErr(){
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (cb) { o.addEventListener('load', function (e) { cb(null, e); }, false); }
+    if (err) { o.addEventListener('error', function (e) { err(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+
+  var asyncLoadWithFallBack = function(arr, success, reject) {
+      var currReject = function(){
+        reject()
+        arr.shift()
+        if(arr.length)
+          async(arr[0], success, currReject)
+        }
+
+      async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack([
+    "https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", 
+    "https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js",
+    "/lib/webfontloader.min.js"
+  ], asyncCb, asyncErr)
+</script>        
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <p>1977年夏天，作家托马斯•捷•瑞安出版了一本名为《P-1的春天》的科幻小说，作者在书中描写了一种可以在计算机中互相传染的病毒，这种病毒最后控制了 7,000 台计算机，造成了一场灾难。这本书曾在美国一度畅销，但在当时的人们看来，都觉得书中所写的事情是几十年甚至是几百年后都不会发生的。然而就在几年后，虚拟科幻小说世界中的东西，竟然真的成为了现实中电脑使用者的噩梦。<a id="more"></a></p>
+<p>计算机技术的飞速发展给人类带来便利的同时，也有越来越多的人利用它牟取利益。恶意代码的出现，是必然的。现在的恶意代码可以分成五类：病毒、木马、蠕虫、移动代码和复合型病毒。发展到如今的恶意代码功能性更强，危害也更大。2017年5月让人记忆犹新的WannaCry勒索病毒在这一月爆发，这被认为是迄今为止最严重的勒索病毒事件，至少150个国家、30万名用户中招，造成损失达80亿美元。</p>
+<p><img src="http://img.wandoutech.com/img/143541.png" alt="image-20210731223540801"></p>
+<p>虽然有“计算机病毒之父”弗雷德•科恩给计算机病毒正名：“计算机病毒不是利用操作系统的错误或缺陷的程序，它是正常的用户程序。”但人们总是能想尽办法找到其妙用所在。技术本无罪，有罪的是人类无尽的自私和贪婪。就像恶意代码出现时从最初的研究为主要目的，到变为炫耀个人技术的工具，再到现在的勒索盈利。这里我们简单地讲讲恶意代码的历史， 看看它是怎样发展的。</p>
+<h2 id="摇篮时代"><a href="#摇篮时代" class="headerlink" title="摇篮时代"></a>摇篮时代</h2><p>从一个故事说起：法拉第在表演他的圆盘发电机时,一位贵妇人问道：“法拉第先生,这东西有什么作用呢?”法拉第答道：“夫人,一个刚刚出生的婴儿有什么作用呢?”</p>
+<p>新发明的诞生和新技术的出现，总是很难预测它对将来会产生怎样的影响。就像一个刚出生的婴儿，我们不知道他将来会成为怎样的一个人。对于一项技术的预见性，往往也只存在于科幻小说中。恶意代码的诞生之初，也并非就是一个立刻搞破坏的“坏孩子”。最初的概念是电脑的先驱者冯•诺依曼在1949年发表的论文《复杂自动机组织论》中提出的：一种能够实现复制自身的自动机。</p>
+<p><img src="http://img.wandoutech.com/img/143549.png" alt="image-20210731223548429"><br>能够自我复制，能够自我繁殖，那岂不是等于说，这段代码拥有了生命？这个新奇的想法很快的调动了研究人员的好奇心。虽然有绝大部分电脑专家都无法想象，这种能自我繁殖的程序的存在是可能的。但在这短短十一年后，也就是1960年，一个名叫“磁芯大战”的游戏在贝尔实验室中诞生，使冯•诺依曼的设想成为事实。这项游戏是三个年轻人在工作之余所发明的，这三个年轻人分别是道格拉斯•麦耀莱、维特•维索斯基和罗伯•莫里斯，当时三人的年纪，都只有二十多岁。</p>
+<p>“磁芯大战”从名字也可以看出来就是程序之间的战争，大家都设计一个程序，再把这些程序都放到内存中，然后开始“并发”运行。在于双方的程序进入电脑之后，玩游戏的人只能看着屏幕上显示的战况，而不能做任何更改。看最终的结果是谁的程序消灭了内存中的其他程序而活了下来。这也是这个游戏的特点。每个程序都要尽力的消灭其他程序，为了能够生存,程序应该能保护自己，不断移动自身来躲过其他程序的攻击或当自身受到攻击后能自我修复。因为它们都在电脑的记忆磁芯中游走，因此得到了“磁芯大战”之名。</p>
+<p><img src="http://img.wandoutech.com/img/143555.png" alt="image-20210731223555162"></p>
+<p>这一程序对抗模型可以看作是原始的病毒对抗。在摇篮时代就展现了其破坏力的一面：抢占系统内存资源，消灭其他的程序。但那时的电脑也都没有连线，是相互独立的，因此病毒代码很难传播。如果有某部电脑受到“感染”，失去控制，工作人员只需把它关掉便可。在计算机尚未普及的年代，电脑连线而成的网络还尚未成为社会结构的一部分，处在摇篮中的恶意代码，仅仅只是电脑工作者认为的一种娱乐游戏。</p>
+<h2 id="熊孩子"><a href="#熊孩子" class="headerlink" title="熊孩子"></a>熊孩子</h2><p>计算机技术和网络技术在飞速发展，当电脑连线而成的网络逐渐成为社会结构的一部分之后，电脑研究员意识到：一个能自我复制的病毒程序便很可能带来无穷的危害了。例如爬行者程序（“磁芯大战”游戏中的一种程序）就能够从一台机器“爬”到另一台机器中。因此，长久以来懂得玩“磁芯大战”游戏的电脑工作者都严守一项不成文的规定：不对大众公开这些程序的内容。但人们对它的探索从未停下脚步，也不断有人打破这些规则，使其的影响范围越来越大。</p>
+<p>第一个已知被广泛传播的计算机病毒ELK Cloner诞生于1981年，而它的作者，只是一个15岁的高中生——里奇•斯克伦塔。病毒通过软盘传播，这个病毒开始作用，并随后将它自己拷贝到任何被访问的未感染的软盘中。因为那时的计算机有两个软盘驱动器，并因为磁盘经常在朋友之间传递，这个病毒就被频繁地复制。在被感染后，计算机每被启动50次，就会显示以下文字：　</p>
+<blockquote>
+<p>Elk Cloner: The program with a personality It will get on all your disks It will infiltrate your chips Yes it’s Cloner! It will stick to you like glue It will modify ram too Send in the Cloner!　</p>
+</blockquote>
+<p><img src="http://img.wandoutech.com/img/143603.png" alt="image-20210731223603141"></p>
+<p>Elk Cloner并没有什么破坏性，而是设计来作为一个善意的玩笑。简单的讲只是一个具有传播特性的恶作剧代码。</p>
+<p>1983年，当年一项杰出电脑奖得奖人肯•汤普逊，在颁奖典礼上作了一个演讲，他在演讲中打破了电脑工作者严守的规定，不但公开证实了电脑病毒的存在，而且还告诉所有听众怎样去写自己的病毒程序。他的同行全都吓坏了，但为时已晚，这个秘密已经流传出去了。</p>
+<p>1983年11月3日，真正具有破坏性的计算机病毒诞生。当时还是南加州大学一名学生的弗雷德•科恩在UNIX系统下，编写了一个能够自动复制并在计算机间进行传染繁殖从而引起系统死机的程序，通过存储介质软盘传到了电脑上。虽然此前就已经知道电脑病毒可能存在的事实，但科恩却是第一个将其付诸实践的人。</p>
+<p><img src="http://img.wandoutech.com/img/143609.png" alt="image-20210731223608972"></p>
+<p>1984年，情况愈复杂了，这一年，《科学美国人》月刊的专栏作家杜特尼在5月刊号写了第一篇讨论“磁芯大战”的文章，并且只要寄上两块美金，任何读者都可以收到有关写程序的纲领，在自己家的电脑中开辟战场。<br>1985年3月份的《科学美国人》里，杜特尼再次讨论“磁芯大战”和病毒。在文章的开头他便说：“当去年5月有关‘磁芯大战’的文章印出来时，我并没有想过我所谈论的是那么严重的题目……”文中第一次提到“病毒”这个名称。他提到说，意大利的电脑程序员利用感染磁碟的方式使其它电脑受到破坏性程序的感染。</p>
+<p>就这样，许多程序员都了解了病毒的原理，进而开始尝试编制这种具有隐蔽性、攻击性和传染性的特殊程序。病毒从隐秘走向公开，先是利用磁碟，然后是利用网络，迅速在全世界范围内扩散开来，成为电脑用户的头号敌人。</p>
+<p>1986年初，在巴基斯坦的拉合尔（Lahore），巴锡特（Basit）和阿姆杰德（Amjad）两兄弟经营着一家IBM-PC机及其兼容机的小商店。他们编写了Pakistan病毒，即Brain。在一年内流传到了世界各地。当时，由于当地盗版软件猖獗，为了防止软件被任意非法拷贝，也为了追踪到底有多少人在非法使用他们的软件，于是在1986年年初，他们编写了”大脑（Brain）”病毒，又被称为”巴基斯坦”病毒。该病毒运行在DOS操作系统下，通过软盘传播，只在盗拷软件时才发作，发作时将盗拷者的硬盘剩余空间吃掉。</p>
+<p>1988年3月2日，一种苹果机的病毒发作，这天受感染的苹果机停止工作，只显示”向所有苹果电脑的使用者宣布和平的信息”。以庆祝苹果机生日。</p>
+<p>1988年冬天，发明“磁芯大战”的三个年轻人之一的罗伯•莫里斯的儿子，正在康奈尔大学攻读研究生的罗伯特•莫里斯，把一个被称为“蠕虫”的电脑病毒送进了美国最大的电脑网络——互联网。</p>
+<p><img src="http://img.wandoutech.com/img/143618.png" alt="image-20210731223618040"></p>
+<p>1988年11月2日下午5点，互联网的管理人员首次发现网络有不明入侵者。它们仿佛是网络中的超级间谍，狡猾地不断截取用户口令等网络中的“机密文件”，利用这些口令欺骗网络中的“哨兵”，长驱直入互联网中的用户电脑。入侵得手，立即反客为主，并闪电般地自我复制，抢占地盘。</p>
+<p>用户目瞪口呆地看着这些不请自来的神秘入侵者迅速扩大战果，充斥电脑内存，使电脑莫名其妙地“死掉”，只好急如星火地向管理人员求援，哪知，他们此时四面楚歌，也只能眼睁睁地看着网络中电脑一批又一批地被病毒感染而“身亡”。当晚，从美国东海岸到西海岸，互联网用户陷入一片恐慌。当加州伯克利分校的专家找出阻止病毒蔓延的办法时，短短12小时内，已有6200台采用Unix操作系统的SUN工作站和VAX小型机瘫痪或半瘫痪，不计其数的数据和资料毁于这一夜之间。造成一场损失近亿美元的空前大劫难！莫里斯事件震惊了美国社会乃至整个世界。</p>
+<p>而比事件影响更大、更深远的是：更多的人从中受到启发，恶意代码从单纯的“熊孩子式”的破坏，往牟取利益的方向发展。黑客伦理失去约束，黑客传统开始中断。大众对黑客的印象也不再回复。</p>
+<p>潘多拉之盒被打开了。</p>
+<h2 id="潘多拉之盒"><a href="#潘多拉之盒" class="headerlink" title="潘多拉之盒"></a>潘多拉之盒</h2><p>1987-1988年间，此时的病毒仍是一个稀有事物，但这种情形被3个著名的病毒的出现改变了，它们是耶路撒冷，米开朗基罗和醉酒（stoned）。通过媒体的炒作，人们的心理充满了恐惧，开始到处寻求帮助。在这种气氛下，开发反病毒软件的公司如雨后春笋般纷纷冒出。从此，计算机病毒从此步入主流。病毒与反病毒技术也在对抗中发展。这一阶段的流行病毒种类有限，攻击目标单一，清除相对来说较容易，是计算机病毒的萌芽和滋生期，被称为第一代病毒。1988年底，在中国的国家统计部门发现的小球病毒是中国第一次病毒经历。</p>
+<p>1989-1991年间，计算机反病毒技术的提高和反病毒产品的不断涌现，病毒编制者也在不断地总结自己的编程技巧和经验，千方百计地逃避反病毒产品的分析、检测和解毒，从而出现了第二代计算机病毒。第二代病毒又称为混合型病毒（又称为“超级病毒”），它是计算机病毒由简单到复杂，由单纯向成熟的阶段。计算机局域网的应用与普及，再加上网络系统尚未有安全防护的意识，结果出现了病毒第一次流行高峰。这一阶段的病毒攻击目标趋于混合型，一种病毒既可传染磁盘引导扇区，又可传染可执行文件，采取更为隐蔽的方法驻留内存和传染目标。它们往往采取了自我保护措施，增加了检测、解毒的难度。</p>
+<p>1992-1995年间，第三代病毒学会了“变形”，此类病毒称为“多态性”病毒或“自我变形”病毒。所谓“多态性”或“自我变形”的含义是指此类病毒在每次传染目标时，进入宿主程序中的病毒程序大部分都是可变的，即在搜集到同一种病毒的多个样本中，病毒程序的代码绝大多数是不同的，这是此类病毒的重要特点。</p>
+<p>此类病毒的首创者是MarkWashburn，他并不是病毒的有意制造者，而是一位反病毒的技术专家。他编写的1260病毒就是一种多态性病毒，此病毒1990年1月问世，有极强的传染力，被传染的文件被加密，每次传染时都更换加密密钥，而且病毒程序都进行了相当大的改动。他将此类病毒散发给他的同事，目的是为了证明特征代码检测法不是在任何场合下都是有效的。然而，不幸的是，为研究病毒而发明的此种病毒超出了反病毒的技术范围，流入了病毒技术中。<br>　　<br>1992年上半年，在保加利亚发现了黑夜复仇者（DarkAvenger）病毒的变种“MutationDarkAvenger”。这是世界上最早发现的多态性的实战病毒，它可用独特的加密算法产生几乎无限数量的不同形态的同一病毒。<br>上世纪90年代中后期，远程网、远程访问服务的开通，病毒流行面更加广泛，病毒的流行迅速突破地域限制，首先通过广域网传播至局域网内，再在局域网内传播扩散。1996年下半年随着国内Internet的大量普及，Email的使用，夹杂于Email内的WORD宏病毒成为病毒的主流。<br>　　<br>这一时期的病毒的最大特点是利用Internet作为其主要传播途径，传播快、隐蔽性强、破坏性大。网络的发展使得病毒的传播速度大大提高，感染的范围也越来越广。可以说，网络化带来了计算机病毒传染的“高效率”。另外，病毒的主动性、独立性更强了，变形（变种）速度极快并向混合型、多样化发展。</p>
+<p><img src="http://img.wandoutech.com/img/143626.png" alt="image-20210731223626353"></p>
+<h2 id="病毒陈列室"><a href="#病毒陈列室" class="headerlink" title="病毒陈列室"></a>病毒陈列室</h2><p>1982年——在APPLE-II的计算机中发现Elk  cloner<br>1986年——第一个PC病毒：Brain virus<br>1987年——“李海”(Lehigh)病毒最早在美国的李海大学(Lehigh University)被发现。<br>1988年——Morris Internet worm——感染了6000多台（蠕虫病毒，特点）<br>1989年——“黑暗复仇者”(Dark Avenger)/“埃迪”(Eddie)病毒是最早的反杀毒软件病毒<br>1989年——“费雷多”(Frodo)病毒出现。这个病毒感染文件后具有一定隐蔽性<br>1990年——virus construction set——病毒生产机<br>1990年——加壳病毒(Armored Virus)首次出现。此类病毒很难分解。如 Whale病毒。<br>1991年——Tequila病毒出现<br>1992年——DAMN病毒由Dark Avenger Mutation Engine编写<br>1992年——Michelangelo病毒出现后感染所有类型的磁碟。<br>1993年——出现的Satanbug/Little Loc/Natas病毒<br>1994年——Good Times（joys）<br>1995年——首次发现macro virus<br>1996年——netcat的UNIX版发布(nc)<br>1996年——Laroux/Excel宏病毒<br>1998年——第一个java virus（StrangeBrew）<br>1998年——netcat的Windows版发布<br>1998年——back orifice（BO）/CIH<br>1999年——Melissa/worm（macrovirus by email）<br>1999年——back orifice（BO）for WIN2k<br>1999年——DOS/DDOS-Denial of Service TFT/trin00<br>1999年——knark内核级rootkit（linux）<br>2000年——love Bug（VBScript）<br>2001年——Code Red-worm（overflow for IIS）<br>2001年——Nimda-worm（IIS/outlook/file share etc.）<br>2002年——setiri后门<br>2002年——SQL slammer（sqlserver）<br>2003年——hudan的steganography工具<br>2003年——MSBlaster/Nachi<br>2004年——MyDoom/Sasser<br>2006年——熊猫烧香<br>2006年——Leap-A/Oompa-A<br>2007年——机器狗病毒<br>2010年——Stuxnet（工业蠕虫）<br>2012年——火焰病毒<br>2017年——WannaCry<br>……</p>
+<h2 id="结束语"><a href="#结束语" class="headerlink" title="结束语"></a>结束语</h2><p>正义和邪恶的斗争是永恒存在的，计算机病毒的发展也必然会促进计算机反病毒技术的发展。从恶意代码的发展史来看，对技术的兴趣和爱好是其发展的源动力。但越来越多迹象表明，物质利益将成为推动计算机病毒发展的最大动力。2017年的“勒索”病毒，更是明目张胆地以勒索钱财为目的。直到2018年9月9日，WannnaCry勒索病毒的幕后黑手才被正式指控。</p>
+<p>如今的恶意代码在功能上，分工也越来越细化，实现的关键技术也在不断的变化。移动端的飞速发展，也给恶意代码创造了新的土壤。未来也将会面临更多的挑战。但所谓魔高一尺，道高一丈，每一次的安全危机，都促使着人们安全意识的提高。</p>
+<p>参考文章：<br><a href="http://news.163.com/17/0611/04/CMKFRE6R00018AOP.html" target="_blank" rel="noopener">http://news.163.com/17/0611/04/CMKFRE6R00018AOP.html</a><br><a href="https://baike.sogou.com/v40108.htm?fromTitle=%E8%8E%AB%E9%87%8C%E6%96%AF%E8%A0%95%E8%99%AB" target="_blank" rel="noopener">https://baike.sogou.com/v40108.htm?fromTitle=%E8%8E%AB%E9%87%8C%E6%96%AF%E8%A0%95%E8%99%AB</a></p>
+
+    </article>
+    <!-- license  -->
+    
+        <div class="license-wrapper">
+            <p>原文作者: <a href="http://wang66.top">王六六</a>
+            </p><p>原文链接: <a href="http://wang66.top/2018/HistoryofMCD.html">http://wang66.top/2018/HistoryofMCD.html</a>
+            </p><p>发表日期: <a href="http://wang66.top/2018/HistoryofMCD.html">September 10th 2018, 8:25:25 pm</a>
+            </p><p>版权声明: 本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
+        </div>
+    
+    <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+                <div class="nextSlogan">Next Post</div>
+                <a href="/2018/linux-rookit.html" title="Linux后门检测与系统恢复">
+                    <div class="nextTitle">Linux后门检测与系统恢复</div>
+                </a>
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href="/2018/soyouwantobeahacker.html" title="所以你想成为黑客？">
+                    <div class="prevTitle">所以你想成为黑客？</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!--PC和WAP自适应版-->
+
+    <!--PC版-->
+
+
+    
+    
+    <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+    <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+    <div id="comment"></div>
+    <script>
+    new Valine({
+        el: '#comment' ,
+        notify: "true", 
+        verify: false, 
+        appId: "kBws43cqYyOkzvJkwd7PwiQ3-gzGzoHsz",
+        appKey: "IEbfjsLgEhcgfFfWicWSYdhf",
+        placeholder: "来评论一下吧~",
+        path:window.location.pathname, 
+		avatar: 'robohash' // (''/mp/identicon/monsterid/wavatar/robohash/retro/hide)
+    });
+    </script>
+
+
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:wangji19971013@qq.com" class="iconfont-archer email" title="email"></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/wang66just6" class="iconfont-archer github" target="_blank" title="github"></a>
+            
+        
+    
+        
+            
+                <span class="iconfont-archer wechat" title="wechat">
+                  
+                  <img class="profile-qr" src="/assets/wechat.png">
+                </span>
+            
+        
+    
+        
+            
+                <span class="iconfont-archer qq" title="qq">
+                  
+                  <img class="profile-qr" src="/assets/qq.jpg">
+                </span>
+            
+        
+    
+        
+            
+                <a href="//weibo.com/wang66just6" class="iconfont-archer weibo" target="_blank" title="weibo"></a>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a href="//twitter.com/wang66just6" class="iconfont-archer twitter" target="_blank" title="twitter"></a>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span><br>
+		<p>Hosted by <a href="https://pages.coding.me" style="font-weight: bold">Coding Pages</a></p>
+		<span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+	<script>
+		var now = new Date(); 
+		function createtime() { 
+			var grt= new Date("08/01/2018 12:00:00");//此处修改你的建站时间或者网站上线时间 
+			now.setTime(now.getTime()+250); 
+			days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); 
+			hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); 
+			if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); 
+			mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} 
+			seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); 
+			snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} 
+			document.getElementById("timeDate").innerHTML = "本站已安全运行 "+dnum+" 天 "; 
+			document.getElementById("times").innerHTML = hnum + " 小时 " + mnum + " 分 " + snum + " 秒"; 
+		} 
+	setInterval("createtime()",250);
+	</script>
+    </div>
+    <!-- 不蒜子  -->
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#摇篮时代"><span class="toc-number">1.</span> <span class="toc-text">摇篮时代</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#熊孩子"><span class="toc-number">2.</span> <span class="toc-text">熊孩子</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#潘多拉之盒"><span class="toc-number">3.</span> <span class="toc-text">潘多拉之盒</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#病毒陈列室"><span class="toc-number">4.</span> <span class="toc-text">病毒陈列室</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#结束语"><span class="toc-number">5.</span> <span class="toc-text">结束语</span></a></li></ol>
+    </div>
+    
+    <div class="back-top iconfont-archer">&#xe639;</div>
+    <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-panel-archives">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 19
+        </div>
+        <!-- search  -->
+        
+    </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2020 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/25</span><a class="archive-post-title" href="/2020/ELF-formt.html">ELF文件格式</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/24</span><a class="archive-post-title" href="/2020/How-The-Kernel-Manages-Your-Memory.html">How The Kernel Manages Your Memory</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/14</span><a class="archive-post-title" href="/2020/Anatomy-of-a-Program-in-Memory.html">Anatomy of a Program in Memory</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2019 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/08</span><a class="archive-post-title" href="/2019/port-knocking.html">端口敲门</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/19</span><a class="archive-post-title" href="/2019/Information-collection.html">信息收集总结</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/02</span><a class="archive-post-title" href="/2019/powershell-attack.html">PowerShell攻击技术</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2018 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/05</span><a class="archive-post-title" href="/2018/vulnhub-ch4inrulz1-0-1.html">Vulnhub渗透笔记之ch4inrulz:1.0.1</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/02</span><a class="archive-post-title" href="/2018/vulnhub-lampiao1.html">VulnHub渗透笔记之Lampio1</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/01</span><a class="archive-post-title" href="/2018/vulnhub-wankada1.html">Vulnhub渗透笔记之wankanda1</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/30</span><a class="archive-post-title" href="/2018/vulnhub-node1.html">Vulnhub渗透笔记之Node:1</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/24</span><a class="archive-post-title" href="/2018/The-mathematics-of-cryptography.html">浅谈密码学中的数学基础</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/16</span><a class="archive-post-title" href="/2018/linux-rookit.html">Linux后门检测与系统恢复</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/10</span><a class="archive-post-title" href="/2018/HistoryofMCD.html">恶意代码发展简史</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/02</span><a class="archive-post-title" href="/2018/soyouwantobeahacker.html">所以你想成为黑客？</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/01</span><a class="archive-post-title" href="/2018/website-attack.html">社会工程学攻击之网站钓鱼</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/27</span><a class="archive-post-title" href="/2018/隐写术之LSB隐写.html">隐写术之LSB隐写</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/27</span><a class="archive-post-title" href="/2018/一次恶意PHP脚本初探.html">一次恶意PHP脚本初探</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/25</span><a class="archive-post-title" href="/2018/ARP毒化.html">来自身边的安全威胁—ARP欺骗攻击</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/18</span><a class="archive-post-title" href="/2018/浅析缓冲区溢出.html">浅析缓冲区溢出</a>
+        </li>
+    
+    </ul></div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="局域网"><span class="iconfont-archer">&#xe606;</span>局域网</span>
+    
+        <span class="sidebar-tag-name" data-tags="arp"><span class="iconfont-archer">&#xe606;</span>arp</span>
+    
+        <span class="sidebar-tag-name" data-tags="中间人攻击"><span class="iconfont-archer">&#xe606;</span>中间人攻击</span>
+    
+        <span class="sidebar-tag-name" data-tags="系统原理"><span class="iconfont-archer">&#xe606;</span>系统原理</span>
+    
+        <span class="sidebar-tag-name" data-tags="翻译"><span class="iconfont-archer">&#xe606;</span>翻译</span>
+    
+        <span class="sidebar-tag-name" data-tags="恶意代码"><span class="iconfont-archer">&#xe606;</span>恶意代码</span>
+    
+        <span class="sidebar-tag-name" data-tags="计算机病毒"><span class="iconfont-archer">&#xe606;</span>计算机病毒</span>
+    
+        <span class="sidebar-tag-name" data-tags="渗透测试"><span class="iconfont-archer">&#xe606;</span>渗透测试</span>
+    
+        <span class="sidebar-tag-name" data-tags="vulnhub"><span class="iconfont-archer">&#xe606;</span>vulnhub</span>
+    
+        <span class="sidebar-tag-name" data-tags="密码学"><span class="iconfont-archer">&#xe606;</span>密码学</span>
+    
+        <span class="sidebar-tag-name" data-tags="linux"><span class="iconfont-archer">&#xe606;</span>linux</span>
+    
+        <span class="sidebar-tag-name" data-tags="rootkit"><span class="iconfont-archer">&#xe606;</span>rootkit</span>
+    
+        <span class="sidebar-tag-name" data-tags="powershell"><span class="iconfont-archer">&#xe606;</span>powershell</span>
+    
+        <span class="sidebar-tag-name" data-tags="资源，翻译"><span class="iconfont-archer">&#xe606;</span>资源，翻译</span>
+    
+        <span class="sidebar-tag-name" data-tags="php"><span class="iconfont-archer">&#xe606;</span>php</span>
+    
+        <span class="sidebar-tag-name" data-tags="webshell"><span class="iconfont-archer">&#xe606;</span>webshell</span>
+    
+        <span class="sidebar-tag-name" data-tags="社会工程学"><span class="iconfont-archer">&#xe606;</span>社会工程学</span>
+    
+        <span class="sidebar-tag-name" data-tags="隐写术"><span class="iconfont-archer">&#xe606;</span>隐写术</span>
+    
+        <span class="sidebar-tag-name" data-tags="lsb隐写"><span class="iconfont-archer">&#xe606;</span>lsb隐写</span>
+    
+        <span class="sidebar-tag-name" data-tags="缓冲区"><span class="iconfont-archer">&#xe606;</span>缓冲区</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br>
+    1、请确保node版本大于6.2<br>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+        <span class="sidebar-category-name" data-categories="资源"><span class="iconfont-archer">&#xe60a;</span>资源</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: "/",
+        author: "王六六"
+    }
+</script>
+    <!-- CDN failover -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ === 'undefined')
+        {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
+        }
+    </script>
+    <script src="/scripts/main.js"></script>
+    <!-- algolia -->
+    
+    <!-- busuanzi  -->
+    
+    <!-- CNZZ  -->
+    
+    </div>
+    <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
+     
+    </body>
+</html>
+
+

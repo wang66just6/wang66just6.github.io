@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html>
+    <!-- title -->
+
+
+
+
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="author" content="王六六">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="王六六">
+    <meta name="keywords" content="王六六的博客 | 王六六">
+    <meta name="description" content="It's raining cats and dogs.">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>所以你想成为黑客？ · wang66&#39;s blog</title>
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s 1;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+</style>
+
+    <link rel="preload" href="/css/style.css?v=20180824" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="stylesheet" href="/css/mobile.css?v=20180824" media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+(function( w ){
+	"use strict";
+	// rel=preload support test
+	if( !w.loadCSS ){
+		w.loadCSS = function(){};
+	}
+	// define on the loadCSS obj
+	var rp = loadCSS.relpreload = {};
+	// rel=preload feature support test
+	// runs once and returns a function for compat purposes
+	rp.support = (function(){
+		var ret;
+		try {
+			ret = w.document.createElement( "link" ).relList.supports( "preload" );
+		} catch (e) {
+			ret = false;
+		}
+		return function(){
+			return ret;
+		};
+	})();
+
+	// if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+	// then change that media back to its intended value on load
+	rp.bindMediaToggle = function( link ){
+		// remember existing media attr for ultimate state, or default to 'all'
+		var finalMedia = link.media || "all";
+
+		function enableStylesheet(){
+			link.media = finalMedia;
+		}
+
+		// bind load handlers to enable media
+		if( link.addEventListener ){
+			link.addEventListener( "load", enableStylesheet );
+		} else if( link.attachEvent ){
+			link.attachEvent( "onload", enableStylesheet );
+		}
+
+		// Set rel and non-applicable media type to start an async request
+		// note: timeout allows this to happen async to let rendering continue in IE
+		setTimeout(function(){
+			link.rel = "stylesheet";
+			link.media = "only x";
+		});
+		// also enable media after 3 seconds,
+		// which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+		setTimeout( enableStylesheet, 3000 );
+	};
+
+	// loop through link elements in DOM
+	rp.poly = function(){
+		// double check this to prevent external calls from running
+		if( rp.support() ){
+			return;
+		}
+		var links = w.document.getElementsByTagName( "link" );
+		for( var i = 0; i < links.length; i++ ){
+			var link = links[ i ];
+			// qualify links to those with rel=preload and as=style attrs
+			if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+				// prevent rerunning on link
+				link.setAttribute( "data-loadcss", true );
+				// bind listeners to toggle media back
+				rp.bindMediaToggle( link );
+			}
+		}
+	};
+
+	// if unsupported, run the polyfill
+	if( !rp.support() ){
+		// run once at least
+		rp.poly();
+
+		// rerun poly on an interval until onload
+		var run = w.setInterval( rp.poly, 500 );
+		if( w.addEventListener ){
+			w.addEventListener( "load", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		} else if( w.attachEvent ){
+			w.attachEvent( "onload", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		}
+	}
+
+
+	// commonjs
+	if( typeof exports !== "undefined" ){
+		exports.loadCSS = loadCSS;
+	}
+	else {
+		w.loadCSS = loadCSS;
+	}
+}( typeof global !== "undefined" ? global : this ) );
+</script>
+
+    <link rel="icon" href="/assets/favicon.ico">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script">
+    <link rel="preload" href="/scripts/main.js" as="script">
+    <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
+    <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
+    
+    <!-- fancybox -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/">Still Shines.</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">所以你想成为黑客？</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href="/">Still Shines.</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro" style="height:50vh;">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/8.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            所以你想成为黑客？
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class="post-intro-tags">
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="资源，翻译">资源，翻译</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>Word count: <span class="post-count">3.4k</span> / Reading time: <span class="post-count">11 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2018/09/02</span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+        <script>
+ 
+  // get user agent
+  var browser = {
+    versions: function () {
+      var u = window.navigator.userAgent;
+      return {
+        userAgent: u,
+        trident: u.indexOf('Trident') > -1, //IE内核
+        presto: u.indexOf('Presto') > -1, //opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+        iPad: u.indexOf('iPad') > -1, //是否为iPad
+        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+      };
+    }()
+  }
+  console.log("userAgent:" + browser.versions.userAgent);
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded');
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in');
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb(){
+    if (browser.versions.uc) {
+      console.log("UCBrowser");
+      fontLoaded();
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular']
+        },
+        loading: function () {  //所有字体开始加载
+          // console.log('loading');
+        },
+        active: function () {  //所有字体已渲染
+          fontLoaded();
+        },
+        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout');
+          fontLoaded();
+        },
+        timeout: 5000 // Set the timeout to two seconds
+      });
+    }
+  }
+
+  function asyncErr(){
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (cb) { o.addEventListener('load', function (e) { cb(null, e); }, false); }
+    if (err) { o.addEventListener('error', function (e) { err(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+
+  var asyncLoadWithFallBack = function(arr, success, reject) {
+      var currReject = function(){
+        reject()
+        arr.shift()
+        if(arr.length)
+          async(arr[0], success, currReject)
+        }
+
+      async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack([
+    "https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", 
+    "https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js",
+    "/lib/webfontloader.min.js"
+  ], asyncCb, asyncErr)
+</script>        
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <blockquote>
+<p>本文翻译自一个大神的博客：<a href="https://netsec.ws/?p=468" target="_blank" rel="noopener">So you want to be a Hacker?</a> (真心推荐! orz)</p>
+</blockquote>
+<p>最近，我读到很多关于参与“信息安全”比赛的问题，还有文章和一般性讨论，在我看来，其中存在着不少使人误导的信息。这个结论可能有点苛刻，我确信他们是出于善意的目的，甚至这些建议也能起到帮助作用(没有一个标准适合所有建议)，但我想我还是把自己的想法写出来，希望能帮助新开始学习黑客的人走得更远。<a id="more"></a></p>
+<p><img src="http://img.wandoutech.com/img/144825.png" width="350" height="256"></p>
+<p><strong>我想做体育锻炼，我该如何开始？</strong><br>这是一个不明确的，开放式的和非常模糊的问题，就和有些人提出的他们该怎么做才能进入信息安全领域的问题十分相似。这里首先要认识到的是，信息安全有大量的领域，在这些数量巨大的领域中，每一个领域都是一个终生的学习内容。就像选择一项运动进行锻炼一样，没有“最好”的运动，有时候你认为是最好的，只是因为你最喜欢它。在我的脑海中，有一些信息安全领域的例子，但它们绝不是最详尽的：</p>
+<p><strong>•web应用安全(Web Application Security)</strong><br><strong>•逆向工程(Reverse Engineering)</strong><br><strong>•恶意软件逆向工程(Malware Reverse Engineering)</strong><br><strong>•网络安全(Network Security)</strong><br><strong>•应急响应(Incident Response)</strong><br><strong>•标准符合性(Standards Compliance)</strong><br><strong>•第三方编程/创作工具(Programming / Creating Tools for Others)</strong><br><strong>•漏洞利用程序开发(Exploit Development)</strong><br><strong>•取证(Forensics)</strong></p>
+<p>其中一些更具有技术性，而另一些则更重点关注理论。我保证无论你喜欢什么总会有一些人觉得无聊，正如你有时会对别人感兴趣的事情一样。现在，如果你读到这篇文章，你可能对这些领域的任何一个都知之甚少，但重要的是你愿意学习，以及你所具有的动力。</p>
+<hr>
+<p><strong>黑客进阶</strong><br>在这个领域中，一个几乎普遍存在这些人身上的标志就是他们自始至终都专注于独立自主地学习安全技术。不幸的是，在某些方面，安全技术仍然被认为是一种“黑暗艺术”。我想明白的是为什么有些人会想去知道怎么样侵入计算机系统，除非他们本就打算这么做？因此，当很多人在这个错误(有时候是真的)的认知下，遇到有人询问与安全技术相关的问题时，就会对他有直接的敌意和表现出轻蔑的态度——这只不过是一个“脚本小子”想要学习破解系统，而不是为了一个好的目的而学习和使用这些知识。事实上，信息安全的“学习”资源是相当脱节的，没有真正的学习材料的中央存储库。</p>
+<p>需要强调的一点是，如果你想顺利并成功地进入信息安全领域，你应该做充分的准备和找到你自己的方法，而不是等待别人拉着你的手，引导你走上正确的道路。可以在Google上搜索一些相关的看起来和听起来都有趣的词条。尽管这有时候似乎是一场持续不断地要找到“最好”的学习领域，或者“最好的”资源，或者“最好”的学习方式的斗争，往往就会花更多的时间去思考这些问题，而不是花时间去真正地学习。也还可以在youtube上查找一些实例视频——如果你不知道其中讲的一些是什么含义的话，那就可以把这些记下来，列出一个清单，然后用google搜索这些知识点。要学会利用感兴趣的点来衍生出你喜欢的话题的知识网络。</p>
+<p><strong>我需要先学什么什么作为基础吗？</strong><br>当然有了(坏笑~)，在你开始之前，你需要对OSI层有充分的了解。你需要阅读那本关于TCP协议的1000页的书。你还需要在你学习黑客技术之前，精通5种编程语言(至少是！)。你能从源代码编译你自己的Linux内核吗？不会？那就别去接触黑客技术了。事实上…以上这些都是扯淡，但也是那些想要学习信息安全的人所常常认为的。成为一个合格的黑客的话只有一个要求——兴趣。未来真正的黑客和脚本小子直接的区别不是知识的差异，而是学习的意愿。</p>
+<p>只要你对如何使用电脑有一个模糊的概念，你就可以开始了。是的没错，就如你没有彻底的搞懂TCP是如何工作的的话，你可以把它列在自己的任务清单上，并寻找查阅有关它的教程。认为自己需要大量的必备知识作为基础才可以开始学习自己感兴趣的话题的想法是很可笑的。当你在查找出登录验证图形在网站上如何运行是使用了javascript的时候，你就会知道javascript是如何工作的。当你阅读缓冲区溢出是如何产生的时候，并且有一个python模板，你将会学到很多python的基础知识。虽然你不会在这基础语言学习结束之后就能找到一份开发人员的工作(就是把这门语言学的很熟的意思)，但是你会找到各类语言之间的通用方法。</p>
+<h3 id="免费学习资源-Informal-Learning"><a href="#免费学习资源-Informal-Learning" class="headerlink" title="免费学习资源(Informal Learning)"></a>免费学习资源(Informal Learning)</h3><p>“好吧，我明白了——我需要自己学一些东西，但你至少能给我一个起点吗？”</p>
+<p>当然，有大量免费或者廉价的学习资源，这取决于你对什么主题感兴趣，这里有一些例子。</p>
+<p><strong>Web应用安全</strong></p>
+<p>•  <strong>HackThisSite</strong> – 一些基于web的基本挑战题<a href="https://www.hackthissite.org/" target="_blank" rel="noopener">(传送门)</a></p>
+<p>•  <strong>Enigma Group</strong> – 与HackThisSite这个网站类似<a href="https://www.enigmagroup.org/" target="_blank" rel="noopener">(传送门)</a></p>
+<p>•  <strong>OWASP Top 10</strong> –最常见的漏洞的概念<a href="https://www.owasp.org/index.php/Top_10_2013-Top_10" target="_blank" rel="noopener">(传送门)</a></p>
+<p>•  <strong>OWASP Broken Wep Apps</strong> –你可以下载上面的虚拟机来练习黑客技能<a href="https://www.vulnhub.com/entry/owasp-broken-web-applications-project,46/" target="_blank" rel="noopener">(传送门)</a></p>
+<p>•  <strong>Pentesting Lab</strong> –另一个以网络为中心的虚拟机<a href="https://www.vulnhub.com/entry/pentester-lab-web-for-pentester,71/" target="_blank" rel="noopener">(传送门)</a></p>
+<p>•  事实上，在<strong>vulnhub</strong>上有任何你感兴趣的东西<a href="https://www.vulnhub.com/" target="_blank" rel="noopener">(传送门)</a></p>
+<p>•  <strong>web应用程序黑客手册</strong>-关于网络黑客和漏洞的书<a href="https://www.amazon.com/The-Web-Application-Hackers-Handbook/dp/1118026470" target="_blank" rel="noopener">(传送门)</a></p>
+<hr>
+<p><strong>逆向工程/恶意软件逆向</strong></p>
+<p>•  <strong>Lena’s Tutorials</strong> –被称为逆向工程最佳教程之一<a href="https://tuts4you.com/e107_plugins/download/download.php?list.17" target="_blank" rel="noopener">(传送门)</a></p>
+<p>•  <strong>The Legends of Random</strong> –另一套可靠的逆向工程教程<a href="http://thelegendofrandom.com/?reqp=1&amp;reqr=" target="_blank" rel="noopener">(传送门)</a></p>
+<p>•  <strong>Reversing: Secrets of Reverse Engineering</strong> –一本关于逆向工程基础的好书<a href="https://www.amazon.com/Reversing-Secrets-Engineering-Eldad-Eilam/dp/0764574817" target="_blank" rel="noopener">(传送门)</a></p>
+<p>•  <strong>Practical Malware Analysis</strong> –一本专注于逆向恶意软件的好书<a href="https://www.amazon.com/Practical-Malware-Analysis-Hands--Dissecting/dp/1593272901/ref=sr_1_1?s=books&amp;ie=UTF8&amp;qid=1403515878&amp;sr=1-1&amp;keywords=practical+malware+analysis" target="_blank" rel="noopener">(传送门)</a></p>
+<p>•  <strong>Malware Analysts Cookbook</strong> – 另一本专注于逆向恶意软件的书 <a href="https://www.amazon.com/Malware-Analysts-Cookbook-DVD-Techniques/dp/0470613033/ref=sr_1_1?s=books&amp;ie=UTF8&amp;qid=1403515949&amp;sr=1-1&amp;keywords=malware+cookbook" target="_blank" rel="noopener">(传送门)</a></p>
+<hr>
+<p><strong>网络安全</strong></p>
+<p>•  虚拟机在这一类别中是主要的，因为它们允许你对真实机器进行练习，前往<strong>vulnhub</strong> 并下载任何看起来很有趣的VM <a href="https://www.vulnhub.com/" target="_blank" rel="noopener">(传送门)</a></p>
+<p>•  <strong>Metasploit Unleashed</strong> –通过metasploit测试框架的可靠运行，与VM的连接一起使用。<a href="https://www.offensive-security.com/metasploit-unleashed/" target="_blank" rel="noopener">(传送门)</a></p>
+<p>•  <strong>The Basics of Hacking and Penetration Testing</strong> –对那些完全陌生的人来说，渗透测试是非常基本的。<a href="https://www.amazon.com/The-Basics-Hacking-Penetration-Testing/dp/1597496553" target="_blank" rel="noopener">(传送门)</a></p>
+<p>•  <strong>Metasploit</strong> –渗透测试指南– 另一本关于在渗透测试中使用metasploit的书<a href="https://www.amazon.com/Metasploit-The-Penetration-Testers-Guide/dp/159327288X" target="_blank" rel="noopener">(传送门)</a></p>
+<p>•  因为这是一个非常大的领域，经常把它分解成一个方面，然后专门研究这方面。博客是你最好的朋友。<a href="www.google.com">(传送门)</a></p>
+<hr>
+<p><strong>漏洞利用</strong></p>
+<p>•  <strong>Corelan</strong> –到目前为止，这是学习漏洞利用开发的最好资源<a href="https://www.corelan.be/" target="_blank" rel="noopener">(传送门)</a></p>
+<p>•  <strong>FuzzySecurity</strong> –另一个很好的学习资源,有一些教程<a href="http://fuzzysecurity.com/tutorials.html" target="_blank" rel="noopener">(传送门)</a></p>
+<p>•  <strong>Exploit-DB</strong> –你能做的最好的事情之一就是找到一些漏洞的例子(通常是附加应用程序)，并尝试独立地复制这个漏洞。<a href="https://www.exploit-db.com/" target="_blank" rel="noopener">(传送门)</a></p>
+<p>•  <strong>Hacking – The Art of Exploitation</strong> –这是一本非常棒的书，涵盖了很多不同的开发技术<a href="https://www.amazon.com/Hacking-The-Art-Exploitation-Edition/dp/1593271441" target="_blank" rel="noopener">(传送门)</a></p>
+<p>•  <strong>The Shellcoders Handbook</strong> –另一本关于漏洞利用开发和shell编程的好书<a href="https://www.amazon.com/The-Shellcoders-Handbook-Discovering-Exploiting/dp/047008023X" target="_blank" rel="noopener">(传送门)</a></p>
+<p>除此之外，<strong>谷歌</strong>，<strong>谷歌</strong>，还是<strong>谷歌</strong>。我遗漏了一些领域，比如取证和规范性，因为我个人对它们不感兴趣所以我没有去寻找资源，但我肯定有一些很棒的资源。</p>
+<hr>
+<h3 id="专业学习资源-Formal-Learning"><a href="#专业学习资源-Formal-Learning" class="headerlink" title="专业学习资源(Formal Learning)"></a>专业学习资源(Formal Learning)</h3><p>在免费资源之外，如果你想把自己的职业生涯转变为职业道路，你也可以开始获得证书，让自己对雇主更有吸引力。如果您对网络安全感兴趣的话，我强烈推荐的一些认证是“Kali Linux的渗透测试”<a href="https://www.offensive-security.com/information-security-training/penetration-testing-training-kali-linux/" target="_blank" rel="noopener">(课程)</a> 。这很容易成为我在这个领域所经历过的最好的学习经历之一，在60天里教会了我比我自己一年学到的更多的东西。他们的“突破边界”也是一个很好的课程，更多地关注漏洞利用开发<a href="https://www.offensive-security.com/information-security-training/penetration-testing-training-kali-linux/" target="_blank" rel="noopener">(传送门)</a>.<br>如果你正在考虑开发你的编程技能，比如SecurityTube的“用于测试人员和黑客的Python” <a href="http://www.securitytube-training.com/online-courses/securitytube-python-scripting-expert/index.html" target="_blank" rel="noopener">(传送门)</a>，这是一个很好的基础教程，它将教你如何做大量的漂亮事情，比如构建你自己的端口扫描器、密码破解器等等。我并没有从就业的角度对他们的认证给予巨大的价值，但我更倾向于把它看作是一个整合的知识和例子，它仍然是有价值的。</p>
+<p>“白帽子(Certified Ethical Hacker)”课程是另一个经常被提及的课程。老实说，这是典型的轻视(关于“道德黑客”的这个说法，译者也持反感态度，没必要这么区分嘛。)，所以我不认为这是值得的——但是如果你需要一个正式的课程来学习，那么它可能是值得你去做的。在这里的ethicalhacker.net的论坛上讨论了很多这样的认证和它们的价值。<a href="https://www.ethicalhacker.net/" target="_blank" rel="noopener">(传送门)</a></p>
+<hr>
+<p><strong>“Just seeing if you can”</strong><br>黑客攻击的目的是获取信息，但这并不是我们所为的。创建一个exploit，寻找到一处SQL注入，密码破解，所做的这些都是为了让我们能朝着控制我们攻击的目标发展。我敢保证，几乎每一个新学黑客技术的人开始都想着“看看他们是否能”进入那个学校的网站。“看看他们能否”获得邻居的WiFi网络。向他们的朋友发送一个木马病毒只是为了“看看他们是否能”被控制。更糟糕的是，你可能会访问像HackForums.net这样的地方，看到很多人试图用RATs来感染别人，建立僵尸网络等等，在印象中这是黑客行为，或者更可悲的是，这是你唯一可以学习的方法。</p>
+<p>我需要强调的是，事实并非如此。任何类型的“只是看看你能不能”的类型练习都可以通过虚拟机、你自己的路由器甚至是CTF或攻防比赛来模拟。即使你能获取到别人的机器的权限，你打算怎么处理它呢？你真的会试图窃取信用卡信息并进行欺诈性交易吗？你真的会窃取密码，并偏执地进行追踪账户的行动，以便偷看别人的电子邮件吗？有很多<a href="https://www.welivesecurity.com/2014/05/06/miami-teenager-charged-hacking-school-computers-crazy-grade-changing-scheme/" target="_blank" rel="noopener">初学者</a>被<a href="https://arstechnica.com/information-technology/2014/05/teen-arrested-for-30-swatting-attacks-against-schools-security-reporter/" target="_blank" rel="noopener">起诉</a>的<a href="https://www.theguardian.com/technology/2014/may/19/fbi-arrests-100-hackers-blackshades-rat-backdoor-malware" target="_blank" rel="noopener">例子</a>,他们没有意识到自己所犯的罪行的严重性。如果你去FBI找工作，在他们看了你文章记录后，你会希望他们读到你问如何主持一个僵尸网络的帖子吗？这是互联网上的一个经典例子，如果你真的想要一个信息安全的职业，你需要一个干净的记录来获得你需要做的任何安全许可。因为愚蠢的东西而被抓住是不值得的。</p>
+<hr>
+<p><strong>结术语</strong><br>所以聊了这么多之后，到底什么才是关键？<br>•黑客会主动寻找信息，而不是等着别人把信息给他。<br>•脚本小子和新黑客之间的区别在于学习的欲望。<br>•你需要尝试各种信息安全领域来找到你感兴趣的东西。<br>•不要听任何人告诉你的有关学习信息安全是有先决条件的说法，事实并非如此。<br>•不值得”看看你是否能”做任何不合法的事情，所得到的风险和回报是没有意义的。<br>•有了课程，攻防竞赛，CTF，更重要的是虚拟机，这里有任何你可以合法模拟的黑客攻击场景。<br>祝你愉快，抱歉，马上接近尾声了，享受 pwning boxes（不知道怎么翻，感觉像是黑客的俚语）吧！信息安全是一个很棒的领域，你每天都会学习新的东西。除了全身心投入敢于尝试之外，没有比这更好的进入信息安全领域的方式。就像开始学习游泳，从弄湿身体，到学会踩水，再到保持漂浮，一点点的尝试，总有一天你会学会它的！</p>
+
+    </article>
+    <!-- license  -->
+    
+        <div class="license-wrapper">
+            <p>原文作者: <a href="http://wang66.top">王六六</a>
+            </p><p>原文链接: <a href="http://wang66.top/2018/soyouwantobeahacker.html">http://wang66.top/2018/soyouwantobeahacker.html</a>
+            </p><p>发表日期: <a href="http://wang66.top/2018/soyouwantobeahacker.html">September 2nd 2018, 2:50:40 pm</a>
+            </p><p>版权声明: 本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
+        </div>
+    
+    <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+                <div class="nextSlogan">Next Post</div>
+                <a href="/2018/HistoryofMCD.html" title="恶意代码发展简史">
+                    <div class="nextTitle">恶意代码发展简史</div>
+                </a>
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href="/2018/website-attack.html" title="社会工程学攻击之网站钓鱼">
+                    <div class="prevTitle">社会工程学攻击之网站钓鱼</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!--PC和WAP自适应版-->
+
+    <!--PC版-->
+
+
+    
+    
+    <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+    <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+    <div id="comment"></div>
+    <script>
+    new Valine({
+        el: '#comment' ,
+        notify: "true", 
+        verify: false, 
+        appId: "kBws43cqYyOkzvJkwd7PwiQ3-gzGzoHsz",
+        appKey: "IEbfjsLgEhcgfFfWicWSYdhf",
+        placeholder: "来评论一下吧~",
+        path:window.location.pathname, 
+		avatar: 'robohash' // (''/mp/identicon/monsterid/wavatar/robohash/retro/hide)
+    });
+    </script>
+
+
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:wangji19971013@qq.com" class="iconfont-archer email" title="email"></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/wang66just6" class="iconfont-archer github" target="_blank" title="github"></a>
+            
+        
+    
+        
+            
+                <span class="iconfont-archer wechat" title="wechat">
+                  
+                  <img class="profile-qr" src="/assets/wechat.png">
+                </span>
+            
+        
+    
+        
+            
+                <span class="iconfont-archer qq" title="qq">
+                  
+                  <img class="profile-qr" src="/assets/qq.jpg">
+                </span>
+            
+        
+    
+        
+            
+                <a href="//weibo.com/wang66just6" class="iconfont-archer weibo" target="_blank" title="weibo"></a>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a href="//twitter.com/wang66just6" class="iconfont-archer twitter" target="_blank" title="twitter"></a>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span><br>
+		<p>Hosted by <a href="https://pages.coding.me" style="font-weight: bold">Coding Pages</a></p>
+		<span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+	<script>
+		var now = new Date(); 
+		function createtime() { 
+			var grt= new Date("08/01/2018 12:00:00");//此处修改你的建站时间或者网站上线时间 
+			now.setTime(now.getTime()+250); 
+			days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); 
+			hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); 
+			if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); 
+			mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} 
+			seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); 
+			snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} 
+			document.getElementById("timeDate").innerHTML = "本站已安全运行 "+dnum+" 天 "; 
+			document.getElementById("times").innerHTML = hnum + " 小时 " + mnum + " 分 " + snum + " 秒"; 
+		} 
+	setInterval("createtime()",250);
+	</script>
+    </div>
+    <!-- 不蒜子  -->
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#免费学习资源-Informal-Learning"><span class="toc-number">1.</span> <span class="toc-text">免费学习资源(Informal Learning)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#专业学习资源-Formal-Learning"><span class="toc-number">2.</span> <span class="toc-text">专业学习资源(Formal Learning)</span></a></li></ol>
+    </div>
+    
+    <div class="back-top iconfont-archer">&#xe639;</div>
+    <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-panel-archives">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 19
+        </div>
+        <!-- search  -->
+        
+    </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2020 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/25</span><a class="archive-post-title" href="/2020/ELF-formt.html">ELF文件格式</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/24</span><a class="archive-post-title" href="/2020/How-The-Kernel-Manages-Your-Memory.html">How The Kernel Manages Your Memory</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/14</span><a class="archive-post-title" href="/2020/Anatomy-of-a-Program-in-Memory.html">Anatomy of a Program in Memory</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2019 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/08</span><a class="archive-post-title" href="/2019/port-knocking.html">端口敲门</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/19</span><a class="archive-post-title" href="/2019/Information-collection.html">信息收集总结</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/02</span><a class="archive-post-title" href="/2019/powershell-attack.html">PowerShell攻击技术</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2018 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/05</span><a class="archive-post-title" href="/2018/vulnhub-ch4inrulz1-0-1.html">Vulnhub渗透笔记之ch4inrulz:1.0.1</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/02</span><a class="archive-post-title" href="/2018/vulnhub-lampiao1.html">VulnHub渗透笔记之Lampio1</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/01</span><a class="archive-post-title" href="/2018/vulnhub-wankada1.html">Vulnhub渗透笔记之wankanda1</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/30</span><a class="archive-post-title" href="/2018/vulnhub-node1.html">Vulnhub渗透笔记之Node:1</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/24</span><a class="archive-post-title" href="/2018/The-mathematics-of-cryptography.html">浅谈密码学中的数学基础</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/16</span><a class="archive-post-title" href="/2018/linux-rookit.html">Linux后门检测与系统恢复</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/10</span><a class="archive-post-title" href="/2018/HistoryofMCD.html">恶意代码发展简史</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/02</span><a class="archive-post-title" href="/2018/soyouwantobeahacker.html">所以你想成为黑客？</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/01</span><a class="archive-post-title" href="/2018/website-attack.html">社会工程学攻击之网站钓鱼</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/27</span><a class="archive-post-title" href="/2018/隐写术之LSB隐写.html">隐写术之LSB隐写</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/27</span><a class="archive-post-title" href="/2018/一次恶意PHP脚本初探.html">一次恶意PHP脚本初探</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/25</span><a class="archive-post-title" href="/2018/ARP毒化.html">来自身边的安全威胁—ARP欺骗攻击</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/18</span><a class="archive-post-title" href="/2018/浅析缓冲区溢出.html">浅析缓冲区溢出</a>
+        </li>
+    
+    </ul></div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="局域网"><span class="iconfont-archer">&#xe606;</span>局域网</span>
+    
+        <span class="sidebar-tag-name" data-tags="arp"><span class="iconfont-archer">&#xe606;</span>arp</span>
+    
+        <span class="sidebar-tag-name" data-tags="中间人攻击"><span class="iconfont-archer">&#xe606;</span>中间人攻击</span>
+    
+        <span class="sidebar-tag-name" data-tags="系统原理"><span class="iconfont-archer">&#xe606;</span>系统原理</span>
+    
+        <span class="sidebar-tag-name" data-tags="翻译"><span class="iconfont-archer">&#xe606;</span>翻译</span>
+    
+        <span class="sidebar-tag-name" data-tags="恶意代码"><span class="iconfont-archer">&#xe606;</span>恶意代码</span>
+    
+        <span class="sidebar-tag-name" data-tags="计算机病毒"><span class="iconfont-archer">&#xe606;</span>计算机病毒</span>
+    
+        <span class="sidebar-tag-name" data-tags="渗透测试"><span class="iconfont-archer">&#xe606;</span>渗透测试</span>
+    
+        <span class="sidebar-tag-name" data-tags="vulnhub"><span class="iconfont-archer">&#xe606;</span>vulnhub</span>
+    
+        <span class="sidebar-tag-name" data-tags="密码学"><span class="iconfont-archer">&#xe606;</span>密码学</span>
+    
+        <span class="sidebar-tag-name" data-tags="linux"><span class="iconfont-archer">&#xe606;</span>linux</span>
+    
+        <span class="sidebar-tag-name" data-tags="rootkit"><span class="iconfont-archer">&#xe606;</span>rootkit</span>
+    
+        <span class="sidebar-tag-name" data-tags="powershell"><span class="iconfont-archer">&#xe606;</span>powershell</span>
+    
+        <span class="sidebar-tag-name" data-tags="资源，翻译"><span class="iconfont-archer">&#xe606;</span>资源，翻译</span>
+    
+        <span class="sidebar-tag-name" data-tags="php"><span class="iconfont-archer">&#xe606;</span>php</span>
+    
+        <span class="sidebar-tag-name" data-tags="webshell"><span class="iconfont-archer">&#xe606;</span>webshell</span>
+    
+        <span class="sidebar-tag-name" data-tags="社会工程学"><span class="iconfont-archer">&#xe606;</span>社会工程学</span>
+    
+        <span class="sidebar-tag-name" data-tags="隐写术"><span class="iconfont-archer">&#xe606;</span>隐写术</span>
+    
+        <span class="sidebar-tag-name" data-tags="lsb隐写"><span class="iconfont-archer">&#xe606;</span>lsb隐写</span>
+    
+        <span class="sidebar-tag-name" data-tags="缓冲区"><span class="iconfont-archer">&#xe606;</span>缓冲区</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br>
+    1、请确保node版本大于6.2<br>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+        <span class="sidebar-category-name" data-categories="资源"><span class="iconfont-archer">&#xe60a;</span>资源</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: "/",
+        author: "王六六"
+    }
+</script>
+    <!-- CDN failover -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ === 'undefined')
+        {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
+        }
+    </script>
+    <script src="/scripts/main.js"></script>
+    <!-- algolia -->
+    
+    <!-- busuanzi  -->
+    
+    <!-- CNZZ  -->
+    
+    </div>
+    <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
+     
+    </body>
+</html>
+
+

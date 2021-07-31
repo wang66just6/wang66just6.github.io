@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html>
+    <!-- title -->
+
+
+
+
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="author" content="王六六">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="王六六">
+    <meta name="keywords" content="王六六的博客 | 王六六">
+    <meta name="description" content="It's raining cats and dogs.">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Linux后门检测与系统恢复 · wang66&#39;s blog</title>
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s 1;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+</style>
+
+    <link rel="preload" href="/css/style.css?v=20180824" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="stylesheet" href="/css/mobile.css?v=20180824" media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+(function( w ){
+	"use strict";
+	// rel=preload support test
+	if( !w.loadCSS ){
+		w.loadCSS = function(){};
+	}
+	// define on the loadCSS obj
+	var rp = loadCSS.relpreload = {};
+	// rel=preload feature support test
+	// runs once and returns a function for compat purposes
+	rp.support = (function(){
+		var ret;
+		try {
+			ret = w.document.createElement( "link" ).relList.supports( "preload" );
+		} catch (e) {
+			ret = false;
+		}
+		return function(){
+			return ret;
+		};
+	})();
+
+	// if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+	// then change that media back to its intended value on load
+	rp.bindMediaToggle = function( link ){
+		// remember existing media attr for ultimate state, or default to 'all'
+		var finalMedia = link.media || "all";
+
+		function enableStylesheet(){
+			link.media = finalMedia;
+		}
+
+		// bind load handlers to enable media
+		if( link.addEventListener ){
+			link.addEventListener( "load", enableStylesheet );
+		} else if( link.attachEvent ){
+			link.attachEvent( "onload", enableStylesheet );
+		}
+
+		// Set rel and non-applicable media type to start an async request
+		// note: timeout allows this to happen async to let rendering continue in IE
+		setTimeout(function(){
+			link.rel = "stylesheet";
+			link.media = "only x";
+		});
+		// also enable media after 3 seconds,
+		// which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+		setTimeout( enableStylesheet, 3000 );
+	};
+
+	// loop through link elements in DOM
+	rp.poly = function(){
+		// double check this to prevent external calls from running
+		if( rp.support() ){
+			return;
+		}
+		var links = w.document.getElementsByTagName( "link" );
+		for( var i = 0; i < links.length; i++ ){
+			var link = links[ i ];
+			// qualify links to those with rel=preload and as=style attrs
+			if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+				// prevent rerunning on link
+				link.setAttribute( "data-loadcss", true );
+				// bind listeners to toggle media back
+				rp.bindMediaToggle( link );
+			}
+		}
+	};
+
+	// if unsupported, run the polyfill
+	if( !rp.support() ){
+		// run once at least
+		rp.poly();
+
+		// rerun poly on an interval until onload
+		var run = w.setInterval( rp.poly, 500 );
+		if( w.addEventListener ){
+			w.addEventListener( "load", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		} else if( w.attachEvent ){
+			w.attachEvent( "onload", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		}
+	}
+
+
+	// commonjs
+	if( typeof exports !== "undefined" ){
+		exports.loadCSS = loadCSS;
+	}
+	else {
+		w.loadCSS = loadCSS;
+	}
+}( typeof global !== "undefined" ? global : this ) );
+</script>
+
+    <link rel="icon" href="/assets/favicon.ico">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script">
+    <link rel="preload" href="/scripts/main.js" as="script">
+    <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
+    <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
+    
+    <!-- fancybox -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/">Still Shines.</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">Linux后门检测与系统恢复</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href="/">Still Shines.</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro" style="height:50vh;">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            Linux后门检测与系统恢复
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class="post-intro-tags">
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="linux">linux</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="rootkit">rootkit</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>Word count: <span class="post-count">3.1k</span> / Reading time: <span class="post-count">14 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2018/09/16</span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+        <script>
+ 
+  // get user agent
+  var browser = {
+    versions: function () {
+      var u = window.navigator.userAgent;
+      return {
+        userAgent: u,
+        trident: u.indexOf('Trident') > -1, //IE内核
+        presto: u.indexOf('Presto') > -1, //opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+        iPad: u.indexOf('iPad') > -1, //是否为iPad
+        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+      };
+    }()
+  }
+  console.log("userAgent:" + browser.versions.userAgent);
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded');
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in');
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb(){
+    if (browser.versions.uc) {
+      console.log("UCBrowser");
+      fontLoaded();
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular']
+        },
+        loading: function () {  //所有字体开始加载
+          // console.log('loading');
+        },
+        active: function () {  //所有字体已渲染
+          fontLoaded();
+        },
+        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout');
+          fontLoaded();
+        },
+        timeout: 5000 // Set the timeout to two seconds
+      });
+    }
+  }
+
+  function asyncErr(){
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (cb) { o.addEventListener('load', function (e) { cb(null, e); }, false); }
+    if (err) { o.addEventListener('error', function (e) { err(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+
+  var asyncLoadWithFallBack = function(arr, success, reject) {
+      var currReject = function(){
+        reject()
+        arr.shift()
+        if(arr.length)
+          async(arr[0], success, currReject)
+        }
+
+      async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack([
+    "https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", 
+    "https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js",
+    "/lib/webfontloader.min.js"
+  ], asyncCb, asyncErr)
+</script>        
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <p>小白是某公司的Linux系统管理员。某天小白突然觉得公司的机器存在异常，并经常有被人监控的感觉。于是他通过分析日志、监控网络通信等手段发现该系统有很大的可能被黑客入侵并留了rootkit后门。<a id="more"></a></p>
+<h2 id="什么是Rootkit"><a href="#什么是Rootkit" class="headerlink" title="什么是Rootkit"></a>什么是Rootkit</h2><p>什么是rootkit？简单的说，rootkit是一种特殊的恶意软件，它的特殊性在于，我们无法找到它。其主要功能为：隐藏其他程序进程的软件，可能是一个或一个以上的软件组合。最早rootkit是用于善意用途的，但后来rootkit也被黑客用在入侵和攻击他人的计算机系统上。计算机病毒、间谍软件等也常使用rootkit来隐藏踪迹，因此rootkit已被大多数的杀毒软件归类为具危害性的恶意软件。Linux、Windows、Mac OS等操作系统都有机会成为Rootkit的受害目标。</p>
+<p><img src="http://img.wandoutech.com/img/143731.png" alt="image-20210731223730689"></p>
+<p>Rootkit也可视为一项技术。在今天，Rootkit一词更多地是指被作为驱动程序，加载到操作系统内核中的恶意软件。因为其代码运行在特权模式之下，从而能造成意料之外的危险。</p>
+<p>Rootkit木马就像是信息世界里的 AIDS，一旦感染，就难以用一般手段消灭了，因为它和自然界里的同类做的事情一样，破坏了系统自身检测的完整性。</p>
+<p>计算机系统没有免疫功能，但是它提供了对自身环境的相关检测功能——枚举进程、文件列表、级别权限保护等，大部分杀毒软件和进程工具都依赖于系统自带的检测功能才得以运作，而 Rootkit木马要破坏的，正是这些功能。</p>
+<p>基于Linux内核的rootkit的历史可以赘述到1990年代中期，从最早的hijack syscall/pghandler/IDT到mem injection，大部分的手法都是一个特点：HOOK。HOOK怎么下是门学问，这个星球上最有缺的rootkit是能让HOOK形成一条跟userspace完全对应的codepath，如何和密码工程配合则会让此类持久化技术发挥到极致。编写rootkit的质量的大部分情况都取决于对内核本身的了解程度，就如你的了解你最爱的人的各个方面是一样的道理。那么rootkit一般是怎么防御和检测呢？常见的检测思路是采用对比内存DUMPCORE和SYMTABLE之间的差异。</p>
+<h2 id="Rookit扫描和检测"><a href="#Rookit扫描和检测" class="headerlink" title="Rookit扫描和检测"></a>Rookit扫描和检测</h2><h3 id="检测工具"><a href="#检测工具" class="headerlink" title="检测工具"></a>检测工具</h3><p>小白正在使用的linux系统版本是CentOS。他先从网上找来了rootkit检测工具：rkhunter、determine和chekrootkit<br><img src="http://img.wandoutech.com/img/143740.png" alt="image-20210731223739343"><br>chkrootkit是一个检测系统中rootkit的工具。可以检测多种rootkit。</p>
+<p>rkhunter是Linux下的一款开源入侵检测工具。rkhunter具有比chkrootkit更为全面的扫描范围。除rootkit特征码扫描外，rkhunter还支持端口扫描，常用开源软件版本和文件变动情况检查等。</p>
+<p>determine可能用于检测来自ps / top等LKM rootkit的隐藏进程。它可以帮助管理员检查他们的机器是否有隐藏的进程。它还包含一个(小而可扩展的) 可以扫描内存的特征数据库。deter-mine 适用于2.4 和 2.6 的Linux 内核。</p>
+<blockquote>
+<p><strong>工具下载：</strong><br>Rkhunter：<a href="http://down.51cto.com/data/149294" target="_blank" rel="noopener">http://down.51cto.com/data/149294</a><br>deter-mine：<a href="http://stealth.openwall.net/rootkits/removal/determine-0-24.tgz" target="_blank" rel="noopener">http://stealth.openwall.net/rootkits/removal/determine-0-24.tgz</a><br>chkrootkit：<a href="ftp://ftp.pangeia.com.br/pub/seg/pac/chkrootkit.tar或http://www.chkrootkit.org" target="_blank" rel="noopener">ftp://ftp.pangeia.com.br/pub/seg/pac/chkrootkit.tar或http://www.chkrootkit.org</a></p>
+</blockquote>
+<h3 id="开始检测"><a href="#开始检测" class="headerlink" title="开始检测"></a>开始检测</h3><h4 id="•使用rkhunter进行扫描"><a href="#•使用rkhunter进行扫描" class="headerlink" title="•使用rkhunter进行扫描"></a>•使用rkhunter进行扫描</h4><p>第一步：首先对压缩包进行解压，这里我们直接右键点击解压到此处。<br>第二步：安装rkhunter。<br>进入 rkhunter-1.3.6 文件夹，右击，选择“在终端中打开”，在终端中输入命令：</p>
+<blockquote>
+<p>./installer.sh –install</p>
+</blockquote>
+<p><img src="http://img.wandoutech.com/img/143749.png" alt="image-20210731223749012"><br>第三步：对系统进行扫描</p>
+<blockquote>
+<p>rkhunter –c –rwo    //对系统进行扫描，只在终端中显示警告信息</p>
+</blockquote>
+<p><img src="http://img.wandoutech.com/img/143801.png" alt="image-20210731223800986"><br>第四步：查看扫描结果并分析<br>扫描后自动生成报告rkhunter.log，位于/var/log下</p>
+<p><img src="http://img.wandoutech.com/img/143810.png" alt="image-20210731223810765"></p>
+<p>这里复制出警告信息：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">Warning: Checking for prerequisites               [ Warning ]</span><br><span class="line">         The file of stored file properties (rkhunter.dat) does not exist, and should be created. To do this type in &apos;rkhunter --propupd&apos;.</span><br><span class="line">Warning: WARNING! It is the users responsibility to ensure that when the &apos;--propupd&apos; option</span><br><span class="line">         is used, all the files on their system are known to be genuine, and installed from a</span><br><span class="line">         reliable source. The rkhunter &apos;--check&apos; option will compare the current file properties</span><br><span class="line">         against previously stored values, and report if any values differ. However, rkhunter</span><br><span class="line">         cannot determine what has caused the change, that is for the user to do.</span><br><span class="line">Warning: The command &apos;/usr/bin/GET&apos; has been replaced by a script: /usr/bin/GET: perl script text executable</span><br><span class="line">Warning: The command &apos;/usr/bin/groups&apos; has been replaced by a script: /usr/bin/groups: Bourne shell script text executable</span><br><span class="line">Warning: The command &apos;/usr/bin/ldd&apos; has been replaced by a script: /usr/bin/ldd: Bourne shell script text executable</span><br><span class="line">Warning: The command &apos;/usr/bin/whatis&apos; has been replaced by a script: /usr/bin/whatis: Bourne shell script text executable</span><br><span class="line">Warning: The command &apos;/sbin/ifdown&apos; has been replaced by a script: /sbin/ifdown: Bourne-Again shell script text executable</span><br><span class="line">Warning: The command &apos;/sbin/ifup&apos; has been replaced by a script: /sbin/ifup: Bourne-Again shell script text executable</span><br><span class="line">&gt; Warning: Sebek LKM                                [ Warning ]</span><br><span class="line">&gt;        Kernel symbol &apos;adore or sebek&apos; found</span><br><span class="line">Warning: Account &apos;testadmin&apos; is root equivalent (UID = 0)</span><br><span class="line">Warning: Account &apos;supervisor&apos; is root equivalent (UID = 0)</span><br><span class="line">Warning: The SSH configuration option &apos;PermitRootLogin&apos; has not been set.</span><br><span class="line">         The default value may be &apos;yes&apos;, to allow root access.</span><br><span class="line">Warning: Hidden directory found: /dev/.udev</span><br><span class="line">Warning: Hidden file found: /usr/share/man/man1/..1.gz: gzip compressed data, from Unix, max compression</span><br><span class="line">Warning: Hidden file found: /usr/bin/.ssh.hmac: ASCII text</span><br><span class="line">Warning: Hidden file found: /usr/bin/.fipscheck.hmac: ASCII text</span><br><span class="line">Warning: Hidden file found: /usr/sbin/.sshd.hmac: ASCII text</span><br><span class="line">Warning: Application &apos;httpd&apos;, version &apos;2.2.3&apos;, is out of date, and possibly a security risk.</span><br><span class="line">Warning: Application &apos;named&apos;, version &apos;9.3.6-P1&apos;, is out of date, and possibly a security risk.</span><br><span class="line">Warning: Application &apos;openssl&apos;, version &apos;0.9.8e&apos;, is out of date, and possibly a security risk.</span><br><span class="line">Warning: Application &apos;php&apos;, version &apos;5.1.6&apos;, is out of date, and possibly a security risk.</span><br><span class="line">Warning: Application &apos;sshd&apos;, version &apos;4.3p2&apos;, is out of date, and possibly a security risk.</span><br><span class="line"></span><br><span class="line">One or more warnings have been found while checking the system.</span><br><span class="line">Please check the log file (/var/log/rkhunter.log)</span><br></pre></td></tr></table></figure>
+<p>上面箭头标记出来的那一段提示说可能存在Sebek LKM，检测报告中对应的内容为：<br><img src="http://img.wandoutech.com/img/143823.png" alt="image-20210731223822952"></p>
+<h4 id="•使用determine进行扫描"><a href="#•使用determine进行扫描" class="headerlink" title="•使用determine进行扫描"></a>•使用determine进行扫描</h4><p>第一步：对压缩包进行解压。<br>第二步：安装determine<br>进入determine文件夹，终端中输入命令：</p>
+<blockquote>
+<p>make</p>
+</blockquote>
+<p><img src="http://img.wandoutech.com/img/143830.png" alt="image-20210731223829767"></p>
+<p>第三步：开始扫描，终端中输入命令：</p>
+<blockquote>
+<p>./determine &gt; determine.log</p>
+</blockquote>
+<p>这会在determine文件夹中生成determine.log文件<br><img src="http://img.wandoutech.com/img/143836.png" alt="image-20210731223836268"><br>第四步：查看扫描结果并分析<br><img src="http://img.wandoutech.com/img/143841.png" alt="image-20210731223841478"><br>分析determine.log,发现系统中存在多个隐藏进程，在/proc下没有与之对应的进程文件，可能存在后门。</p>
+<h4 id="•使用chkrootkit进行扫描"><a href="#•使用chkrootkit进行扫描" class="headerlink" title="•使用chkrootkit进行扫描"></a>•使用chkrootkit进行扫描</h4><p>第一步：对压缩包进行解压。<br>第二步：安装chkrootkit</p>
+<blockquote>
+<p>在终端中输入：make</p>
+</blockquote>
+<p><img src="http://img.wandoutech.com/img/143849.png" alt="image-20210731223848341"></p>
+<p>第三步：开始扫描</p>
+<blockquote>
+<p>./chkrootkit &gt; chkrootkit.log</p>
+</blockquote>
+<p>对系统进行扫描，并在当前目录下生成报告chkrootkit.log.<br><img src="http://img.wandoutech.com/img/143855.png" alt="image-20210731223854426"></p>
+<p>第四步：查看扫描结果并分析</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br></pre></td><td class="code"><pre><span class="line">ROOTDIR is `/&apos;</span><br><span class="line">Checking `amd&apos;... not found</span><br><span class="line">Checking `basename&apos;... not infected</span><br><span class="line">Checking `biff&apos;... not found</span><br><span class="line">Checking `chfn&apos;... not infected</span><br><span class="line">Checking `chsh&apos;... not infected</span><br><span class="line">Checking `cron&apos;... not infected</span><br><span class="line">Checking `crontab&apos;... not infected</span><br><span class="line">Checking `date&apos;... not infected</span><br><span class="line">Checking `du&apos;... not infected</span><br><span class="line">Checking `dirname&apos;... not infected</span><br><span class="line">Checking `echo&apos;... not infected</span><br><span class="line">Checking `egrep&apos;... not infected</span><br><span class="line">Checking `env&apos;... not infected</span><br><span class="line">Checking `find&apos;... not infected</span><br><span class="line">Checking `fingerd&apos;... not found</span><br><span class="line">Checking `gpm&apos;... not infected</span><br><span class="line">Checking `grep&apos;... not infected</span><br><span class="line">Checking `hdparm&apos;... not infected</span><br><span class="line">Checking `su&apos;... not infected</span><br><span class="line">Checking `ifconfig&apos;... not infected</span><br><span class="line">Checking `inetd&apos;... not tested</span><br><span class="line">Checking `inetdconf&apos;... not found</span><br><span class="line">Checking `identd&apos;... not found</span><br><span class="line">Checking `init&apos;... not infected</span><br><span class="line">Checking `killall&apos;... not infected</span><br><span class="line">Checking `ldsopreload&apos;... not infected</span><br><span class="line">Checking `login&apos;... not infected</span><br><span class="line">Checking `ls&apos;... not infected</span><br><span class="line">Checking `lsof&apos;... not infected</span><br><span class="line">Checking `mail&apos;... not infected</span><br><span class="line">Checking `mingetty&apos;... not infected</span><br><span class="line">Checking `netstat&apos;... not infected</span><br><span class="line">Checking `named&apos;... not infected</span><br><span class="line">Checking `passwd&apos;... not infected</span><br><span class="line">Checking `pidof&apos;... not infected</span><br><span class="line">Checking `pop2&apos;... not found</span><br><span class="line">Checking `pop3&apos;... not found</span><br><span class="line">Checking `ps&apos;... not infected</span><br><span class="line">Checking `pstree&apos;... not infected</span><br><span class="line">Checking `rpcinfo&apos;... not infected</span><br><span class="line">Checking `rlogind&apos;... not found</span><br><span class="line">Checking `rshd&apos;... not found</span><br><span class="line">Checking `slogin&apos;... not infected</span><br><span class="line">Checking `sendmail&apos;... not infected</span><br><span class="line">Checking `sshd&apos;... not infected</span><br><span class="line">Checking `syslogd&apos;... not infected</span><br><span class="line">Checking `tar&apos;... not infected</span><br><span class="line">Checking `tcpd&apos;... not infected</span><br><span class="line">Checking `tcpdump&apos;... not infected</span><br><span class="line">Checking `top&apos;... not infected</span><br><span class="line">Checking `telnetd&apos;... not infected</span><br><span class="line">Checking `timed&apos;... not found</span><br><span class="line">Checking `traceroute&apos;... not infected</span><br><span class="line">Checking `vdir&apos;... not infected</span><br><span class="line">Checking `w&apos;... not infected</span><br><span class="line">Checking `write&apos;... not infected</span><br><span class="line">Checking `aliens&apos;... no suspect files</span><br><span class="line">Searching for sniffer&apos;s logs, it may take a while... nothing found</span><br><span class="line">Searching for HiDrootkit&apos;s default dir... nothing found</span><br><span class="line">Searching for t0rn&apos;s default files and dirs... nothing found</span><br><span class="line">Searching for t0rn&apos;s v8 defaults... nothing found</span><br><span class="line">Searching for Lion Worm default files and dirs... nothing found</span><br><span class="line">Searching for RSHA&apos;s default files and dir... nothing found</span><br><span class="line">Searching for RH-Sharpe&apos;s default files... nothing found</span><br><span class="line">Searching for Ambient&apos;s rootkit (ark) default files and dirs... nothing found</span><br><span class="line">Searching for suspicious files and dirs, it may take a while... </span><br><span class="line">/usr/lib/.libgcrypt.so.11.hmac /usr/lib/gtk-2.0/immodules/.relocation-tag /usr/lib/firefox-3.0.18/.autoreg /usr/lib/.libfipscheck.so.1.1.0.hmac /usr/lib/perl5/5.8.8/i386-linux-thread-multi/.packlist /usr/lib/.libfipscheck.so.1.hmac /lib/.libcrypto.so.0.9.8e.hmac /lib/.libcrypto.so.6.hmac /lib/.libssl.so.6.hmac /lib/.libssl.so.0.9.8e.hmac</span><br><span class="line"></span><br><span class="line">Searching for LPD Worm files and dirs... nothing found</span><br><span class="line">Searching for Ramen Worm files and dirs... nothing found</span><br><span class="line">Searching for Maniac files and dirs... nothing found</span><br><span class="line">Searching for RK17 files and dirs... nothing found</span><br><span class="line">Searching for Ducoci rootkit... nothing found</span><br><span class="line">Searching for Adore Worm... nothing found</span><br><span class="line">Searching for ShitC Worm... nothing found</span><br><span class="line">Searching for Omega Worm... nothing found</span><br><span class="line">Searching for Sadmind/IIS Worm... nothing found</span><br><span class="line">Searching for MonKit... nothing found</span><br><span class="line">Searching for Showtee... nothing found</span><br><span class="line">Searching for OpticKit... nothing found</span><br><span class="line">Searching for T.R.K... nothing found</span><br><span class="line">Searching for Mithra... nothing found</span><br><span class="line">Searching for LOC rootkit... nothing found</span><br><span class="line">Searching for Romanian rootkit... nothing found</span><br><span class="line">Searching for HKRK rootkit... nothing found</span><br><span class="line">Searching for Suckit rootkit... nothing found</span><br><span class="line">Searching for Volc rootkit... nothing found</span><br><span class="line">Searching for Gold2 rootkit... nothing found</span><br><span class="line">Searching for TC2 Worm default files and dirs... nothing found</span><br><span class="line">Searching for Anonoying rootkit default files and dirs... nothing found</span><br><span class="line">Searching for ZK rootkit default files and dirs... nothing found</span><br><span class="line">Searching for ShKit rootkit default files and dirs... nothing found</span><br><span class="line">Searching for AjaKit rootkit default files and dirs... nothing found</span><br><span class="line">Searching for zaRwT rootkit default files and dirs... nothing found</span><br><span class="line">Searching for Madalin rootkit default files... nothing found</span><br><span class="line">Searching for Fu rootkit default files... nothing found</span><br><span class="line">Searching for ESRK rootkit default files... nothing found</span><br><span class="line">Searching for rootedoor... nothing found</span><br><span class="line">Searching for ENYELKM rootkit default files... nothing found</span><br><span class="line">Searching for common ssh-scanners default files... nothing found</span><br><span class="line">Searching for suspect PHP files... nothing found</span><br><span class="line">Searching for anomalies in shell history files... nothing found</span><br><span class="line">Checking `asp&apos;... not infected</span><br><span class="line">Checking `bindshell&apos;... not infected</span><br><span class="line">Checking `lkm&apos;... You have     3 process hidden for readdir command</span><br><span class="line">You have     3 process hidden for ps command</span><br><span class="line">chkproc: Warning: Possible LKM Trojan installed</span><br><span class="line">chkdirs: nothing detected</span><br><span class="line">Checking `rexedcs&apos;... not found</span><br><span class="line">Checking `sniffer&apos;... eth0: PF_PACKET(/sbin/dhclient)</span><br><span class="line">Checking `w55808&apos;... not infected</span><br><span class="line">Checking `wted&apos;... chkwtmp: nothing deleted</span><br><span class="line">Checking `scalper&apos;... not infected</span><br><span class="line">Checking `slapper&apos;... not infected</span><br><span class="line">Checking `z2&apos;... chklastlog: nothing deleted</span><br><span class="line">Checking `chkutmp&apos;...  The tty of the following user process(es) were not found</span><br><span class="line"> in /var/run/utmp !</span><br><span class="line">! RUID          PID TTY    CMD</span><br><span class="line">! root         4068 tty1   /sbin/mingetty tty1</span><br><span class="line">! root         4069 tty2   /sbin/mingetty tty2</span><br><span class="line">! root         4070 tty3   /sbin/mingetty tty3</span><br><span class="line">! root         4071 tty4   /sbin/mingetty tty4</span><br><span class="line">! root         4172 tty7   /usr/bin/Xorg :0 -br -audit 0 -auth /var/gdm/:0.Xauth -nolisten tcp vt7</span><br><span class="line">chkutmp: nothing deleted</span><br><span class="line">Checking `OSX_RSPLUG&apos;... not infected</span><br></pre></td></tr></table></figure>
+<p>分析chkrootkit.log，没有发现异常。</p>
+<h4 id="综合分析"><a href="#综合分析" class="headerlink" title="综合分析"></a>综合分析</h4><p>从上面的扫描结果看，可以确定的是这个系统存在rootkit后门Sebek LKM。sebek是运行在内核空间的一段代码，记录系统用户存取的一些或者全部数据。这个工具的功能有：记录加密会话中击键，恢复使用SCP拷贝的文件，捕获远程系统被记录的口令，恢复使用Burneye保护的二进制程序的口令还有其它的一些入侵分析任务相关的作用。</p>
+<h3 id="系统修复"><a href="#系统修复" class="headerlink" title="系统修复"></a>系统修复</h3><p>要想清除这个rootkit后门，我们可以利用现有的工具和文件，采用最快捷的方式恢复系统内核，并在系统中寻找可以的隐藏文件。我们首先要下载对应系统内核相关的压缩包，生成新的、干净的内核模块，替换原有模块文件。</p>
+<p>这里已经下载好了相关的系统内核：<br><img src="http://img.wandoutech.com/img/143908.png" alt="image-20210731223907758"><br>第一步：恢复前利用 ls -aR 将/home 下的文件列出，并保存为 homefiles1.txt。</p>
+<blockquote>
+<p>ls -aR &gt;homefiles1.txt</p>
+</blockquote>
+<p><img src="http://img.wandoutech.com/img/143916.png" alt="image-20210731223916741"><br>第二步：利用已编译的内核模块 rpm 包快速恢复系统内核模块文件。<br>在终端中输入以下命令：</p>
+<blockquote>
+<p>cd /test/src     //进入到rpm包存放的目录<br>rpm -i –force kernel-2.6.18-194.el5.i686.rpm</p>
+</blockquote>
+<p><img src="http://img.wandoutech.com/img/143928.png" alt="image-20210731223928724"><br>之后重启系统。<br>第三步：查找隐藏的文件<br>在/home目录下，输入如下命令：</p>
+<blockquote>
+<p>ls -aR &gt; homefiles2.txt</p>
+</blockquote>
+<p><img src="http://img.wandoutech.com/img/143935.png" alt="image-20210731223935287"></p>
+<p>我们现在对比 homefiles1.txt、homefiles2.txt这两个文件，这里输入如下命令：</p>
+<blockquote>
+<p>diff  homefiles1.txt  homefiles2.txt</p>
+</blockquote>
+<p>diff是一个文件对比的工具<br><img src="http://img.wandoutech.com/img/143943.png" alt="image-20210731223943485"><br>结果中可以看到”4a5”处表示homefiles2.txt中在第五行比第一个文件的第四行多了一行homefile2.txt。对比如图：<br><img src="http://img.wandoutech.com/img/143952.png" alt="image-20210731223952532"><br>我们再来关注第393行和第495行：<br><img src="http://img.wandoutech.com/img/143958.png" alt="image-20210731223958565"><br>发现ava在系统恢复后存在，且对比恢复前的文件列表，可知这是一个隐藏文件。<br>由此可知恢复系统后，在/home目录下出现了三个不同的文件：homefiles2.txt、ava、THIS_IS_A_HIDDEN_FILE第一个文件是我们创建的，那其他的两个文件又是什么用呢？我们找到目录下的文件并运行：<br><img src="http://img.wandoutech.com/img/144005.png" alt="image-20210731224004875"></p>
+<p>我们运行ava后，可以看到它有以下的功能：<br><img src="http://img.wandoutech.com/img/144010.png" alt="image-20210731224010441"></p>
+<p>它最主要作用就是使自己隐藏，也能把另一个文件或进程也隐藏起来。</p>
+<blockquote>
+<p>I 打印信息(秘密UID等)<br>h隐藏文件<br>u取消隐藏文件<br>r作为root执行<br>R永久删除PID<br>U卸载adore（一个LKM rk,google adore会有很多详细的介绍）<br>i使PID不可见<br>v使PID可见</p>
+</blockquote>
+<p>参考文章：<br><a href="https://blog.csdn.net/tiandyoin/article/details/75136484" target="_blank" rel="noopener">https://blog.csdn.net/tiandyoin/article/details/75136484</a></p>
+
+    </article>
+    <!-- license  -->
+    
+        <div class="license-wrapper">
+            <p>原文作者: <a href="http://wang66.top">王六六</a>
+            </p><p>原文链接: <a href="http://wang66.top/2018/linux-rookit.html">http://wang66.top/2018/linux-rookit.html</a>
+            </p><p>发表日期: <a href="http://wang66.top/2018/linux-rookit.html">September 16th 2018, 8:48:25 pm</a>
+            </p><p>版权声明: 本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
+        </div>
+    
+    <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+                <div class="nextSlogan">Next Post</div>
+                <a href="/2018/The-mathematics-of-cryptography.html" title="浅谈密码学中的数学基础">
+                    <div class="nextTitle">浅谈密码学中的数学基础</div>
+                </a>
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href="/2018/HistoryofMCD.html" title="恶意代码发展简史">
+                    <div class="prevTitle">恶意代码发展简史</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!--PC和WAP自适应版-->
+
+    <!--PC版-->
+
+
+    
+    
+    <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+    <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+    <div id="comment"></div>
+    <script>
+    new Valine({
+        el: '#comment' ,
+        notify: "true", 
+        verify: false, 
+        appId: "kBws43cqYyOkzvJkwd7PwiQ3-gzGzoHsz",
+        appKey: "IEbfjsLgEhcgfFfWicWSYdhf",
+        placeholder: "来评论一下吧~",
+        path:window.location.pathname, 
+		avatar: 'robohash' // (''/mp/identicon/monsterid/wavatar/robohash/retro/hide)
+    });
+    </script>
+
+
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:wangji19971013@qq.com" class="iconfont-archer email" title="email"></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/wang66just6" class="iconfont-archer github" target="_blank" title="github"></a>
+            
+        
+    
+        
+            
+                <span class="iconfont-archer wechat" title="wechat">
+                  
+                  <img class="profile-qr" src="/assets/wechat.png">
+                </span>
+            
+        
+    
+        
+            
+                <span class="iconfont-archer qq" title="qq">
+                  
+                  <img class="profile-qr" src="/assets/qq.jpg">
+                </span>
+            
+        
+    
+        
+            
+                <a href="//weibo.com/wang66just6" class="iconfont-archer weibo" target="_blank" title="weibo"></a>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a href="//twitter.com/wang66just6" class="iconfont-archer twitter" target="_blank" title="twitter"></a>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span><br>
+		<p>Hosted by <a href="https://pages.coding.me" style="font-weight: bold">Coding Pages</a></p>
+		<span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+	<script>
+		var now = new Date(); 
+		function createtime() { 
+			var grt= new Date("08/01/2018 12:00:00");//此处修改你的建站时间或者网站上线时间 
+			now.setTime(now.getTime()+250); 
+			days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); 
+			hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); 
+			if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); 
+			mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} 
+			seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); 
+			snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} 
+			document.getElementById("timeDate").innerHTML = "本站已安全运行 "+dnum+" 天 "; 
+			document.getElementById("times").innerHTML = hnum + " 小时 " + mnum + " 分 " + snum + " 秒"; 
+		} 
+	setInterval("createtime()",250);
+	</script>
+    </div>
+    <!-- 不蒜子  -->
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#什么是Rootkit"><span class="toc-number">1.</span> <span class="toc-text">什么是Rootkit</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Rookit扫描和检测"><span class="toc-number">2.</span> <span class="toc-text">Rookit扫描和检测</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#检测工具"><span class="toc-number">2.1.</span> <span class="toc-text">检测工具</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#开始检测"><span class="toc-number">2.2.</span> <span class="toc-text">开始检测</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#•使用rkhunter进行扫描"><span class="toc-number">2.2.1.</span> <span class="toc-text">•使用rkhunter进行扫描</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#•使用determine进行扫描"><span class="toc-number">2.2.2.</span> <span class="toc-text">•使用determine进行扫描</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#•使用chkrootkit进行扫描"><span class="toc-number">2.2.3.</span> <span class="toc-text">•使用chkrootkit进行扫描</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#综合分析"><span class="toc-number">2.2.4.</span> <span class="toc-text">综合分析</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#系统修复"><span class="toc-number">2.3.</span> <span class="toc-text">系统修复</span></a></li></ol></li></ol>
+    </div>
+    
+    <div class="back-top iconfont-archer">&#xe639;</div>
+    <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-panel-archives">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 19
+        </div>
+        <!-- search  -->
+        
+    </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2020 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/25</span><a class="archive-post-title" href="/2020/ELF-formt.html">ELF文件格式</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/24</span><a class="archive-post-title" href="/2020/How-The-Kernel-Manages-Your-Memory.html">How The Kernel Manages Your Memory</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/14</span><a class="archive-post-title" href="/2020/Anatomy-of-a-Program-in-Memory.html">Anatomy of a Program in Memory</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2019 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/08</span><a class="archive-post-title" href="/2019/port-knocking.html">端口敲门</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/19</span><a class="archive-post-title" href="/2019/Information-collection.html">信息收集总结</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/02</span><a class="archive-post-title" href="/2019/powershell-attack.html">PowerShell攻击技术</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2018 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/05</span><a class="archive-post-title" href="/2018/vulnhub-ch4inrulz1-0-1.html">Vulnhub渗透笔记之ch4inrulz:1.0.1</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/02</span><a class="archive-post-title" href="/2018/vulnhub-lampiao1.html">VulnHub渗透笔记之Lampio1</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/01</span><a class="archive-post-title" href="/2018/vulnhub-wankada1.html">Vulnhub渗透笔记之wankanda1</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/30</span><a class="archive-post-title" href="/2018/vulnhub-node1.html">Vulnhub渗透笔记之Node:1</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/24</span><a class="archive-post-title" href="/2018/The-mathematics-of-cryptography.html">浅谈密码学中的数学基础</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/16</span><a class="archive-post-title" href="/2018/linux-rookit.html">Linux后门检测与系统恢复</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/10</span><a class="archive-post-title" href="/2018/HistoryofMCD.html">恶意代码发展简史</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/02</span><a class="archive-post-title" href="/2018/soyouwantobeahacker.html">所以你想成为黑客？</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/01</span><a class="archive-post-title" href="/2018/website-attack.html">社会工程学攻击之网站钓鱼</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/27</span><a class="archive-post-title" href="/2018/隐写术之LSB隐写.html">隐写术之LSB隐写</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/27</span><a class="archive-post-title" href="/2018/一次恶意PHP脚本初探.html">一次恶意PHP脚本初探</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/25</span><a class="archive-post-title" href="/2018/ARP毒化.html">来自身边的安全威胁—ARP欺骗攻击</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/18</span><a class="archive-post-title" href="/2018/浅析缓冲区溢出.html">浅析缓冲区溢出</a>
+        </li>
+    
+    </ul></div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="局域网"><span class="iconfont-archer">&#xe606;</span>局域网</span>
+    
+        <span class="sidebar-tag-name" data-tags="arp"><span class="iconfont-archer">&#xe606;</span>arp</span>
+    
+        <span class="sidebar-tag-name" data-tags="中间人攻击"><span class="iconfont-archer">&#xe606;</span>中间人攻击</span>
+    
+        <span class="sidebar-tag-name" data-tags="系统原理"><span class="iconfont-archer">&#xe606;</span>系统原理</span>
+    
+        <span class="sidebar-tag-name" data-tags="翻译"><span class="iconfont-archer">&#xe606;</span>翻译</span>
+    
+        <span class="sidebar-tag-name" data-tags="恶意代码"><span class="iconfont-archer">&#xe606;</span>恶意代码</span>
+    
+        <span class="sidebar-tag-name" data-tags="计算机病毒"><span class="iconfont-archer">&#xe606;</span>计算机病毒</span>
+    
+        <span class="sidebar-tag-name" data-tags="渗透测试"><span class="iconfont-archer">&#xe606;</span>渗透测试</span>
+    
+        <span class="sidebar-tag-name" data-tags="vulnhub"><span class="iconfont-archer">&#xe606;</span>vulnhub</span>
+    
+        <span class="sidebar-tag-name" data-tags="密码学"><span class="iconfont-archer">&#xe606;</span>密码学</span>
+    
+        <span class="sidebar-tag-name" data-tags="linux"><span class="iconfont-archer">&#xe606;</span>linux</span>
+    
+        <span class="sidebar-tag-name" data-tags="rootkit"><span class="iconfont-archer">&#xe606;</span>rootkit</span>
+    
+        <span class="sidebar-tag-name" data-tags="powershell"><span class="iconfont-archer">&#xe606;</span>powershell</span>
+    
+        <span class="sidebar-tag-name" data-tags="资源，翻译"><span class="iconfont-archer">&#xe606;</span>资源，翻译</span>
+    
+        <span class="sidebar-tag-name" data-tags="php"><span class="iconfont-archer">&#xe606;</span>php</span>
+    
+        <span class="sidebar-tag-name" data-tags="webshell"><span class="iconfont-archer">&#xe606;</span>webshell</span>
+    
+        <span class="sidebar-tag-name" data-tags="社会工程学"><span class="iconfont-archer">&#xe606;</span>社会工程学</span>
+    
+        <span class="sidebar-tag-name" data-tags="隐写术"><span class="iconfont-archer">&#xe606;</span>隐写术</span>
+    
+        <span class="sidebar-tag-name" data-tags="lsb隐写"><span class="iconfont-archer">&#xe606;</span>lsb隐写</span>
+    
+        <span class="sidebar-tag-name" data-tags="缓冲区"><span class="iconfont-archer">&#xe606;</span>缓冲区</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br>
+    1、请确保node版本大于6.2<br>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+        <span class="sidebar-category-name" data-categories="资源"><span class="iconfont-archer">&#xe60a;</span>资源</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: "/",
+        author: "王六六"
+    }
+</script>
+    <!-- CDN failover -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ === 'undefined')
+        {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
+        }
+    </script>
+    <script src="/scripts/main.js"></script>
+    <!-- algolia -->
+    
+    <!-- busuanzi  -->
+    
+    <!-- CNZZ  -->
+    
+    </div>
+    <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
+     
+    </body>
+</html>
+
+
